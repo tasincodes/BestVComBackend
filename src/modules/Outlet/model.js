@@ -34,4 +34,4 @@ const OutletSchema= new mongoose.Schema({
 
 const OutletModel=mongoose.model('outlet',OutletSchema);
 
-module.exports=OutletSchema;
+module.exports=OutletModel;
