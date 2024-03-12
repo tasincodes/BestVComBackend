@@ -8,28 +8,28 @@ const ProductSchema = new mongoose.Schema({
   },
   productName: {
     type: String,
-    maxlength: 300, // Use `maxlength` for character limit validation
+    maxlength: 300, 
     required: true
   },
   productImages: {
-    type: [String], // Array to store multiple image URLs
+    type: [String], 
   },
   productVideos: {
-    type: [String], // Array to store multiple video URLs
+    type: [String], 
   },
   productDescription: {
     type: String,
-    maxlength: 3000, // Use `maxlength` for character limit validation
+    maxlength: 3000, 
   },
   productShortDescription: {
     type: String,
-    maxlength: 2000, // Use `maxlength` for character limit validation
+    maxlength: 2000, 
   },
   productTags: {
     type: String,
-    maxlength: 200, // Use `maxlength` for character limit validation
+    maxlength: 200, 
   },
-  general: { // Subdocument for general fields
+  general: { 
     regularPrice: {
       type: Number,
       required: true
@@ -41,17 +41,17 @@ const ProductSchema = new mongoose.Schema({
       type: Date // Store start date for sales
     },
     salesEnd: {
-      type: Date // Store end date for sales
+      type: Date 
     },
     taxStatus: {
-      type: String, // Define tax status options (e.g., "taxable", "exempt")
+      type: String, 
     },
     taxClass: {
       type: String // Define tax class categories
     }
   },
 
-  
+
 });
 
 module.exports = mongoose.model('Product', ProductSchema);
