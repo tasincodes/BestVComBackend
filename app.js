@@ -17,6 +17,10 @@ const { handleError } = require('./src/utility/errors.js');
 
 const app = new express();
 
+// Set trust proxy to true
+app.set('trust proxy', '127.0.0.1','103.191.51.223');
+
+
 // Security Middleware Implement
 app.use(helmet());
 app.use(mongoSanitize());
@@ -37,8 +41,8 @@ app.use(cookieParser());
 const whitelist = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:3004',
-  'http://localhost:3005',
+  'http://localhost:80',
+  'http://localhost:40',
   '*',
 ];
 const corsOptions = {
@@ -63,6 +67,9 @@ app.use(cors(corsOptions));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });
 app.use(limiter);
 
+
+app.use(limiter);
+
 // Mongo DB Database Connection
 connectWithDB();
 
@@ -73,7 +80,7 @@ app.use(handleError);
 
 // Undefined Route Implement
 app.use('*', (req, res) => {
-  res.status(404).json({ status: 'fail', data: 'Just for the 2nd test' });
+  res.status(404).json({ status: 'fail', data: 'Undefined Route' });
 });
 
 module.exports = app;

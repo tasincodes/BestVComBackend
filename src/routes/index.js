@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-//middlewares
-// const authVerifyMiddleware = require('../middlewares/authMiddleware.js');
-
 
 //routes
-// const authRoute = require('../modules/Auth/controller');
 
+//middlewares
+const authVerifyMiddleware = require('../middlewares/authMiddleware');
 
+//routes
+const authRoute = require('../modules/Auth/controller');
 
-// Root End Point
-// router.use('/auth', authRoute);
+//EndPoint
+
+router.use('/auth', authRoute);
+router.use(authVerifyMiddleware);
 
 module.exports = router;
