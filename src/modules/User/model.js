@@ -3,26 +3,20 @@ const mongoose = require('mongoose');
 
 
 const UserSchema=new mongoose.Schema({
-    userName:{
-    type:String,
-     max:[30,'Please Input Your Name'],
-    required:[true,'Must Be required your name']
-    },
+  
+  email: {
+    type: String,
+    unique: [true, 'your email must be unique/used already'],
+    required: [true, 'email must be required'],
+  },
 
-    profilePic:{
-        type:String,
-    },
+   
     phoneNumber:{
         type:String,
         max:[12,'Please Input Your Number'],
         required:[true,"Must be input Phone Number"]
     },
-    email: {
-        type: String,
-        unique: [true, 'your email must be unique/used already'],
-        required: [true, 'email must be required'],
-      },
-
+  
       password: {
         type: String,
         max: [6, 'Your Password must be in 6 digits'],
@@ -31,9 +25,11 @@ const UserSchema=new mongoose.Schema({
       otp: {
         type: Number,
       },
+
       emailChangeOTP: {
         type: Number,
       },
+      
       changedEmail: {
         type: String,
       },
