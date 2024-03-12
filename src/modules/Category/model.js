@@ -16,7 +16,7 @@ const CategorySchema = new mongoose.Schema({
         max:[30,"category name must be under 30"],
         
     },
-    categorydescription:{
+    categoryDescription:{
         type:string,
         max:[100,"product descriptiopn should be under 100 characters"]
     },
