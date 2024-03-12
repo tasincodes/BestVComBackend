@@ -29,6 +29,15 @@ const userSignUpHandler=asyncHandler(async(req,res)=>{
 
     });
 })
+const userVerifier=asyncHandler(async(req,res)=>{
+    const user =await authService.verifyUser(req.body);
+    res.status(200).json({
+        email:user.email,
+        user,
+        message:"User verification success"
+
+    });
+})
 
 
 router.post('/registration',userSignUpHandler);

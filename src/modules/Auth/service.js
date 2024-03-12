@@ -56,6 +56,15 @@ const registerUser=async(userData)=>{
         throw err;
     }
 }
+const verifyUser=async(userData)=>{
+    try{
+        const {OTP}= userData;
+
+    }
+    catch(err){
+        throw err
+    }
+}
 
 
 module.exports={
