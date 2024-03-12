@@ -37,9 +37,6 @@ app.use(cookieParser());
 const whitelist = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://v2admin.onnow.io',
-  'https://app.onnow.io',
-  'https://staging-admin.onnow.io',
   'http://localhost:3004',
   'http://localhost:3005',
   '*',
