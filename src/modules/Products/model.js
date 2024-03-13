@@ -50,6 +50,49 @@ const ProductSchema = new mongoose.Schema({
       type: String // Define tax class categories
     }
   },
+  inventory:{
+    sku:{
+      type:String
+    },
+    stockManagement:{
+      type:Boolean
+    },
+    stockStatus:{
+      type: String,
+      enum:['In stock','out of stock','on backorder']
+    },
+    soldIndevidually:{
+      type:Boolean
+    }
+  },
+  shipping:{
+    weight:{
+      type:Number,
+      required:true
+    },
+    productDimensions: {
+      length: {
+          type: Number,
+          required: true
+      },
+      width: {
+          type: Number,
+          required: true
+      },
+      height: {
+          type: Number,
+          required: true
+      }
+  },
+  
+  taxClass: {
+    type: String,
+    enum: ['No shipping class'] 
+  }
+
+  }
+
+
 
 
 });
