@@ -33,6 +33,17 @@ const UserSchema=new mongoose.Schema({
       changedEmail: {
         type: String,
       },
+
+      role: {
+        type: String,
+    //  HEAD_OFFICE:'HQ',
+    // BRANCH_ADMIN:'BA',
+    // CUSTOMER: 'CUS',
+       
+        enum: ['HQ', 'BA', 'CUS'],
+        require: [true, 'Role must be selected'],
+      },
+
       isActive: {
         type: Boolean,
         default: false,
