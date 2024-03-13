@@ -21,6 +21,16 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     maxlength: 3000, 
   },
+  seo:{
+    productTitle:{
+      type:String,
+      maxlength:100
+    },
+    prodDescription:{
+      type:String,
+      maxlength:100
+    }
+  },
   productShortDescription: {
     type: String,
     maxlength: 2000, 
@@ -28,6 +38,10 @@ const ProductSchema = new mongoose.Schema({
   productTags: {
     type: String,
     maxlength: 200, 
+  },
+  productNotes:{
+    type: String,
+    maxlength:1000
   },
   general: { 
     regularPrice: {
