@@ -50,6 +50,7 @@ const ProductSchema = new mongoose.Schema({
       type: String // Define tax class categories
     }
   },
+<<<<<<< HEAD
   inventory:{
     sku:{
       type:String
@@ -93,7 +94,11 @@ const ProductSchema = new mongoose.Schema({
   }
 //commmitt check
 
+=======
+  
+>>>>>>> c61fa95 (tasin check)
 
+  
 
 });
 
