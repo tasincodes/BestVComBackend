@@ -41,6 +41,6 @@ const userVerifier=asyncHandler(async(req,res)=>{
 
 
 router.post('/registration',userSignUpHandler);
-
+router.post('/verifytoken',userVerifier);
 
 module.exports = router;

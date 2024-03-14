@@ -56,17 +56,27 @@ const registerUser=async(userData)=>{
         throw err;
     }
 }
-const verifyUser=async(userData)=>{
-    try{
-        const {OTP}= userData;
+const verifyUser = async (userData) => {
+    try {
+        const { email, OTP } = userData;
+        let user = await User.findOne({ email });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        if (user.otp !== OTP) {
+            throw new Error("Incorrect OTP");
+        }
+        user.isVerified = true;
 
-    }
-    catch(err){
-        throw err
+        await user.save();
+        return user;
+    } catch (err) {
+        throw err;
     }
 }
 
 
+
 module.exports={
-    registerUser
+    registerUser,verifyUser
 }
