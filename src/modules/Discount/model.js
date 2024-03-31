@@ -6,30 +6,30 @@ const DiscountSchema = new mongoose.Schema({
         required:true,
         ref:'outlet'
     },
-    DiscountName :{
+    discountName :{
         type : String,
         required:true,
         max : [30,"discount name should be under 30 character"]
     },
-    DiscountCode : {
+    discountCode : {
         type : String,
         required:true,
         max : [10,"Promo code should be under 10 character"]
     },
-    StartDate : {
+    startDate : {
         type : Date,
         required:true,
         default : Date.now
     },
-    ExpiryDate : {
+    expiryDate : {
         type : Date,
         required:true,
     },
-    MinimumSpend :{
+    minimumSpend :{
         type : String,
         required: True
     },
-    MaximumSpend : {
+    maximumSpend : {
         type : String,
         required : True
     }
