@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 const bcrypt=require(bcryptjs);
 
-const CustomerSchema=new Mongoose.Schema({
+const CustomerSchema=new mongoose.Schema({
     email:{
         type:String,
         unique:true,
@@ -27,5 +27,54 @@ const CustomerSchema=new Mongoose.Schema({
         type:String,
         max:[14,"Phone Number Should be at least 14 characters"],
     },
-    
+    isValid:{
+        type:Boolean,
+        default:false
+    },
+    otp:{
+        type:Number
+    },
+    password:{
+        type:String,
+    },
+    address:{
+        type:String,
+        max:[120,"Address Should be at least 120 characters"],
+
+    },
+    refreshToken:[String],
+
+    district:{
+        type:String,
+        max:[45,"District Should be at least 45 characters"],
+    }
+
+
 })
+
+// Password Hash Function  using Bcryptjs
+
+CustomerSchema.pre('save',async function hashPassword(next){
+    if(this.isModified('password')){
+        const salt =await bcrypt.genSalt(10);
+        this.password=await bcrypt.hash(this.password,salt);
+    }
+    next();
+});
+
+CustomerSchema.methods={
+    async authenticate(password){
+        return await bcrypt.compare(password,this.password);
+    },
+
+};
+
+  //Validations
+  CustomerSchema.path('phoneNumber').validate(function (value) {
+    const regex = /^\d{13}$/; // regular expression to match 11 digits
+    return regex.test(value);
+  },"Please enter a valid Phone Number")
+
+const CustomerModel=mongoose.model('customer',CustomerSchema);
+
+module.exports=CustomerModel;
