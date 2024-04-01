@@ -15,68 +15,75 @@ const createToken = require('../../utility/createToken');
 const bcrypt = require('bcryptjs');
 
 
-const registerUser=async(userData)=>{
-    try{
-
-        const {email,password}=userData;
-        
-        let isUser=await User.findOne({email:email}).select(
-            'Email isVerified is Active Role'
-        );
-        if(isUser && !isUser.isVerified){
-            throw new BadRequest("You have already registered with this email")
-        }
-
-        const otp=generateOTP();
-
-        const emailBody= `Verification OTP:${otp}`;
-
-        if(isUser){
-            isUser.otp=otp;
-            isUser.password=password;
-            await isUser.save();
-        }
-        else{
-            const newUser=await User.create({...userData,otp});
-
-            isUser={
-               email:newUser.email,
-               isVerified:newUser.isVerified,
-               isActive:newUser.isActive,
-               role:newUser.role,
-            };
-            SendEmailUtility(email,emailBody,'OTP');
-            return newUser;
-        }
-
-      
-
-    }
-    catch(err){
-        throw err;
-    }
-}
-const verifyUser = async (userData) => {
-    try {
-        const { email, OTP } = userData;
-        let user = await User.findOne({ email });
-        if (!user) {
-            throw new Error("User not found");
-        }
-        if (user.otp !== OTP) {
-            throw new Error("Incorrect OTP");
-        }
-        user.isVerified = true;
-
-        await user.save();
-        return user;
-    } catch (err) {
-        throw err;
-    }
-}
 
 
 
-module.exports={
-    registerUser,verifyUser
-}
+
+// Admin Register a new user
+
+const UserRegister = async (email, phoneNumber, password, role) => {
+  try {
+      // Generate OTP
+      const otp = generateOTP(); // Make sure generateOTP is imported properly
+
+      // Save user with hashed password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+          email,
+          phoneNumber,
+          password: hashedPassword,
+          role,
+          otp,
+      });
+      await user.save();
+
+      // Send OTP to email
+      await SendEmailUtility(email, 'OTP for registration', `Your OTP for registration: ${otp}`);
+
+      // Return
+      return user;
+  } catch (error) {
+      console.error(error); // Log the error
+      throw new BadRequest('Failed to register user.');
+  }
+};
+
+
+
+
+// Verify OTP
+const verifyOTP = async (email, otp) => {
+  try {
+      const user = await User.findOne({ email, otp });
+      if (!user) {
+          throw new BadRequest('Invalid OTP.');
+      }
+
+      // Update user
+      user.isActive = true;
+      user.isVerified = true;
+      user.otp = undefined; // Clear OTP after verification
+      await user.save();
+  } catch (error) {
+      throw new BadRequest('Failed to verify OTP.');
+  }
+};
+
+
+
+
+
+
+
+
+module.exports = {
+  UserRegister,
+  verifyOTP
+};
+
+
+  
+ 
+
+
+

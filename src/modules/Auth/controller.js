@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const { validate } = require('../../middlewares/schemaValidation'); // Corrected import
 
-const handleValidation = require('../../middlewares/schemaValidation');
 const {
     HEAD_OFFICE,
     BRANCH_ADMIN,
     CUSTOMER
-
 }=require('../../config/constants');
-
 
 const authService = require('./service');
 const { adminValidate } = require('./request');
@@ -18,29 +16,52 @@ const { asyncHandler } = require('../../utility/common');
 
 
 
-// create Admin/User
-
-const userSignUpHandler=asyncHandler(async(req,res)=>{
-    const user =await authService.registerUser(req.body);
-    res.status(200).json({
-        email:user.email,
-        user,
-        message:"User Registration Success please check your mail for the OTP"
-
-    });
-})
-const userVerifier=asyncHandler(async(req,res)=>{
-    const user =await authService.verifyUser(req.body);
-    res.status(200).json({
-        email:user.email,
-        user,
-        message:"User verification success"
-
-    });
-})
 
 
-router.post('/registration',userSignUpHandler);
-router.post('/verifytoken',userVerifier);
+
+
+// Register a new user
+
+const registerHandler = asyncHandler(async(req, res) => {
+  const { email, phoneNumber, password, role } = req.body;
+  const user = await authService.UserRegister(email, phoneNumber, password, role);
+
+  res.status(200).json({
+      message: "Your account has been registered. Please check your email for the OTP.",
+      email: user.email,
+      user,
+  });
+});
+
+
+
+
+
+
+
+// Verify OTP
+
+const otpVerifyHandler = asyncHandler(async(req,res)=>{
+  const { email, otp } = req.body;
+  const verify=await authService.verifyOTP(email,otp)
+  
+    res.json({
+       message: 'OTP verified successfully. User activated.',
+       verify
+      });
+});
+
+
+
+
+
+
+
+
+router.post('/adminRegister',registerHandler);
+router.post('/otpVerification',otpVerifyHandler);
+
+
+
 
 module.exports = router;
