@@ -53,6 +53,32 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
 
 
 
+//Resend OTP
+
+const resendOTPHandler = asyncHandler(async(req,res)=>{
+  
+  const { email } = req.body;
+  const otpResend = await authService.resendOTP(email);
+  res.status(200).json({
+    otpResend
+  });
+
+
+})
+
+//Expire OTP
+const expireOTP = async (req, res, next) => {
+  try {
+    await authService.expireOTP(req.body);
+
+    res.status(200).json({
+      message: 'OTP expired',
+    });
+  } catch (err) {
+    next(err, req, res);
+  }
+};
+
 
 
 
@@ -60,6 +86,8 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
 
 router.post('/adminRegister',registerHandler);
 router.post('/otpVerification',otpVerifyHandler);
+router.post('/otpResend',resendOTPHandler);
+router.post('/expireOTP',expireOTP);
 
 
 

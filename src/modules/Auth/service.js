@@ -71,14 +71,47 @@ const verifyOTP = async (email, otp) => {
 
 
 
+// Resend OTP
+
+const resendOTP=async (email) =>{
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new BadRequest('User not found.');
+    }
+
+    // Generate new OTP
+    const newOTP = generateOTP();
+    user.otp = newOTP;
+    await user.save();
+
+    // Send OTP to email
+    await SendEmailUtility(email, 'New OTP', `Your new OTP: ${newOTP}`);
+
+    return { message: 'New OTP sent successfully.' };
+} catch (error) {
+    throw new BadRequest('Failed to resend OTP.');
+}};
 
 
+// Expire OTP
+const expireOTP = async (data) => {
+  const { email } = data;
+  await User.updateOne(
+    { email },
+    { $unset: { otp: 1, changedEmail: 1, emailChangeOTP: 1 } }
+  );
+  return;
+};
 
 
 
 module.exports = {
   UserRegister,
-  verifyOTP
+  verifyOTP,
+  resendOTP,
+  expireOTP
 };
 
 
