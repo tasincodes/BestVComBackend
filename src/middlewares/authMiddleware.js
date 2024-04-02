@@ -9,7 +9,9 @@ module.exports = (req, res, next) => {
         } else {
             //Get email for decoded token & add with request header
             let email=decoded['data']['email']
-            req.headers.email=email
+            req.userid = decoded.userId;
+            req.role = decoded.role;
+            req.email = decoded.email;
             next();
         }
     })

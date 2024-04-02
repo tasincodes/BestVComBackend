@@ -6,7 +6,7 @@ const outletService = require('./service');
 const outletManagerCreate = async (req,res,next)=>{
 
     try{
-        const outletManagerId = req.params.id;
+        const outletManagerId = req.params.userId;
         console.log("twest")
         const outletManager = await outletService.fetchOutletManager(req,outletManagerId)
         if(!outletManager){
