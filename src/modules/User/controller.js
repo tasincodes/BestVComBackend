@@ -13,7 +13,7 @@ const authMiddleware = require('../../middlewares/authMiddleware');
 roleMiddleware = require('../../middlewares/roleMiddleware');
 const handleValidation = require('../../middlewares/schemaValidation');
 const { asyncHandler } = require('../../utility/common');
-const { HEAD_OFFICE, BRANCH_ADMIN } = require('../../config/constants');
+const { HEAD_OFFICE,BRANCH_ADMIN } = require('../../config/constants');
 
 
 
@@ -45,6 +45,6 @@ const getAllUsersHandler=asyncHandler(async(req,res)=>{
 
 
 router.post('/resetPass',resetPasswordHandler);
-router.get('/allUsers',getAllUsersHandler);
+router.get('/allUsers', authMiddleware, roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]), getAllUsersHandler);
 
 module.exports = router;
