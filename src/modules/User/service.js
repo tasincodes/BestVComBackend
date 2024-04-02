@@ -40,6 +40,10 @@ const resetPassword = async (email, newPassword) => {
 
 //getAllUser
 
+const getAllUsers=async(data)=>{
+    const user=await User.find();
+    return user;
+}
 
 
 
@@ -48,6 +52,7 @@ const resetPassword = async (email, newPassword) => {
 
 
 module.exports = {
-  resetPassword
+  resetPassword,
+  getAllUsers
  
 };

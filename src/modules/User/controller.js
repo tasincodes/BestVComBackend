@@ -10,8 +10,10 @@ const {
 } = require('./request');
 
 const authMiddleware = require('../../middlewares/authMiddleware');
+roleMiddleware = require('../../middlewares/roleMiddleware');
 const handleValidation = require('../../middlewares/schemaValidation');
 const { asyncHandler } = require('../../utility/common');
+const { HEAD_OFFICE, BRANCH_ADMIN } = require('../../config/constants');
 
 
 
@@ -30,6 +32,19 @@ const resetPasswordHandler = asyncHandler(async(req,res)=>{
 
 
 
+// getAllUsers
+
+const getAllUsersHandler=asyncHandler(async(req,res)=>{
+    const users=await userService.getAllUsers();
+    res.status(200).json({
+       
+        users
+    })
+})
+
+
+
 router.post('/resetPass',resetPasswordHandler);
+router.get('/allUsers',getAllUsersHandler);
 
 module.exports = router;
