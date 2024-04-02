@@ -61,20 +61,23 @@ const UserSchema=new mongoose.Schema({
 
 // Password Hash Function using Bycryptjs
 
+// Password Hash Function using Bycryptjs
+
 UserSchema.pre('save', async function hashPassword(next) {
-    if (this.isModified('password')) {
-      const salt = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, salt);
-    }
-    next();
-  });
-  
-  UserSchema.methods = {
-    async authenticate(password) {
-      return await bcrypt.compare(password, this.password);
-    },
-  };
-  
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
+
+UserSchema.methods = {
+  async authenticate(password) {
+    return await bcrypt.compare(password, this.password);
+  },
+};
+
+//Validations
   //Validations
   UserSchema.path('phoneNumber').validate(function (value) {
     const regex = /^\d{13}$/; // regular expression to match 11 digits

@@ -13,6 +13,7 @@ const {generateOTP}=require('../../utility/common');
 const{SendEmailUtility}=require('../../utility/email');
 const createToken = require('../../utility/createToken');
 const bcrypt = require('bcryptjs');
+const { decrypt } = require('dotenv');
 
 
 
@@ -23,30 +24,30 @@ const bcrypt = require('bcryptjs');
 
 const UserRegister = async (email, phoneNumber, password, role) => {
   try {
-      // Generate OTP
-      const otp = generateOTP(); // Make sure generateOTP is imported properly
+    // Generate OTP
+    const otp = generateOTP(); 
 
-      // Save user with hashed password
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = new User({
-          email,
-          phoneNumber,
-          password: hashedPassword,
-          role,
-          otp,
-      });
-      await user.save();
 
-      // Send OTP to email
-      await SendEmailUtility(email, 'OTP for registration', `Your OTP for registration: ${otp}`);
+    const user = new User({
+      email,
+      phoneNumber,
+      role,
+      otp,
+      password,
+    });
+    await user.save();
 
-      // Return
-      return user;
+    // Send OTP to email
+    await SendEmailUtility(email, 'OTP for registration', `Your OTP for registration: ${otp}`);
+
+    // Return user
+    return user;
   } catch (error) {
-      console.error(error); // Log the error
-      throw new BadRequest('Failed to register user.');
+    console.error(error); 
+    throw new BadRequest('Failed to register user.');
   }
 };
+
 
 
 
@@ -95,6 +96,8 @@ const resendOTP=async (email) =>{
 }};
 
 
+
+
 // Expire OTP
 const expireOTP = async (data) => {
   const { email } = data;
@@ -106,12 +109,61 @@ const expireOTP = async (data) => {
 };
 
 
+//SignIn Admin
+
+const signinUser = async (email,password) => {
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      throw new BadRequest("Invalid email or password.");
+    }
+
+    // Validate password using bcrypt.compare
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // Check password match
+    if (!isMatch) {
+      throw new BadRequest("Invalid email or password.");
+    }
+ // Generate JWT token with user data payload
+ const accessToken = jwt.sign({ user }, 'SecretKey12345', { expiresIn: '3d' });
+    // User is authenticated, return sanitized user data (excluding sensitive fields)
+    const sanitizedUser = {
+      accessToken,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      
+    };
+
+    return sanitizedUser;
+  } catch (error) {
+    console.error(error);
+    throw error; 
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
 module.exports = {
   UserRegister,
   verifyOTP,
   resendOTP,
-  expireOTP
+  expireOTP,
+  signinUser
 };
 
 
