@@ -1,33 +1,46 @@
-const OutletModel = require("./model")
-const userModel = require("../User/model")
+const OutletModel = require("./model");
+const userModel = require("../User/model");
 
+const fetchOutletManager = async (userId, outletName, outletLocation, phoneNumber, email) => {
+    try {
+        
+        const outletManager = await userModel.findById(userId);
 
-const fetchOutletManager = async(data,outletManagerId)=>{
-
-      const{ outletName,outletLocation,phoneNumber,email }= data.body
-    try{
-        const outletManager = await userModel.findById(outletManagerId)
-        console.log(outletManager)
-        if(!user){
-            return "User not found"
+        if (!outletManager) {
+            return null;
         }
-        const newOutletManager = OutletModel.create({
-            userId:outletManager._id,
-            outletName: outletName,
-            outletLocation : outletLocation,
-            phoneNumber : phoneNumber,
-            email : email
-        })
-        return newOutletManager;
+        const newOutlet = await OutletModel.create({
+            userId: outletManager._id,
+            outletName,
+            outletLocation,
+            phoneNumber,
+            email,
+        });
 
+        return newOutlet;
+    } catch (error) {
+        console.error(error);
+    
+        return null;
     }
-    catch(error){
-        console.log(error)
-    }
+};
 
+const getAllUsers=async(data)=>{
+    const user=await OutletModel.find();
+    return user;
 }
 
 
-module.exports= {
-    fetchOutletManager
-}
+
+
+
+
+
+
+
+
+
+module.exports = {
+    fetchOutletManager,
+    getAllUsers
+};
