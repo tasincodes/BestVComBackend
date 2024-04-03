@@ -30,7 +30,7 @@ const OutletSchema= new mongoose.Schema({
     }
 
 
-});
+},{versionKey:false});
 
 const OutletModel=mongoose.model('outlet',OutletSchema);
 
