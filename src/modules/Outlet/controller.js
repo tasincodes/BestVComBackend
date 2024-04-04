@@ -14,8 +14,9 @@ const outletCreate = async (req, res, next) => {
         if (createdOutlet) {
             res.status(200).json({ createdOutlet });
         }
-        return res.status(401).json({ message: "Outlet manager not found" });
-     
+        else{
+        res.status(401).json({ message: "Outlet manager not found" });
+        }
     } catch (error) {
  
         next(error);
@@ -50,7 +51,6 @@ const deleteOutlet = asyncHandler(async(req, res) => {
 
 const searchOutlet = async(req,res)=>{
     const searchInfo = await outletService.searchOutlet(req.query.outletName.split(","));
-    console.log(searchInfo)
     if(!searchInfo){
         res.status(401).json({message:"couldnt get search info"})
     }
