@@ -58,13 +58,17 @@ const searchOutlet = async(req,res)=>{
 }
 
 
-
-
-
-
-
-
-
+const outletEmailSetPassword = async (req,res)=>{
+    try{
+    const {email,token}= req.body;
+    const emailInfo = await outletService.passEmailForOutlet(email,token)
+    if(!emailInfo){res.status(401).json({message:"emailinfo not found from service"})}
+    }
+    catch(error){
+        console.error('Error sending email:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 
 
@@ -74,4 +78,5 @@ router.get("/getAllOutlet", getAllOutlet);
 router.put("/updateOutlet/:id",updateOutlet)
 router.delete("/deleteOutlet/:id",deleteOutlet)
 router.get("/searchOutlet",searchOutlet)
+router.post("/outletEmailSetPassword",outletEmailSetPassword)
 module.exports = router;

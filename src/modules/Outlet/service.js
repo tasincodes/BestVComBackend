@@ -1,5 +1,10 @@
 const OutletModel = require("./model");
 const userModel = require("../User/model");
+const { asyncHandler } = require("../../utility/common");
+const{passEmailForOutlet}=require('../../utility/email');
+const jwt = require('jsonwebtoken');
+
+
 
 const fetchOutletManager = async (userId, outletName, outletLocation, phoneNumber, email) => {
     try {
@@ -16,12 +21,13 @@ const fetchOutletManager = async (userId, outletName, outletLocation, phoneNumbe
             phoneNumber,
             email,
         });
-
-        return newOutlet;
+        const token = jwt.sign({ userId: outletManager._id }, 'secrectKey123', { expiresIn: '1h' });
+        await passEmailForOutlet(email,token)
+        return { outlet: newOutlet, token }
     } catch (error) {
         console.error(error);
     
-        return null;
+        return { outlet: null, token: null };
     }
 };
 
@@ -71,6 +77,13 @@ return searchedOutlet
     }
 }
 
+
+
+
+
+
+
+
   
 
 module.exports = {
@@ -78,5 +91,5 @@ module.exports = {
     getAllUsers,
     updateOutlet,
     deleteOutlet,
-    searchOutlet
+    searchOutlet,
 };

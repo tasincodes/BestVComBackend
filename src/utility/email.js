@@ -134,6 +134,31 @@ exports.SendEmailUtility = async (EmailTo, EmailText, EmailSubject) => {
 
 
 
+exports.passEmailForOutlet = async(email,token)=>{
+
+  const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+          user: 'shahriartasin2000@gmail.com',
+          pass: process.env.EMAIL_PASS
+      }
+  });
+
+  const mailOptions = {
+      from: 'tech.syscomatic@gmail.com',
+      to: email,
+      subject: 'Set Your Password',
+      html: `
+          <p>Hello Outlet Manager,</p>
+          <p>Welcome to our platform! Click the button below to set your password:</p>
+          <a href="http://yourwebsite.com/set-password/${token}">Set Password</a>
+      `
+  };
+  await transporter.sendMail(mailOptions);
+  // res.status(200).json({ message: 'Email sent successfully' });
+}
+
+
 // exports.sendManagerOrderPlacedEmail = (user, order) => {
 //   const { email, role } = user;
 
