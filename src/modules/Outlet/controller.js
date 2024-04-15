@@ -2,14 +2,15 @@ const express = require("express");
 const router = express.Router();
 const outletService = require('./service');
 const { asyncHandler } = require('../../utility/common');
+const multer = require("multer");
 
 const outletCreate = async (req, res, next) => {
     try {
         
-        const { userId, outletName, outletLocation, phoneNumber, email } = req.body;
+        const { outletName, outletLocation, outletImage} = req.body;
 
        
-        const createdOutlet = await outletService.fetchOutletManager(userId, outletName, outletLocation, phoneNumber, email);
+        const createdOutlet = await outletService.outletCreateService(outletName, outletLocation, outletImage);
 
         if (createdOutlet) {
             res.status(200).json({ createdOutlet });
@@ -23,6 +24,17 @@ const outletCreate = async (req, res, next) => {
     }
 };
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "./src/modules/uploads");
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  });
+  
+  const upload = multer({ storage: storage });
+  
 
 const getAllOutlet = asyncHandler(async(req, res) => {
     const outlet=await outletService.getAllUsers();
@@ -73,10 +85,25 @@ const outletEmailSetPassword = async (req,res)=>{
 
 
 
-router.post("/outletManagerCreate", outletCreate);
+router.post("/outletCreate", outletCreate);
 router.get("/getAllOutlet", getAllOutlet);
 router.put("/updateOutlet/:id",updateOutlet)
 router.delete("/deleteOutlet/:id",deleteOutlet)
 router.get("/searchOutlet",searchOutlet)
 router.post("/outletEmailSetPassword",outletEmailSetPassword)
+
+router.post("/upload", upload.single("file"), async (req, res, next) => {
+    try {
+      const uploadedFile = req.file;
+      if (uploadedFile) {
+        res
+          .status(200)
+          .json({ message: "File uploaded successfully", file: uploadedFile });
+      } else {
+        res.status(401).json({ message: "File not uploaded" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
 module.exports = router;
