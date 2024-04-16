@@ -7,21 +7,21 @@ const CategorySchema = new mongoose.Schema({
         ref:'user'
     },
     categoryName:{
-        type:string,
+        type:String,
         max:[30,"category name must be under 30"],
         required : true
     },
     parentCategory:{
-        type : string,
+        type : String,
         max:[30,"category name must be under 30"],
         
     },
     categoryDescription:{
-        type:string,
+        type:String,
         max:[100,"product descriptiopn should be under 100 characters"]
     },
     fetaureImage:{
-        type:string
+        type:[String]
         
 
     }
