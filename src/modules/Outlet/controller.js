@@ -7,10 +7,10 @@ const multer = require("multer");
 const outletCreate = async (req, res, next) => {
     try {
         
-        const { outletName, outletLocation, outletImage} = req.body;
+        const { outletName, outletLocation, outletImage,branchAdmin} = req.body;
 
        
-        const createdOutlet = await outletService.outletCreateService(outletName, outletLocation, outletImage);
+        const createdOutlet = await outletService.outletCreateService(outletName, outletLocation, outletImage,branchAdmin);
 
         if (createdOutlet) {
             res.status(200).json({ createdOutlet });
@@ -84,6 +84,15 @@ const outletEmailSetPassword = async (req,res)=>{
 
 
 
+const getOutletManagerById = asyncHandler(async(req, res) => {
+
+  const managerInfo = await outletService.getOutletManagerByIdService(req.params.id);
+  res.status(200).json({message:"outlet manager found",managerInfo
+  })
+});
+
+
+
 
 router.post("/outletCreate", outletCreate);
 router.get("/getAllOutlet", getAllOutlet);
@@ -91,6 +100,7 @@ router.put("/updateOutlet/:id",updateOutlet)
 router.delete("/deleteOutlet/:id",deleteOutlet)
 router.get("/searchOutlet",searchOutlet)
 router.post("/outletEmailSetPassword",outletEmailSetPassword)
+router.get("/getOutletManagerById/:id",getOutletManagerById)
 
 router.post("/upload", upload.single("file"), async (req, res, next) => {
     try {

@@ -15,6 +15,10 @@ const OutletSchema= new mongoose.Schema({
     outletImage :{
         type : String,
         required:true
+    },
+    branchAdmin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user' 
     }
  
 

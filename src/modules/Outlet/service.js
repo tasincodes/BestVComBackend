@@ -5,13 +5,14 @@ const jwt = require('jsonwebtoken');
 
 
 
-const outletCreateService = async (outletName, outletLocation,outletImage) => {
+const outletCreateService = async (outletName, outletLocation,outletImage,branchAdmin) => {
     try {
         
         const newOutlet = await OutletModel.create({
             outletName,
             outletLocation,
-            outletImage : outletImage
+            outletImage : outletImage,
+            branchAdmin
         });
         return { outlet: newOutlet}
     } catch (error) {
@@ -71,6 +72,16 @@ return searchedOutlet
 }
 
 
+const getOutletManagerByIdService = async(id)=>{
+  try{
+let managerInfo = userModel.findById(id)
+return managerInfo
+  }
+  catch(error){
+    throw error
+    }
+}
+
 
   
 
@@ -80,4 +91,5 @@ module.exports = {
     updateOutlet,
     deleteOutlet,
     searchOutlet,
+    getOutletManagerByIdService
 };
