@@ -45,11 +45,34 @@ const getAllCategoriesHandler = asyncHandler(async (req, res) => {
     });
 });
 
+// Update CategoryBy ID
 
+const updateCategoryHandler = asyncHandler(async (req, res) =>{
+    const {id}=req.params;
+    const updateCategory = await categoryService.updateCategoryById(id,req.body);
+    res.status(200).json({
+        message:"Update Category Successfully",
+        updateCategory
+    })
+})
+
+
+// deleteCategoryHandlerbyId
+
+const deleteCategoryHandler=asyncHandler(async(req,res)=>{
+    const {id}=req.params;
+    const deleteCategory = await categoryService.deleteCategoryById(id,req.body);
+    res.status(200).json({
+        message:"Delete Category Successfully!",
+        deleteCategory
+    })
+})
 
 
 
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
 router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
 router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCategoriesHandler);
+router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
+router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
 module.exports = router;
