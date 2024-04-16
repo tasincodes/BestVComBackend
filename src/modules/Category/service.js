@@ -36,10 +36,23 @@ const getAllCategory = async () => {
 };
 
 
+// update category by ID
+
+const updateCategoryById=async(id,value)=>{
+    const category = await Category.findOneAndUpdate({_id:id},value,{
+        new:true
+    })
+    if(!category){
+        throw new BadRequest("Could not update the");         
+    }
+    return category;
+};
+
 
 
 module.exports ={
     addCategory,
     addSubcategory,
-    getAllCategory
+    getAllCategory,
+    updateCategoryById
 }
