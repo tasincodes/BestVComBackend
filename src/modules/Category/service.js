@@ -48,11 +48,22 @@ const updateCategoryById=async(id,value)=>{
     return category;
 };
 
+// delete category By ID
+
+const deleteCategoryById = async(id)=>{
+    const category = await Category.findOneAndDelete({_id:id});
+    if(!category){
+        throw new BadRequest('Could not Delete category Behenchodh!')
+    }
+    return category;
+}
+
 
 
 module.exports ={
     addCategory,
     addSubcategory,
     getAllCategory,
-    updateCategoryById
+    updateCategoryById,
+    deleteCategoryById
 }
