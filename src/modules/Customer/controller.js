@@ -13,6 +13,14 @@ const createCustomerhandler = asyncHandler(async (req, res) => {
 });
 
 
-router.post('/createCustomer',createCustomerhandler)
+const getAllCustomerhandler = asyncHandler(async (req, res) => {
+    const customer = await customerService.getAllCustomerService();
+    res.status(200).json({
+        message: "customer added successfully",
+        customer
+    });
+});
 
+router.post('/createCustomer',createCustomerhandler)
+router.get('/getCustomer',getAllCustomerhandler)
  module.exports = router;

@@ -10,9 +10,7 @@ const CustomerSchema=new mongoose.Schema({
     firstName:{
         type:String,
         max:[15,"FirstName Should be at least 15 characters"],
-
     },
-
     lastName:{
         type:String,
         max:[12,"LastName Should be at least 12 characters"]

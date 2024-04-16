@@ -5,7 +5,21 @@ const customerModel = require("../Customer/model")
 const customerCreateService = async (customerInfo) => {
     try {
         
-        const newCustomer = await customerModel.create(customerInfo);
+        const newCustomer = await customerModel.create(
+customerInfo);
+        return { customer:newCustomer }
+    } catch (error) {
+        console.error(error);
+    
+        return { customer: null };
+    }
+};
+
+
+const getAllCustomerService = async () => {
+    try {
+        
+        const newCustomer = await customerModel.find();
         return { customer:newCustomer }
     } catch (error) {
         console.error(error);
@@ -15,6 +29,7 @@ const customerCreateService = async (customerInfo) => {
 };
 
 module.exports={
-    customerCreateService
+    customerCreateService,
+    getAllCustomerService
 
 }
