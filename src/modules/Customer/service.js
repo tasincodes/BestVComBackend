@@ -30,19 +30,44 @@ const getAllCustomerService = async () => {
     }
 };
 
-const forgetInfoService = async (email) => {
+const forgetInfoService = async (email,phoneNumber) => {
     try {
         const otp = generateOTP();
-        await otpMail(email, otp); // Call the otpMail function with email and otp
+        await otpMail(email, otp);
+        const newCustomer = new customerModel({
+            otp: otp,
+            email: email,
+            phoneNumber
+        });
+        const savedCustomer = await newCustomer.save();
+        console.log("Customer saved successfully:", savedCustomer);
     } catch (error) {
         console.error(error);
     }
 }
 
 
+
+// Verify OTP
+const verifyOTP = async (email, otp) => {
+    try {
+        const user = await customerModel.findOne({ email, otp });
+        if (!user) {
+            throw new BadRequest('Invalid OTP.');
+        }
+  
+        user.otp = undefined; // Clear OTP after verification
+        await user.save();
+    } catch (error) {
+        throw new BadRequest('Failed to verify OTP.');
+    }
+  };
+  
+
 module.exports={
     customerCreateService,
     getAllCustomerService,
-    forgetInfoService
+    forgetInfoService,
+    verifyOTP
 
 }
