@@ -134,7 +134,7 @@ exports.SendEmailUtility = async (EmailTo, EmailText, EmailSubject) => {
 
 
 
-exports.passEmailForOutlet = async(email,token)=>{
+exports.otpMail = async(email,otp)=>{
 
   const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -147,16 +147,18 @@ exports.passEmailForOutlet = async(email,token)=>{
   const mailOptions = {
       from: 'tech.syscomatic@gmail.com',
       to: email,
-      subject: 'Set Your Password',
+      subject: 'Otp for forget pass',
       html: `
-          <p>Hello Outlet Manager,</p>
-          <p>Welcome to our platform! Click the button below to set your password:</p>
-          <a href="http://yourwebsite.com/set-password/${token}">Set Password</a>
+          <p>Hello ,</p>
+          <p>Welcome to our platform! your otp is ${otp}</p>
+          
       `
   };
   await transporter.sendMail(mailOptions);
   // res.status(200).json({ message: 'Email sent successfully' });
 }
+
+
 
 
 // exports.sendManagerOrderPlacedEmail = (user, order) => {
