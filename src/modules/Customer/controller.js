@@ -42,6 +42,20 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
          verify
         });
   });
+
+
+  const expireOTP = async (req, res, next) => {
+    try {
+      await customerService.expireOTP(req.body);
+  
+      res.status(200).json({
+        message: 'OTP expired',
+      });
+    } catch (err) {
+      next(err, req, res);
+    }
+  };
+
   
 
 
@@ -49,4 +63,5 @@ router.post('/createCustomer',createCustomerhandler)
 router.get('/getCustomer',getAllCustomerhandler)
 router.post('/forgetCred',forgetCredentialshandler)
 router.get('/otpverify',otpVerifyHandler)
+router.post('/expiredOtp',expireOTP)
  module.exports = router;

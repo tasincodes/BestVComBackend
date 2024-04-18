@@ -2,7 +2,12 @@ const CustomerModel = require("../Customer/model");
 const customerModel = require("../Customer/model")
 const {generateOTP}=require('../../utility/common');
 const {otpMail} = require('../../utility/email')
-
+const {
+    BadRequest,
+    Unauthorized,
+    Forbidden,
+    NoContent,
+}=require('../../utility/errors');
 
 const customerCreateService = async (customerInfo) => {
     try {
@@ -64,10 +69,21 @@ const verifyOTP = async (email, otp) => {
   };
   
 
+
+  const expireOTP = async (data) => {
+    const { email } = data;
+    await customerModel.updateOne(
+      { email },
+      { $unset: { otp: 1} }
+    );
+    return;
+  };
+
 module.exports={
     customerCreateService,
     getAllCustomerService,
     forgetInfoService,
-    verifyOTP
+    verifyOTP,
+    expireOTP
 
 }
