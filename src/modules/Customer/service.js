@@ -1,4 +1,3 @@
-const CustomerModel = require("../Customer/model");
 const customerModel = require("../Customer/model")
 const {generateOTP}=require('../../utility/common');
 const {otpMail} = require('../../utility/email')

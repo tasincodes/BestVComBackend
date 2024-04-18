@@ -4,7 +4,7 @@ const DiscountSchema = new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
-        ref:'outlet'
+        ref:'category'
     },
     discountName :{
         type : String,
