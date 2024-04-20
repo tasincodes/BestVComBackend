@@ -5,35 +5,57 @@ const DiscountSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'category'
-    },
-    discountName :{
-        type : String,
-        required:true,
-        max : [30,"discount name should be under 30 character"]
-    },
-    discountCode : {
-        type : String,
-        required:true,
-        max : [10,"Promo code should be under 10 character"]
-    },
-    startDate : {
-        type : Date,
-        required:true,
-        default : Date.now
-    },
-    expiryDate : {
-        type : Date,
-        required:true,
-    },
-    minimumSpend :{
-        type : String,
-        required: True
-    },
-    maximumSpend : {
-        type : String,
-        required : True
-    }
-
-},{versionKey:false})
+        },
+        couponName:{
+            type : String,
+            required : true
+        },        
+        discountType: {
+            type: String,
+            enum: ['percentage', 'fixed'],
+            required: true
+        },
+        couponAmount: {
+            type: Number,
+            required: function () {
+                return this.discountType === 'fixed'; 
+            }
+        },
+        allowFreeShipping: {
+            type: Boolean,
+            default: false
+        },
+        couponExpiry: {
+            type: String,
+            required: true
+        },
+        
+        // Usage restriction section fields
+        minimumSpend: Number,
+        maximumSpend: Number,
+        individualUseOnly: {
+            type: Boolean,
+            default: false
+        },
+        excludeSaleItems: {
+            type: Boolean,
+            default: false
+        },
+        products: [String], // Array of product IDs
+        excludeProducts: [String], // Array of product IDs to exclude
+        categories: [String], // Array of category IDs
+        excludeCategories: [String], // Array of category IDs to exclude
+        productDiscountType: {
+            type: String,
+            enum: ['percentage', 'fixed'],
+            required: true
+        },
+        blockedAccounts: [String], // Array of user IDs
+        
+        // Usage limit section fields
+        usageLimitPerCoupon: Number,
+        limitUsageToXItems: Number,
+        usageLimitPerUser: Number
+    }, { timestamps: true },{versionKey:false})
 const DiscountModel = mongoose.model('discount',DiscountSchema);
 module.exports = DiscountModel;
