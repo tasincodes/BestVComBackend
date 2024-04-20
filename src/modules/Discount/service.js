@@ -63,6 +63,14 @@ const deleteCouponByIdService = async (couponId) => {
         return null;
     }
 }
+const getCouponByCodeService = async (couponCode) => {
+    try {
+        return await discountModel.findOne({ couponName: couponCode });
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
 
 module.exports = {
@@ -70,5 +78,6 @@ module.exports = {
     updateCouponServicebyId,
     getAllCouponService,
     getAllCoupoByCategoryService,
-    deleteCouponByIdService
+    deleteCouponByIdService,
+    getCouponByCodeService
 }

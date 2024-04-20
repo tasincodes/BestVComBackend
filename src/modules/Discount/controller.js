@@ -52,11 +52,23 @@ const deleteCouponByIdHandler = asyncHandler(async (req, res) => {
     }
 });
 
+const getCouponByCodeHandler = asyncHandler(async (req, res) => {
+    const couponCode = req.params.code;
+    const coupon = await discountService.getCouponByCodeService(couponCode);
+    if (coupon) {
+        res.status(200).json({ coupon });
+    } else {
+        res.status(404).json({ message: 'Coupon not found' });
+    }
+});
+
+
 
 router.post('/createCoupon',couponGenerateHandler);
 router.put('/updateCoupon/:id',couponUpdateHandler);
 router.get('/getAllCoupon',getAllCouponHandler);
 router.get('/getAllCouponByCat/:userId',getAllCouponByCategoryHandler);
 router.delete('/deleteCouponById/:id', deleteCouponByIdHandler);
+router.get('/getCouponByCode/:code', getCouponByCodeHandler);
 
 module.exports = router;
