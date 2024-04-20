@@ -5,13 +5,14 @@ const {
     Forbidden,
     NoContent,
 }=require('../../utility/errors');
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
 
 const generateCouponService = async(couponInfo)=>{
     try {
         
         const newCoupon = await discountModel.create(
             couponInfo);
-        return { couponInfo : couponInfo}
+        return { couponInfo : newCoupon}
     } catch (error) {
         console.error(error);
     
@@ -34,9 +35,40 @@ if(couponUpdates){
     } 
 }
 
+const getAllCouponService = async()=>{
+    try{
+        return await discountModel.find()
+    }
+    catch(error){
+        console.error(error);
+        return error
+    }
+}
+
+const getAllCoupoByCategoryService = async(userId)=>{
+    try{
+        return await discountModel.find({ userId: userId })
+    }
+    catch(error){
+        console.error(error);
+        return error
+    }
+}
+
+const deleteCouponByIdService = async (couponId) => {
+    try {
+        return await discountModel.findByIdAndDelete(couponId);
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
 
 module.exports = {
     generateCouponService,
-    updateCouponServicebyId
+    updateCouponServicebyId,
+    getAllCouponService,
+    getAllCoupoByCategoryService,
+    deleteCouponByIdService
 }

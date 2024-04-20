@@ -3,7 +3,7 @@ const DiscountSchema = new mongoose.Schema({
 
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
+        required:false,
         ref:'category'
         },
         couponName:{
