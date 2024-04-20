@@ -6,7 +6,7 @@ const {
     NoContent,
 }=require('../../utility/errors');
 
-const generateCoupon = async(couponInfo)=>{
+const generateCouponService = async(couponInfo)=>{
     try {
         
         const newCoupon = await discountModel.create(
@@ -15,11 +15,28 @@ const generateCoupon = async(couponInfo)=>{
     } catch (error) {
         console.error(error);
     
-        return { customer: null };
+        return { couponInfo: null };
     }
 };
 
 
+const updateCouponServicebyId = async(id,updatedInfo)=>{
+    try{
+const couponUpdates = await discountModel.findByIdAndUpdate(id,updatedInfo,
+    { new: true })
+if(couponUpdates){
+    return {couponUpdates: couponUpdates}
+}
+    }
+    catch(err){
+        console.error(error);
+        return { couponUpdates: null };
+    } 
+}
+
+
+
 module.exports = {
-    generateCoupon
+    generateCouponService,
+    updateCouponServicebyId
 }
