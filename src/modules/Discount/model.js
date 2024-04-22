@@ -1,36 +1,38 @@
 const mongoose = require('mongoose');
-const DiscountSchema = new mongoose.Schema({
 
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:false,
-        ref:'category'
-        },
-        couponName:{
-            type : String,
-            required : true
-        },        
-        discountType: {
-            type: String,
-            enum: ['percentage', 'fixed'],
-            required: true
-        },
-        couponAmount: {
-            type: Number,
-            required: function () {
-                return this.discountType === 'fixed'; 
-            }
-        },
-        allowFreeShipping: {
-            type: Boolean,
-            default: false
-        },
-        couponExpiry: {
-            type: String,
-            required: true
-        },
-        
-        // Usage restriction section fields
+const CouponSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'category',
+        required: true
+    },
+    general:{
+    couponName: {
+        type: String,
+        required: true
+    },
+    discountType: {
+        type: String,
+        enum: ['percentage', 'fixed'],
+        required: true
+    },
+    couponAmount: {
+        type: Number,
+        required: function () {
+            return this.discountType === 'fixed';
+        }
+    },
+    allowFreeShipping: {
+        type: Boolean,
+        default: false
+    },
+    couponExpiry: {
+        type: Date,
+        required: true
+    },
+
+},
+    usageRestriction: {
         minimumSpend: Number,
         maximumSpend: Number,
         individualUseOnly: {
@@ -41,21 +43,23 @@ const DiscountSchema = new mongoose.Schema({
             type: Boolean,
             default: false
         },
-        products: [String], // Array of product IDs
-        excludeProducts: [String], // Array of product IDs to exclude
-        categories: [String], // Array of category IDs
-        excludeCategories: [String], // Array of category IDs to exclude
+        products: [String],
+        excludeProducts: [String],
+        categories: [String],
+        excludeCategories: [String],
         productDiscountType: {
             type: String,
             enum: ['percentage', 'fixed'],
             required: true
         },
-        blockedAccounts: [String], // Array of user IDs
-        
-        // Usage limit section fields
+        blockedAccounts: [String]
+    },
+    usageLimit: {
         usageLimitPerCoupon: Number,
         limitUsageToXItems: Number,
         usageLimitPerUser: Number
-    }, { timestamps: true },{versionKey:false})
-const DiscountModel = mongoose.model('discount',DiscountSchema);
-module.exports = DiscountModel;
+    }
+}, { timestamps: true });
+
+const CouponModel = mongoose.model('coupon', CouponSchema);
+module.exports = CouponModel;
