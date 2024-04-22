@@ -1,4 +1,5 @@
-const discountModel = require("../Discount/model")
+const discountModel = require("../Discount/model");
+const productModel = require("../Products/model");
 const {
     BadRequest,
     Unauthorized,
@@ -73,11 +74,22 @@ const getCouponByCodeService = async (couponCode) => {
 }
 
 
+const getDiscountByCoupon = async(couponId,totalPrice)=>{
+
+    coupon = await discountModel.findById({id:couponId})
+if(!coupon){
+    throw new BadRequest("Coupon code is not available")
+}
+
+}
+
+
 module.exports = {
     generateCouponService,
     updateCouponServicebyId,
     getAllCouponService,
     getAllCoupoByCategoryService,
     deleteCouponByIdService,
-    getCouponByCodeService
+    getCouponByCodeService,
+    getDiscountByCoupon
 }

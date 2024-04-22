@@ -9,7 +9,8 @@ const CouponSchema = new mongoose.Schema({
     general:{
     couponName: {
         type: String,
-        required: true
+        required: true,
+        unique:true,
     },
     discountType: {
         type: String,
