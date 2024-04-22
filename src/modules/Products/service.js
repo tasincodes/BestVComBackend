@@ -29,7 +29,28 @@ const updateProductById =async(id,value)=>{
 
 
 
+// getAllProducts
+
+const getAllProducts= async()=>{
+    const products= await Product.find();
+    return products;
+}
+
+
+
+const deleteProductById = async(id)=>{
+    const products = await Product.findOneAndDelete({_id:id});
+    if(!products){
+        throw new BadRequest('Could not Delete Products Behenchodh!')
+    }
+    return products;
+}
+
+
+
 module.exports = {
     addProduct,
-    updateProductById
+    updateProductById,
+    getAllProducts,
+    deleteProductById
 }
