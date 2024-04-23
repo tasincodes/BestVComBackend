@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CouponSchema = new mongoose.Schema({
-    userId: {
+    categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'category',
         required: true
