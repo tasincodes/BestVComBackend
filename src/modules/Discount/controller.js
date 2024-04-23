@@ -68,9 +68,9 @@ const getDiscountByCouponHandler = asyncHandler(async(req,res)=>{
     const couponId = req.params.id;
     const userId = req.params.userId;
     const {totalPrice,requestedProducts} = req.body;
-    const couponConfirmation = await discountService.getDiscountByCoupon(couponId,totalPrice,requestedProducts,userId);
-    if(couponConfirmation){
-        res.status(200).json({couponConfirmation})
+    const discountAmount = await discountService.getDiscountByCoupon(couponId,totalPrice,requestedProducts,userId);
+    if(discountAmount){
+        res.status(200).json({discountAmount})
     }
     else {
         res.status(404).json({ message: 'Coupon coudnt get authorized' });

@@ -48,11 +48,6 @@ const CouponSchema = new mongoose.Schema({
         excludeProducts: [String],
         categories: [String],
         excludeCategories: [String],
-        productDiscountType: {
-            type: String,
-            enum: ['percentage', 'fixed'],
-            required: true
-        },
         blockedAccounts: [String]
     },
     usageLimit: {
