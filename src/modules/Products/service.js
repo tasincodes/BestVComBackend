@@ -6,7 +6,6 @@ const { BadRequest } = require('../../utility/errors');
 
 const addProduct = async (productData) => {
     const productCode = await generateProductCode(Product);
-    console.log(productCode);
     const newProduct = await Product.create({ ...productData, productCode }); // Combine productData and productCode directly
     if (!newProduct) {
       throw new BadRequest('Could Not Create Product');
@@ -46,36 +45,31 @@ const deleteProductById = async(id)=>{
     }
     return products;
 }
-
 async function generateProductCode(Product) {
-    // Get current date in format YYYYMMDD
-    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     try {
-        // Fetch the latest product (handles empty array case)
-        const latestProduct = await Product.findOne().sort({ _id: -1 }); // Use findOne instead of find
-        
-        let productCounter;
-        if (latestProduct) {
-          const latestCode = latestProduct.productCode;
-          const [, currentCounter] = latestCode.split('-'); // Extract counter from code format
-          productCounter = parseInt(currentCounter, 10) + 1; // Increment the counter
-        } else {
-          productCounter = 1; // Start with 1 if no existing products
-        }
-        const formattedCounter = String(productCounter).padStart(4, '0');
+      // Get the count of existing products
+      const productCount = await Product.countDocuments();
+  
+      // Increment the product count to get the next available product number
+      const productNumber = productCount + 1;
+  
+      // Format the product number with leading zeros
+      const formattedProductNumber = String(productNumber).padStart(4, '0');
+  
+      // Get the current date in the format YYYYMMDD
+      const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  
+      // Construct the product code
+      const productCode = `BEL-${formattedProductNumber}-${currentDate}`;
+  
+      return productCode;
+    } catch (error) {
+      console.error('Error generating product code:', error);
+      throw new Error('Failed to generate product code');
+    }
+  }
+  
 
-        // Construct the product code
-        const productCode = `BEL-${formattedCounter}-${currentDate}`;
-    
-        // Optionally, update the product counter in the database for future generations
-        // await productModel.create({ productCode });  // Example of creating a record with the code for tracking
-    
-        return productCode;
-    
-      } catch (err) {
-        console.error('Error generating product code:', err);
-      }
-}
 
 
 module.exports = {
