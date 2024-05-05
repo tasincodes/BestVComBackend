@@ -10,6 +10,10 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     maxlength: 300,
     required: true
+  }, 
+  productCode: {
+    type: String,
+    
   },
   productImages: [String],
   productVideos: [String],

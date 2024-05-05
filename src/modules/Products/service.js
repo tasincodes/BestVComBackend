@@ -5,13 +5,14 @@ const { BadRequest } = require('../../utility/errors');
 // addProduct
 
 const addProduct = async (productData) => {
-    const newProduct = await Product.create(productData);
+    const productCode = await generateProductCode(Product);
+    console.log(productCode);
+    const newProduct = await Product.create({ ...productData, productCode }); // Combine productData and productCode directly
     if (!newProduct) {
-        throw new BadRequest('Could Not Create Product');
+      throw new BadRequest('Could Not Create Product');
     }
     return newProduct;
 }
-
 
 
 //Edit Product
@@ -46,23 +47,36 @@ const deleteProductById = async(id)=>{
     return products;
 }
 
+async function generateProductCode(Product) {
+    // Get current date in format YYYYMMDD
+    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    try {
+        // Fetch the latest product (handles empty array case)
+        const latestProduct = await Product.findOne().sort({ _id: -1 }); // Use findOne instead of find
+        
+        let productCounter;
+        if (latestProduct) {
+          const latestCode = latestProduct.productCode;
+          const [, currentCounter] = latestCode.split('-'); // Extract counter from code format
+          productCounter = parseInt(currentCounter, 10) + 1; // Increment the counter
+        } else {
+          productCounter = 1; // Start with 1 if no existing products
+        }
+        const formattedCounter = String(productCounter).padStart(4, '0');
 
+        // Construct the product code
+        const productCode = `BEL-${formattedCounter}-${currentDate}`;
+    
+        // Optionally, update the product counter in the database for future generations
+        // await productModel.create({ productCode });  // Example of creating a record with the code for tracking
+    
+        return productCode;
+    
+      } catch (err) {
+        console.error('Error generating product code:', err);
+      }
+}
 
-// function generateProductCode() {
-//     // Get current date in format YYYYMMDD
-//     const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
-//     // Dummy product counter (you might want to fetch this from a database or other source)
-//     let productCounter = 1;
-
-//     // Format the product counter with leading zeros
-//     const formattedCounter = String(productCounter).padStart(4, '0');
-
-//     // Construct the product code
-//     const productCode = BEL-${formattedCounter}-${currentDate};
-
-//     return productCode;
-// }
 
 module.exports = {
     addProduct,
