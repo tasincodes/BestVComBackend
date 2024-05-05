@@ -48,13 +48,14 @@ const OrderSchema= new mongoose.Schema({
     },
    transactionId: String,
 
-  products:{
+   products: [{
     _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: [true, "Must select a items"],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: [true, "Must select a item"],
     },
-  },
+}],
+
   coupon:{
     _id:{
       type: mongoose.Schema.Types.ObjectId,
