@@ -4,12 +4,17 @@ const CouponModel=require('../Discount/model');
 const { BadRequest } = require('../../utility/errors');
 
 
+// Helper function to calculate total price
+function calculateTotalPrice(products) {
+    return products.reduce((total, product) => total + product.general.regularPrice, 0);
+}
+
 const createOrder = async (orderData) => {
     try {
         const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
         // Validate request body
-        if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !vatRate) {
+        if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
             throw new Error('Please provide all required fields');
         }
 
@@ -21,7 +26,7 @@ const createOrder = async (orderData) => {
         }
 
         // Calculate total price
-        const totalPrice = calculateTotalPrice(validProducts);
+        let totalPrice = calculateTotalPrice(validProducts);
 
         // Apply discount if coupon provided
         let discountAmount = 0;
@@ -34,7 +39,7 @@ const createOrder = async (orderData) => {
         }
 
         // Calculate VAT
-        const calculatedVAT = calculateVAT(vatRate, totalPrice - discountAmount);
+        const vat = (vatRate / 100) * totalPrice;
 
         // Create new order
         const newOrder = new OrderModel({
@@ -48,8 +53,8 @@ const createOrder = async (orderData) => {
             products,
             coupon: couponId ? couponId : null,
             discountAmount,
-            totalPrice: totalPrice - discountAmount,
-            vatRate: calculatedVAT
+            totalPrice: totalPrice - discountAmount + vat, // Add VAT to the total price
+            vatRate
         });
 
         // Save the order to the database
@@ -61,11 +66,6 @@ const createOrder = async (orderData) => {
     }
 }
 
-// Helper function to calculate total price
-function calculateTotalPrice(products) {
-    return products.reduce((total, product) => total + product.general.regularPrice, 0);
-}
-
 // Helper function to calculate discount based on coupon
 function calculateDiscount(coupon, totalPrice) {
     if (coupon.discountType === 'percentage') {
@@ -73,11 +73,6 @@ function calculateDiscount(coupon, totalPrice) {
     } else {
         return coupon.couponAmount;
     }
-}
-
-// Helper function to calculate VAT
-function calculateVAT(vatRate, totalPrice) {
-    return (vatRate / 100) * totalPrice;
 }
 
 
