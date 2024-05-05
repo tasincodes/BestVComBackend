@@ -76,6 +76,33 @@ function calculateDiscount(coupon, totalPrice) {
 }
 
 
+//updateOrderByOrder ID
+
+const updateOrder = async (orderId, orderData) => {
+    try {
+        // Find the order by OrderId and update it with the provided data
+        const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
+        return updatedOrder;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+// delete OrderBy ID
+
+const deleteOrder = async (orderId) => {
+    try {
+        // Find the order by OrderId and delete it
+        await OrderModel.findByIdAndDelete(orderId);
+    } catch (error) {
+        throw error;
+    }
+};
+
+
 module.exports = {
-    createOrder
+    createOrder,
+    updateOrder,
+    deleteOrder
 };
