@@ -149,6 +149,22 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
     return discount;
 };
 
+const getCouponByTypeService = async (discountType) => {
+    try {
+        let coupons;
+        if (discountType === "fixed" || discountType === "percentage") {
+            coupons = await discountModel.find({ "general.discountType": discountType });
+        } else {
+            coupons = [];
+        }
+        return coupons;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+
 
 
 module.exports = {
@@ -158,5 +174,6 @@ module.exports = {
     getAllCoupoByCategoryService,
     deleteCouponByIdService,
     getCouponByCodeService,
-    getDiscountByCoupon
+    getDiscountByCoupon,
+    getCouponByTypeService
 }

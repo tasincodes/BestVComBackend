@@ -48,6 +48,22 @@ const deleteProductById = async(id)=>{
 
 
 
+// function generateProductCode() {
+//     // Get current date in format YYYYMMDD
+//     const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+//     // Dummy product counter (you might want to fetch this from a database or other source)
+//     let productCounter = 1;
+
+//     // Format the product counter with leading zeros
+//     const formattedCounter = String(productCounter).padStart(4, '0');
+
+//     // Construct the product code
+//     const productCode = BEL-${formattedCounter}-${currentDate};
+
+//     return productCode;
+// }
+
 module.exports = {
     addProduct,
     updateProductById,

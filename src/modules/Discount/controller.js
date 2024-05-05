@@ -77,6 +77,22 @@ const getDiscountByCouponHandler = asyncHandler(async(req,res)=>{
     }
 })
 
+const getCouponByTypeHandler = asyncHandler(async (req, res) => {
+    const discountType = req.params.discountType;
+    const validDiscountTypes = ["fixed", "percentage"];
+    
+    if (!validDiscountTypes.includes(discountType)) {
+        return res.status(400).json({ message: 'Invalid discount type' });
+    }
+
+    const coupons = await discountService.getCouponByTypeService(discountType);
+    if (coupons.length > 0) {
+        res.status(200).json({ coupon: coupons });
+    } else {
+        res.status(404).json({ message: 'No coupons found for the specified discount type' });
+    }
+});
+
 
 
 router.post('/createCoupon',couponGenerateHandler);
@@ -86,4 +102,5 @@ router.get('/getAllCouponByCat/:userId',getAllCouponByCategoryHandler);
 router.delete('/deleteCouponById/:id', deleteCouponByIdHandler);
 router.get('/getCouponByCode/:code', getCouponByCodeHandler);
 router.get('/getDsicountByCode/:couponId/:userId', getDiscountByCouponHandler);
+router.get('/getCouponByTypeHandler/:discountType', getCouponByTypeHandler);
 module.exports = router;
