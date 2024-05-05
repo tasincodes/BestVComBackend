@@ -121,11 +121,10 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
         }
     });
 
-    // Fetch category data for the unique category IDs
     const categoryIds = [...new Set(requestedProductData.map(product => product.categoryId))];
     const categoryData = await Category.find({ _id: { $in: categoryIds } });
 
-    // Check if categories are included/excluded based on coupon restrictions
+    
     categoryData.forEach(category => {
         if (!coupon.usageRestriction.categories.includes(category._id.toString())) {
             throw new BadRequest(`Category ${category.categoryName} is not eligible for this coupon`);
@@ -135,7 +134,6 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
         }
     });
 
-    // Calculate discount
     let discount = 0;
     if (coupon.general.discountType === 'percentage') {
         discount = (coupon.general.couponAmount / 100) * totalPrice;
@@ -143,11 +141,9 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
         discount = coupon.general.couponAmount;
     }
 
-    // Deduct from usage limits
     coupon.usageLimit.usageLimitPerCoupon -= 1;
     coupon.usageLimit.usageLimitPerUser -= 1;
 
-    // Save the updated coupon
     await coupon.save();
 
     return discount;
