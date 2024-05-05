@@ -20,5 +20,51 @@ const OrderSchema= new mongoose.Schema({
         default: 1,
       },
 
+      deliveryAddress: {
+        type:String,
+      },
+     district:{
+      type:String,
+     },
+     phoneNumber:{
+      type: String,
+      required: [true, "Customer phone number is required"],
+     },
+     vatRate: {
+      type: Number,
+      default: 0,
+      max: [100, "Your tax rate cannot exceed 100"],
+    },
+      // vatStatus: {
+    //   type: String,
+    //   enum: ["inclusive", "exclusive"],
+    //   default: "inclusive",
+    // },
+
+    paymentMethod: {
+      type: String,
+      required: [true, "Payment method is required"],
+    },
+   transactionId: String,
+
+  products:{
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: [true, "Must select a items"],
+    },
+  },
+  coupon:{
+    _id:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"coupon"
+    }
+  }
+
+
       
-}) 
+},{ timestamps: true }) ;
+
+const OrderModel=mongoose.model('Order',OrderSchema);
+
+module.exports = OrderModel
