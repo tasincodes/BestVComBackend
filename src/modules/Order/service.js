@@ -1,15 +1,15 @@
 const OrderModel = require('../Order/model');
 const ProductModel = require('../Products/model');
+const CouponModel=require('../Discount/model');
 const { BadRequest } = require('../../utility/errors');
 
 
-
-const createOrder=async(orderData) =>{
+const createOrder = async (orderData) => {
     try {
-        const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId } = orderData;
+        const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
         // Validate request body
-        if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+        if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !vatRate) {
             throw new Error('Please provide all required fields');
         }
 
@@ -21,7 +21,7 @@ const createOrder=async(orderData) =>{
         }
 
         // Calculate total price
-        let totalPrice = calculateTotalPrice(validProducts);
+        const totalPrice = calculateTotalPrice(validProducts);
 
         // Apply discount if coupon provided
         let discountAmount = 0;
@@ -34,7 +34,7 @@ const createOrder=async(orderData) =>{
         }
 
         // Calculate VAT
-        const vatRate = calculateVAT(orderData.vatRate, totalPrice - discountAmount);
+        const calculatedVAT = calculateVAT(vatRate, totalPrice - discountAmount);
 
         // Create new order
         const newOrder = new OrderModel({
@@ -49,7 +49,7 @@ const createOrder=async(orderData) =>{
             coupon: couponId ? couponId : null,
             discountAmount,
             totalPrice: totalPrice - discountAmount,
-            vatRate
+            vatRate: calculatedVAT
         });
 
         // Save the order to the database
@@ -79,7 +79,6 @@ function calculateDiscount(coupon, totalPrice) {
 function calculateVAT(vatRate, totalPrice) {
     return (vatRate / 100) * totalPrice;
 }
-
 
 
 module.exports = {
