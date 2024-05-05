@@ -45,6 +45,8 @@ const deleteProductById = async(id)=>{
     }
     return products;
 }
+
+// generate Product Codes
 async function generateProductCode(Product) {
     try {
       // Get the count of existing products
@@ -69,6 +71,9 @@ async function generateProductCode(Product) {
     }
   }
   
+
+
+
 
 
 

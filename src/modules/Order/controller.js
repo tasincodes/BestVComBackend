@@ -44,8 +44,17 @@ const deleteOrder = asyncHandler(async (req, res) => {
 });
 
 
+const getAllOrders = asyncHandler(async (req, res) => {
+    const orders = await orderService.getAllOrders();
+    res.status(200).json({
+        message: "Successfully retrieved all orders",
+        orders
+    });
+});
 
 
+
+router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/:id',deleteOrder);

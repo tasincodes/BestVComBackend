@@ -101,8 +101,20 @@ const deleteOrder = async (orderId) => {
 };
 
 
+const getAllOrders = async () => {
+    try {
+        // Find all orders
+        const orders = await OrderModel.find();
+        return orders;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
 module.exports = {
     createOrder,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    getAllOrders
 };
