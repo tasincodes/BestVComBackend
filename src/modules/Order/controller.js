@@ -13,13 +13,13 @@ const { asyncHandler } = require('../../utility/common');
 
 const createOrder = asyncHandler(async (req, res) => {
     const orderData = req.body;
-    const createdOrder = await orderService.createOrder(orderData);
+    const { order, totalOrderValue } = await orderService.createOrder(orderData); // Get total order value from the service
     res.status(200).json({
         message: "Order created successfully",
-        createdOrder
+        createdOrder: order,
+        totalOrderValue: totalOrderValue // Include total order value in the response
     });
 });
-
 
 
 //Update OrderHandlerByOderID

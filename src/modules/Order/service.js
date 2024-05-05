@@ -4,8 +4,10 @@ const CouponModel=require('../Discount/model');
 const { BadRequest } = require('../../utility/errors');
 
 
-// Helper function to calculate total price
-function calculateTotalPrice(products) {
+// service.js
+
+// Helper function to calculate total order value
+function calculateOrderValue(products) {
     return products.reduce((total, product) => total + product.general.regularPrice, 0);
 }
 
@@ -26,7 +28,7 @@ const createOrder = async (orderData) => {
         }
 
         // Calculate total price
-        let totalPrice = calculateTotalPrice(validProducts);
+        let totalPrice = calculateOrderValue(validProducts);
 
         // Apply discount if coupon provided
         let discountAmount = 0;
@@ -60,7 +62,10 @@ const createOrder = async (orderData) => {
         // Save the order to the database
         const savedOrder = await newOrder.save();
 
-        return savedOrder;
+        return {
+            order: savedOrder,
+            totalOrderValue: totalPrice // Include total order value in the response
+        };
     } catch (error) {
         throw error;
     }
@@ -74,6 +79,7 @@ function calculateDiscount(coupon, totalPrice) {
         return coupon.couponAmount;
     }
 }
+
 
 
 //updateOrderByOrder ID
