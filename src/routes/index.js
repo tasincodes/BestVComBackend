@@ -16,6 +16,7 @@ const customerRoute = require('../modules/Customer/controller');
 const productRoute = require('../modules/Products/controller');
 const discountRoute = require('../modules/Discount/controller');
 const orderRoute = require('../modules/Order/controller');
+const reportingRoute = require('../modules/Reporting/controller');
 
 //EndPoint
 router.use('/auth', authRoute);
@@ -28,6 +29,7 @@ router.use('/customer',customerRoute);
 router.use('/product',productRoute);
 router.use('/discount',discountRoute);
 router.use('/order',orderRoute);
+router.use('/reports',reportingRoute);
 
 router.use(authVerifyMiddleware);
 

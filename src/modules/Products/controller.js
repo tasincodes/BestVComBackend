@@ -8,7 +8,6 @@ const { HEAD_OFFICE, BRANCH_ADMIN } = require('../../config/constants');
 
 
 
-console.log("kichu ekta")
 
 
 // addProducts

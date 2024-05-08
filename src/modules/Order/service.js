@@ -56,16 +56,11 @@ const createOrder = async (orderData) => {
             coupon: couponId ? couponId : null,
             discountAmount,
             totalPrice: totalPrice - discountAmount + vat, // Add VAT to the total price
-            vatRate
-        });
+            vatRate,
+            totalOrderValue: totalPrice
+        }); 
 
-        // Save the order to the database
-        const savedOrder = await newOrder.save();
-
-        return {
-            order: savedOrder,
-            totalOrderValue: totalPrice // Include total order value in the response
-        };
+        return await newOrder.save();
     } catch (error) {
         throw error;
     }

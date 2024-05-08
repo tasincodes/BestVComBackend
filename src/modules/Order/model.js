@@ -61,6 +61,9 @@ const OrderSchema= new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref:"coupon"
     }
+  },
+  totalOrderValue:{
+    type:String
   }
 
 
