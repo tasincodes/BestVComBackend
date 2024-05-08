@@ -63,7 +63,12 @@ const OrderSchema= new mongoose.Schema({
     }
   },
   totalOrderValue:{
-    type:String
+    type:String,
+    required: [true, "Total order value is required"],
+  },
+  discountAmount:{
+    type:String,
+    
   }
 
 
