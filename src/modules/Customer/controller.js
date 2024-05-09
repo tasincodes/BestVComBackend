@@ -87,3 +87,4 @@ router.get('/otpverify',otpVerifyHandler)
 router.post('/expiredOtp',expireOTP)
 router.post('/customerSignIn',customerSignInHandler)
  module.exports = router;
+ ///hfnskdncfkjsdn test
