@@ -40,6 +40,10 @@ const CustomerSchema=new mongoose.Schema({
         max:[120,"Address Should be at least 120 characters"],
 
     },
+    isActive:{
+        type:Boolean
+    },
+    isVerified:{type:Boolean},
     refreshToken:[String],
 
     district:{

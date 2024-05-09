@@ -143,6 +143,7 @@ const signinUser = async (email,password) => {
       isActive: user.isActive,
       isVerified: user.isVerified,
       
+      
     };
 
     return sanitizedUser;

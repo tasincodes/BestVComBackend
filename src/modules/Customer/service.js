@@ -7,20 +7,20 @@ const {
     Forbidden,
     NoContent,
 }=require('../../utility/errors');
+const bcrypt = require('bcryptjs');
+const jwt= require('jsonwebtoken');
+
 
 const customerCreateService = async (customerInfo) => {
     try {
-        
-        const newCustomer = await customerModel.create(
-customerInfo);
-        return { customer:newCustomer }
+      const newCustomer = await customerModel.create(customerInfo);
+      return { message: "Customer added successfully", customer: newCustomer };
     } catch (error) {
-        console.error(error);
-    
-        return { customer: null };
+      console.error(error);
+      throw new Error("Failed to create customer: " + error.message);
     }
-};
-
+  };
+  
 
 const getAllCustomerService = async () => {
     try {
@@ -59,7 +59,8 @@ const verifyOTP = async (email, otp) => {
         if (!user) {
             throw new BadRequest('Invalid OTP.');
         }
-  
+        user.isActive = true;
+        user.isVerified = true;
         user.otp = undefined; // Clear OTP after verification
         await user.save();
     } catch (error) {
@@ -77,12 +78,51 @@ const verifyOTP = async (email, otp) => {
     );
     return;
   };
+  
+const customerSignInService = async (email,password) => {
+    try {
+      // Find user by email
+      const user = await customerModel.findOne({ email });
+  
+      // Check if user exists
+      if (!user) {
+        throw new BadRequest("Invalid email or password.");
+      }
+  
+      // Validate password using bcrypt.compare
+      const isMatch = await bcrypt.compare(password, user.password);
+  
+      // Check password match
+      if (!isMatch) {
+        throw new BadRequest("Invalid email or password.");
+      }
+   // Generate JWT token with user data payload
+   const accessToken = jwt.sign({ user }, 'SecretKey12345', { expiresIn: '3d' });
+      // User is authenticated, return sanitized user data (excluding sensitive fields)
+      const sanitizedUser = {
+        accessToken,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        isActive: user.isActive,
+        isVerified: user.isVerified,
+        
+        
+      };
+  
+      return sanitizedUser;
+    } catch (error) {
+      console.error(error);
+      throw error; 
+    }
+  };
 
 module.exports={
     customerCreateService,
     getAllCustomerService,
     forgetInfoService,
     verifyOTP,
-    expireOTP
+    expireOTP,
+    customerSignInService
 
 }
