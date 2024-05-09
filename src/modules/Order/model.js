@@ -15,9 +15,9 @@ const OrderSchema= new mongoose.Schema({
 
       orderStatus: {
         type: Number,
-        // [ 0.Order Received 1.Order Confirmed 2.Order Processing 3.Order Delivered 4.Order On-Hold 5.Order Cancelled 6.Order Spammed
+        // [ 0.Order Received 1.Order Confirmed 2. Order Dispatched 3.Order Delivered 4.On-Hold 5.Order Cancelled 6.Order Spammed
         enum: [0, 1, 2, 3, 4, 5,6],
-        default: 1,
+        default: 0,
       },
       
 
