@@ -104,8 +104,8 @@ const customerSignInService = async (email,password) => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         role: user.role,
-        isActive: user.isActive,
-        isVerified: user.isVerified,
+        isActive: true,
+        // isVerified: user.isVerified,
         
         
       };
