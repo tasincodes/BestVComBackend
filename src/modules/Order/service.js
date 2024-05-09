@@ -3,16 +3,15 @@ const ProductModel = require('../Products/model');
 const CouponModel=require('../Discount/model');
 const { BadRequest } = require('../../utility/errors');
 
+const { v4: uuidv4 } = require('uuid');
 
-// service.js
 
 // Helper function to calculate total order value
-function calculateOrderValue(products) {
-    return products.reduce((total, product) => total + product.general.regularPrice, 0);
-}
-
 const createOrder = async (orderData) => {
     try {
+        // Generate orderId
+        const orderId = uuidv4();
+
         const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
         // Validate request body
@@ -43,8 +42,9 @@ const createOrder = async (orderData) => {
         // Calculate VAT
         const vat = (vatRate / 100) * totalPrice;
 
-        // Create new order
+        // Create new order with orderId
         const newOrder = new OrderModel({
+            orderId, // Add orderId to the order object
             customer,
             orderType,
             deliveryAddress,
@@ -71,14 +71,7 @@ const createOrder = async (orderData) => {
     }
 }
 
-// Helper function to calculate discount based on coupon
-function calculateDiscount(coupon, totalPrice) {
-    if (coupon.discountType === 'percentage') {
-        return (coupon.couponAmount / 100) * totalPrice;
-    } else {
-        return coupon.couponAmount;
-    }
-}
+
 
 
 
@@ -118,9 +111,30 @@ const getAllOrders = async () => {
 };
 
 
+
+
+// order manage
+const acceptOrder=async (orderId, userId)=>{
+    const acceptedOrder = await OrderModel.findByIdAndUpdate(
+        orderId,
+        { orderStatus: 0 }, // Assuming 0 represents 'Order Recieved' status
+        { new: true }
+      );
+    
+      if (!acceptedOrder) {
+        throw new Error('Order not found');
+      }
+    
+      return acceptedOrder;
+}
+
+
+
+
 module.exports = {
     createOrder,
     updateOrder,
     deleteOrder,
-    getAllOrders
+    getAllOrders,
+    acceptOrder,
 };

@@ -53,10 +53,25 @@ const getAllOrders = asyncHandler(async (req, res) => {
 });
 
 
+const  acceptOrder=asyncHandler(async (req,res)=>{
+    const { orderId } = req.params;
+    const userId = req.user.id; // Assuming you have user information in request
+  
+ 
+    const acceptedOrder = await orderService.acceptOrder(orderId, userId);
+    res.status(200).json({
+        message:"Order Staus Update Successfully!",
+        acceptedOrder
+    })
+   
+})
+
+
+
 
 router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/:id',deleteOrder);
-
+router.put('/:orderId/accept',acceptOrder)
 module.exports = router;
