@@ -102,6 +102,8 @@ router.get("/searchOutlet",searchOutlet)
 router.post("/outletEmailSetPassword",outletEmailSetPassword)
 router.get("/getOutletManagerById/:id",getOutletManagerById)
 
+
+
 router.post("/upload", upload.single("file"), async (req, res, next) => {
     try {
       const uploadedFile = req.file;

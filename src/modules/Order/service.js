@@ -32,6 +32,7 @@ function calculateDiscount(coupon, totalPrice) {
     }
 }
 
+
 const createOrder = async (orderData) => {
     try {
         // Generate orderId
@@ -165,32 +166,36 @@ const getAllOrders = async () => {
 
 
 
+// Update Order Status
+const updateOrderStatus = async ( id, updateOrder) => {
+  const { orderStatus } = updateOrder;
+
+  const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
+    new: true,
+  });
+
+  if (!order) throw new NotFound("Order not found");
+
+  const isLogged = order.orderLogs.find(
+    (log) => log.status === Number(orderStatus)
+  );
+
+  if (!isLogged) {
+    order.orderLogs.push({
+      status: Number(orderStatus),
+      createdAt: new Date(),
+    });
+
+    await order.save();
+  
+}}
+
+  
+  
+  
 
 
 
-const updateOrderStatus = async (orderId, newStatus) => {
-    // Validate orderId format
-    
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      throw new Error('Invalid orderId format');
-    }
-  
-    try {
-      const updatedOrder = await OrderModel.findByIdAndUpdate(
-        mongoose.Types.ObjectId(orderId), // Convert to ObjectId before query
-        { orderStatus: newStatus },
-        { new: true }
-      );
-  
-      if (!updatedOrder) {
-        throw new Error('Order not found');
-      }
-  
-      return updatedOrder;
-    } catch (error) {
-      throw error; // Re-throw for proper error handling in controller
-    }
-  };
 
 
 
@@ -199,8 +204,5 @@ module.exports = {
     updateOrder,
     deleteOrder,
     getAllOrders,
-    updateOrderStatus
-
-
- 
+    updateOrderStatus 
 };

@@ -58,38 +58,23 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 
 
-//Update Order Status API
 
-const updateOrderStatus = asyncHandler(async (req, res) => {
-    try {
-      const { orderId } = req.params;
-      console.log("test", orderId);
-  
-      const { newStatus } = req.body;
-      console.log("test", newStatus);
-  
-      if (!newStatus) {
-        return res.status(400).json({ message: 'New status is required' });
-      }
-  
-      const updatedOrder = await orderService.updateOrderStatus(orderId, newStatus);
-      return res.status(200).json({ message: 'Order status updated successfully', updatedOrder });
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      // Handle specific error cases (optional)
-      if (error.message === 'Invalid orderId format') {
-        return res.status(400).json({ message: 'Invalid order ID format' });
-      } else if (error.message === 'Order not found') {
-        return res.status(404).json({ message: 'Order not found' });
-      } else {
-        return res.status(500).json({ message: 'Failed to update order status' });
-      }
-    }
-  });
-  
-  module.exports = updateOrderStatus;
-  
 
+const updateOrderStatusHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+
+    const order = await orderService.updateOrderStatus(id, req.body);
+
+    res.status(200).json({
+      message: "Order updated successfully",
+      order,
+    });
+  } catch (err) {
+    next(err, req, res);
+  }
+};
 
 
 
@@ -101,6 +86,8 @@ router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/:id',deleteOrder);
-router.put('/:orderId',updateOrderStatus)
+router.put('/:id',updateOrderStatusHandler)
+
+
 
 module.exports = router;
