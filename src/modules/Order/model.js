@@ -18,9 +18,19 @@ const OrderSchema = new mongoose.Schema({
   },
   orderStatus: {
       type: Number,
-      enum: [0, 1, 2, 3, 4, 5, 6],
-      default: 0
+// Order Received-->0
+// Order Confirmed (Processing) -->1
+// Order Dispatched --->2
+// Order Delivered-->3
+// Order On-Hold --->4
+// Order Cancelled--->5
+// Order Spammed --->6
+
+enum: [0, 1, 2, 3, 4, 5, 6],
+default: 0
+      
   },
+
   deliveryAddress: {
       type: String,
       required: true
