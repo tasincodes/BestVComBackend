@@ -5,6 +5,7 @@ const OrderSchema = new mongoose.Schema({
       type: String,
       required: true
   },
+  
   customer: {
       type: mongoose.Types.ObjectId,
       required: true,
@@ -51,9 +52,17 @@ const OrderSchema = new mongoose.Schema({
       }
   },
   discountAmount: Number,
-  totalPrice: Number,
+
+  totalPrice: {
+    type: Number, // Ensure totalPrice is defined as a Number type
+    required: true // Adjust this as per your requirements
+},
+
   vatRate: Number
+
 }, { timestamps: true });
+
+
 
 const OrderModel=mongoose.model('Order',OrderSchema);
 

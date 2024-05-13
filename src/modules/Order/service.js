@@ -5,22 +5,33 @@ const { BadRequest } = require('../../utility/errors');
 
 const { v4: uuidv4 } = require('uuid');
 
-
 // Define calculateOrderValue function
 function calculateOrderValue(products) {
-    return products.reduce((total, product) => total + product.general.regularPrice, 0);
+    return products.reduce((total, product) => {
+        if (product && product.general && typeof product.general.regularPrice === 'number') {
+            return total + product.general.regularPrice;
+        } else {
+            console.warn('Invalid product:', product);
+            return total;
+        }
+    }, 0);
 }
 
 // Define calculateDiscount function
 function calculateDiscount(coupon, totalPrice) {
+    if (!coupon) {
+        return 0; // No coupon, so no discount
+    }
+
     if (coupon.discountType === 'percentage') {
         return (coupon.couponAmount / 100) * totalPrice;
-    } else {
+    } else if (coupon.discountType === 'fixed') {
         return coupon.couponAmount;
+    } else {
+        return 0; // Unknown discount type, so no discount
     }
 }
 
-// Your createOrder function
 const createOrder = async (orderData) => {
     try {
         // Generate orderId
@@ -46,10 +57,9 @@ const createOrder = async (orderData) => {
 
         // Calculate total price using calculateOrderValue function
         let totalPrice = calculateOrderValue(validProducts);
-        
-        if (isNaN(totalPrice) || totalPrice <= 0) {
-            throw new Error('Invalid total price');
-        }
+
+        // Log totalPrice to debug
+        console.log('Total Price:', totalPrice);
 
         // Apply discount if coupon provided
         let discountAmount = 0;
@@ -59,11 +69,26 @@ const createOrder = async (orderData) => {
                 throw new Error('Invalid coupon ID');
             }
             discountAmount = calculateDiscount(coupon, totalPrice);
+            // Log discountAmount to debug
+            console.log('Discount Amount:', discountAmount);
+        }
+
+        // Check if discountAmount is valid
+        if (isNaN(discountAmount) || discountAmount < 0 || discountAmount > totalPrice) {
+            throw new Error('Invalid discount amount');
         }
 
         // Calculate VAT
         const vat = (vatRate / 100) * totalPrice;
-        console.log("vat",vat)
+
+        // Log VAT to debug
+        console.log('VAT:', vat);
+
+        // Calculate final total price including discount and VAT
+        const finalTotalPrice = totalPrice - discountAmount + vat;
+
+        // Log finalTotalPrice to debug
+        console.log('Final Total Price:', finalTotalPrice);
 
         // Create new order
         const newOrder = new OrderModel({
@@ -78,25 +103,22 @@ const createOrder = async (orderData) => {
             products,
             coupon: couponId ? couponId : null,
             discountAmount,
-            totalPrice: totalPrice - discountAmount + vat, // Add VAT to the total price
+            totalPrice: finalTotalPrice, // Assign final total price
             vatRate
         });
 
         // Save the order to the database
         const savedOrder = await newOrder.save();
 
-        console.log(savedOrder)
-
         return {
             order: savedOrder,
-            totalOrderValue: totalPrice // Include total order value in the response
-           
+            totalOrderValue: finalTotalPrice // Include final total order value in the response
         };
-        console.log(totalOrderValue);
     } catch (error) {
         throw error;
     }
 }
+
 
 
 
@@ -142,21 +164,33 @@ const getAllOrders = async () => {
 
 
 
-// order manage
-const acceptOrder=async (orderId, userId)=>{
-    const acceptedOrder = await OrderModel.findByIdAndUpdate(
-        orderId,
-        { orderStatus: 0 }, // Assuming 0 represents 'Order Recieved' status
+
+
+
+
+const updateOrderStatus = async (orderId, newStatus) => {
+    // Validate orderId format
+    
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      throw new Error('Invalid orderId format');
+    }
+  
+    try {
+      const updatedOrder = await OrderModel.findByIdAndUpdate(
+        mongoose.Types.ObjectId(orderId), // Convert to ObjectId before query
+        { orderStatus: newStatus },
         { new: true }
       );
-    
-      if (!acceptedOrder) {
+  
+      if (!updatedOrder) {
         throw new Error('Order not found');
       }
-    
-      return acceptedOrder;
-}
-
+  
+      return updatedOrder;
+    } catch (error) {
+      throw error; // Re-throw for proper error handling in controller
+    }
+  };
 
 
 
@@ -165,5 +199,8 @@ module.exports = {
     updateOrder,
     deleteOrder,
     getAllOrders,
-    acceptOrder,
+    updateOrderStatus
+
+
+ 
 };
