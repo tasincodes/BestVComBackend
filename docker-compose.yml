@@ -1,0 +1,49 @@
+version: '3'
+
+networks:
+  best-production-network:
+    driver: bridge
+
+services:
+  best_production_backend:
+    container_name: best_production_backend
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - best-production-network
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "127.0.0.1:17001:8080"
+    depends_on:
+      - best_production_mongo
+
+  best_production_mongo:
+    container_name: best_production_mongo
+    restart: always
+    image: mongo
+    ports:
+      - "17002:27017"
+    networks:
+      - best-production-network
+    volumes:
+      - /home/best_persistent/mongodb:/data/db
+    env_file:
+      - .env
+
+  best_production_mongo_express:
+    container_name: best_production_mongo_express
+    image: mongo-express
+    restart: always
+    ports:
+      - "127.0.0.1:17003:8081"
+    networks:
+      - best-production-network
+    env_file:
+      - .env
+    depends_on:
+      - best_production_mongo
