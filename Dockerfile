@@ -8,4 +8,4 @@ RUN npm ci
 COPY . .
 #Expose port and start application
 EXPOSE 5000
-CMD [ "node" ,"nodejs", "index.js" "start" ]
+CMD [ "node","index.js","start" ]
