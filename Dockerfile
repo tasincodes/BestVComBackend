@@ -1,11 +1,20 @@
-FROM node:alpine
-# Create app directory
+# Use the official Node.js 14 image as base
+FROM node:14
+
+# Set the working directory in the container
 WORKDIR /usr/src/app
-# Install app dependencies
+
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
-RUN npm ci
-# Copy app source code
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
 COPY . .
-#Expose port and start application
-EXPOSE 5000
-CMD [ "node","index.js","start" ]
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["node", "index.js"]
