@@ -1,8 +1,11 @@
-FROM node:18
-
+FROM node:alpine
 # Create app directory
-WORKDIR /app
-
+WORKDIR /usr/src/app
+# Install app dependencies
+COPY package*.json ./
+RUN npm ci
+# Copy app source code
+COPY . .
 #Expose port and start application
-EXPOSE 8080
-CMD ["npm", "start"]
+EXPOSE 5000
+CMD [ "node" ,"nodejs", "index.js" "start" ]
