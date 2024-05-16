@@ -10,7 +10,21 @@ const UserSchema=new mongoose.Schema({
     required: [true, 'email must be required'],
   },
 
-   
+   outlet:{
+    type:mongoose.Types.ObjectId,
+    ref:'outlet'
+   },
+
+   firstName:{
+      type:String,
+      max:[20,"Name should be at least 20 "]
+   },
+
+   lastName:{
+    type:String,
+    max:[20,"Name should be at least 20 "]
+   },
+
     phoneNumber:{
         type:String,
         max:[12,'Please Input Your Number'],
@@ -36,11 +50,13 @@ const UserSchema=new mongoose.Schema({
 
       role: {
         type: String,
-    //  HEAD_OFFICE:'HQ',
+    // HEAD_OFFICE:'HQ',
     // BRANCH_ADMIN:'BA',
     // CUSTOMER: 'CUS',
+    // ADMIN : AD
+    // MGR : Manager
        
-        enum: ['HQ', 'BA', 'CUS'],
+        enum: ['HQ', 'BA', 'CUS','AD','MGR'],
         require: [true, 'Role must be selected'],
       },
 

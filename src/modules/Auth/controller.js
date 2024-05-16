@@ -38,6 +38,20 @@ const registerHandler = asyncHandler(async(req, res) => {
 
 
 
+const addUsersHandler= asyncHandler(async(req,res)=>{
+  const {email,firstName,lastName,phoneNumber,role,password}=req.body;
+  const user = await authService.addUsers(email, phoneNumber,firstName,lastName, password, role);
+
+  res.status(200).json({
+    message: "Your account has been registered. Please Login!!.",
+    email: user.email,
+    user,
+  })
+})
+
+
+
+
 
 // Verify OTP
 
@@ -117,8 +131,7 @@ router.post('/otpVerification',otpVerifyHandler);
 router.post('/otpResend',resendOTPHandler);
 router.post('/expireOTP',expireOTP);
 router.post('/signInAdmin',userSignInHandler)
-
-
+router.post('/userManage',authMiddleware,roleMiddleware([HEAD_OFFICE]),addUsersHandler);
 
 
 module.exports = router;

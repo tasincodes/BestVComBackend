@@ -50,6 +50,42 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
 
 
+//User Creation
+
+
+
+const addUsers = async(req,res)=>{
+
+  try {
+    const { email, outletId, phoneNumber, password, role } = req.body;
+
+    // Ensure a valid role is provided
+    if (!['HQ', 'BA', 'AD', 'MGR'].includes(role)) {
+        return res.status(400).json({ success: false, error: 'Invalid role' });
+    }
+
+    // Create the user based on the provided role
+    const user = await UserModel.create({
+        email,
+        outlet: outletId,
+        phoneNumber,
+        password,
+        role,
+        firstName:firstName,
+        lastName:lastName,
+        isActive: true, // Optionally set user as active
+
+    });
+
+    res.status(201).json({ success: true, user });
+} catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+}
+
+}
+
+
+
 
 
 // Verify OTP
@@ -168,7 +204,8 @@ module.exports = {
   verifyOTP,
   resendOTP,
   expireOTP,
-  signinUser
+  signinUser,
+  addUsers
 };
 
 
