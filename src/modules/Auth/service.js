@@ -54,35 +54,48 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
 
 
-const addUsers = async(req,res)=>{
-
+const addUsers = async ({ email, outletId, phoneNumber, password, role, firstName, lastName }) => {
   try {
-    const { email, outletId, phoneNumber, password, role } = req.body;
-
     // Ensure a valid role is provided
     if (!['HQ', 'BA', 'AD', 'MGR'].includes(role)) {
-        return res.status(400).json({ success: false, error: 'Invalid role' });
+      throw new Error('Invalid role');
+    }
+
+    // Ensure a valid outlet ID is provided
+    if (!outletId || !isValidObjectId(outletId)) {
+      throw new Error('Invalid outlet ID');
+    }
+
+    // Ensure a valid phone number is provided (simple regex check)
+    const phoneRegex = /^[0-9]{10,15}$/; // Adjust regex based on your specific phone number format requirements
+    if (!phoneRegex.test(phoneNumber)) {
+      throw new Error('Must be a valid phone number');
     }
 
     // Create the user based on the provided role
-    const user = await UserModel.create({
-        email,
-        outlet: outletId,
-        phoneNumber,
-        password,
-        role,
-        firstName:firstName,
-        lastName:lastName,
-        isActive: true, // Optionally set user as active
-
+    const user = await User.create({
+      email,
+      outlet: outletId,
+      phoneNumber,
+      password,
+      role,
+      firstName,
+      lastName,
+      isActive: true,
+      isVerified:true // Optionally set user as active
     });
 
-    res.status(201).json({ success: true, user });
-} catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-}
+    return { success: true, user };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
-}
+const isValidObjectId = (id) => {
+  // Use mongoose or any other relevant library to validate ObjectId
+  return /^[0-9a-fA-F]{24}$/.test(id);
+};
+
 
 
 
