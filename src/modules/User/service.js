@@ -38,12 +38,17 @@ const resetPassword = async (email, newPassword) => {
 };
 
 
-//getAllUser
 
+
+
+
+//getAllUser
 const getAllUsers=async(data)=>{
     const user=await User.find();
     return user;
 }
+
+ 
 
 
 

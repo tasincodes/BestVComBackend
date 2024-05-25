@@ -44,6 +44,8 @@ const getAllUsersHandler=asyncHandler(async(req,res)=>{
 
 
 
+
+
 router.post('/resetPass',resetPasswordHandler);
 router.get('/allUsers', authMiddleware, roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]), getAllUsersHandler);
 

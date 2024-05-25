@@ -37,6 +37,24 @@ const registerHandler = asyncHandler(async(req, res) => {
 
 
 
+const addUsersHandler = asyncHandler(async (req, res) => {
+  const { email, firstName, lastName, phoneNumber, role, password, outletId } = req.body;
+
+  try {
+    const result = await authService.addUsers({ email, phoneNumber, firstName, lastName, password, role, outletId });
+
+    res.status(201).json({
+      message: "Your account has been registered. Please Login!!",
+      email: result.user.email,
+      user: result.user,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+
+
 
 
 // Verify OTP
@@ -117,8 +135,7 @@ router.post('/otpVerification',otpVerifyHandler);
 router.post('/otpResend',resendOTPHandler);
 router.post('/expireOTP',expireOTP);
 router.post('/signInAdmin',userSignInHandler)
-
-
+router.post('/userManage',authMiddleware,roleMiddleware([HEAD_OFFICE]),addUsersHandler);
 
 
 module.exports = router;
