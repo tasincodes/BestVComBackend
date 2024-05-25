@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); 
 const router = express.Router();
 const reportingService = require("./service");
 const { asyncHandler } = require("../../utility/common");
@@ -30,9 +30,13 @@ const totalOrderAndVariationsSoldHandler = asyncHandler(async (req, res) => {
       totalOrderAndVariationsSold: totalOrderAndVariationsSold,
     });
 });
-
+const getSalesMetricsHandler = asyncHandler(async (req, res) => {
+  const { startDate, endDate } = req.query;
+  const metrics = await reportingService.getSalesMetrics(startDate, endDate);
+  res.status(200).json(metrics);
+});
 
 router.get("/totalSales", totalSalesHandler);
 router.get("/totalOrderAndVariationsSold", totalOrderAndVariationsSoldHandler);
-
+router.get('/salesMetrics', getSalesMetricsHandler);
 module.exports = router;

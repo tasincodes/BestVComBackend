@@ -6,6 +6,51 @@ const { BadRequest } = require("../../utility/errors");
 
 
 
+  // const totalSalesAndNetSalesService = async (startDate, endDate) => {
+  //   try {
+  //     if (!startDate || !endDate) {
+  //       return { message: "Start and end dates are required" };
+  //     }
+  
+  //     const totalSalesResult = await OrderModel.aggregate([
+  //       {
+  //         $match: {
+  //           createdAt: {
+  //             $gte: new Date(startDate),
+  //             $lte: new Date(endDate),
+  //           },
+  //           orderStatus: { $gte: 2, $lte: 4 }, // Considering only completed orders (Order Dispatched to Order On-Hold)
+  //         },
+  //       },
+  //       {
+  //         $group: {
+  //           _id: null,
+  //           totalSales: { $sum: "$totalPrice" },
+  //           totalDiscount: { $sum: "$discountAmount" }, // Sum of discount amounts
+  //           totalVAT: { $sum: { $multiply: ["$totalPrice", 0.15] } }, // Sum of VAT amounts (assuming VAT rate of 15%)
+  //         },
+  //       },
+  //     ]);
+  
+  //     if (totalSalesResult.length === 0) {
+  //       return { message: "No completed orders found within the given period" };
+  //     }
+  
+  //     const { totalSales, totalDiscount, totalVAT } = totalSalesResult[0]; // Destructuring assignment
+  
+  //     // Calculate net sales by subtracting discount and VAT from total sales
+  //     const netSales = totalSales - totalDiscount - totalVAT;
+  
+  //     return {
+  //       netSales: netSales,
+  //       totalSales: totalSales,
+  //     };
+  //   } catch (error) {
+  //     console.error("Error fetching net sales:", error);
+  //     return { message: "Internal server error" };
+  //   }
+  // };
+  
   const totalSalesAndNetSalesService = async (startDate, endDate) => {
     try {
       if (!startDate || !endDate) {
@@ -24,46 +69,60 @@ const { BadRequest } = require("../../utility/errors");
         },
         {
           $group: {
-            _id: null,
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
             totalSales: { $sum: "$totalPrice" },
             totalDiscount: { $sum: "$discountAmount" }, // Sum of discount amounts
             totalVAT: { $sum: { $multiply: ["$totalPrice", 0.15] } }, // Sum of VAT amounts (assuming VAT rate of 15%)
           },
         },
+        {
+          $project: {
+            _id: 0,
+            year: "$_id.year",
+            month: "$_id.month",
+            totalSales: 1,
+            totalDiscount: 1,
+            totalVAT: 1,
+            netSales: { $subtract: [{ $subtract: ["$totalSales", "$totalDiscount"] }, "$totalVAT"] },
+          },
+        },
+        {
+          $sort: { year: 1, month: 1 } // Sort by year and month
+        }
       ]);
   
       if (totalSalesResult.length === 0) {
         return { message: "No completed orders found within the given period" };
       }
   
-      const { totalSales, totalDiscount, totalVAT } = totalSalesResult[0]; // Destructuring assignment
-  
-      // Calculate net sales by subtracting discount and VAT from total sales
-      const netSales = totalSales - totalDiscount - totalVAT;
-  
-      return {
-        netSales: netSales,
-        totalSales: totalSales,
-      };
+      return totalSalesResult.map(result => ({
+        year: result.year,
+        month: result.month,
+        totalSales: result.totalSales,
+        netSales: result.netSales,
+      }));
     } catch (error) {
       console.error("Error fetching net sales:", error);
       return { message: "Internal server error" };
     }
   };
   
-
   const totalOrderAndVariationsSoldService = async (startDate, endDate) => {
     try {
       if (!startDate || !endDate) {
         return { message: "Start and end dates are required" };
       }
+  
       // Calculate total orders for the month
       const totalOrders = await OrderModel.countDocuments({
         createdAt: { $gte: startDate, $lte: endDate },
       });
   
-      // Calculate total variations sold for the month
-      const totalVariationsSold = await OrderModel.aggregate([
+      // Calculate unique product variations sold for the month
+      const totalVariationsSoldPipeline = [
         {
           $match: {
             createdAt: { $gte: startDate, $lte: endDate },
@@ -74,15 +133,23 @@ const { BadRequest } = require("../../utility/errors");
         },
         {
           $group: {
-            _id: "$products._id", // Group by product ID
-            totalSold: { $sum: "$products.quantity" }, // Sum the quantity of each product sold
+            _id: null, // Single document for all variations
+            uniqueProducts: { $addToSet: "$products._id" }, // Set of unique product IDs
           },
         },
-      ]);
-  console.log(totalVariationsSold)
+        {
+          $project: {
+            totalVariationsSold: { $size: "$uniqueProducts" }, // Count of unique products
+          },
+        },
+      ];
+  
+      const variationsSoldResult = await OrderModel.aggregate(totalVariationsSoldPipeline);
+      const totalVariationsSold = variationsSoldResult.length > 0 ? variationsSoldResult[0].totalVariationsSold : 0;
+  
       return {
         totalOrders: totalOrders,
-        totalVariationsSold: totalVariationsSold.length, // Count of unique product variations sold
+        totalVariationsSold: totalVariationsSold
       };
     } catch (error) {
       console.error("Error fetching total order and variations sold:", error);
@@ -90,7 +157,77 @@ const { BadRequest } = require("../../utility/errors");
     }
   };
   
-
+  
+  const getSalesMetrics = async (startDate, endDate) => {
+    try {
+      if (!startDate || !endDate) {
+        throw new Error('Start and end dates are required');
+      }
+  
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+  
+      // Calculate gross sales in the period
+      const grossSales = await OrderModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalGrossSales: { $sum: '$totalPrice' }
+          }
+        }
+      ]);
+  
+      // Calculate net sales in the period
+      const netSales = await OrderModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalNetSales: { $sum: { $subtract: ['$totalPrice', '$discountAmount'] } }
+          }
+        }
+      ]);
+  
+      // Calculate total days in the period
+      const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+  
+      // Calculate average gross daily sales
+      const avgGrossDailySales = grossSales.length ? grossSales[0].totalGrossSales / totalDays : 0;
+  
+      // Calculate average net daily sales
+      const avgNetDailySales = netSales.length ? netSales[0].totalNetSales / totalDays : 0;
+  
+      // Orders placed today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+  
+      const ordersPlacedToday = await OrderModel.countDocuments({
+        createdAt: { $gte: today, $lt: tomorrow }
+      });
+  
+      return {
+        grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
+        avgGrossDailySales,
+        netSales: netSales.length ? netSales[0].totalNetSales : 0,
+        avgNetDailySales,
+        ordersPlacedToday
+      };
+    } catch (error) {
+      console.error('Error fetching sales metrics:', error);
+      throw error;
+    }
+  };
 
 
   
@@ -99,6 +236,7 @@ const { BadRequest } = require("../../utility/errors");
 module.exports = {
   
   totalSalesAndNetSalesService,
-  totalOrderAndVariationsSoldService
+  totalOrderAndVariationsSoldService,
+  getSalesMetrics
 
 };

@@ -4,18 +4,32 @@ const CouponModel=require('../Discount/model');
 const { BadRequest } = require('../../utility/errors');
 
 const { v4: uuidv4 } = require('uuid');
-
+//zahed bhai er function
 // Define calculateOrderValue function
-function calculateOrderValue(products) {
-    return products.reduce((total, product) => {
-        if (product && product.general && typeof product.general.regularPrice === 'number') {
-            return total + product.general.regularPrice;
+// function calculateOrderValue(products) {
+//     return products.reduce((total, product) => {
+//         if (product && product.general && typeof product.general.regularPrice === 'number') {
+//             return total + product.general.regularPrice;
+//         } else {
+//             console.warn('Invalid product:', product);
+//             return total;
+//         }
+//     }, 0);
+// }
+function calculateOrderValue(products, orderProducts) {
+    return orderProducts.reduce((total, orderProduct) => {
+        const product = products.find(p => p._id.equals(orderProduct._id));
+        if (product && product.general && typeof product.general.regularPrice === 'number' && orderProduct.quantity && typeof orderProduct.quantity === 'number') {
+            return total + (product.general.regularPrice * orderProduct.quantity);
         } else {
-            console.warn('Invalid product:', product);
+            console.warn('Invalid product or quantity:', orderProduct);
             return total;
         }
     }, 0);
 }
+
+
+
 
 // Define calculateDiscount function
 function calculateDiscount(coupon, totalPrice) {
@@ -33,92 +47,195 @@ function calculateDiscount(coupon, totalPrice) {
 }
 
 
+// const createOrder = async (orderData) => {
+//     try {
+//         // Generate orderId
+//         const orderId = uuidv4();
+//         const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
+
+//         // Validate request body
+//         if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+//             throw new Error('Please provide all required fields');
+//         }
+
+//         // Validate product IDs
+//         if (!Array.isArray(products) || products.length === 0) {
+//             throw new Error('No products provided');
+//         }
+
+//         const productIds = products.map(product => product._id);
+//         const validProducts = await ProductModel.find({ _id: { $in: productIds } });
+
+//         if (validProducts.length !== products.length) {
+//             throw new Error('Invalid product IDs');
+//         }
+
+//         // Calculate total price using calculateOrderValue function
+//         let totalPrice = calculateOrderValue(validProducts);
+
+//         // Log totalPrice to debug
+//         console.log('Total Price:', totalPrice);
+
+//         // Apply discount if coupon provided
+//         let discountAmount = 0;
+//         if (couponId) {
+//             const coupon = await CouponModel.findById(couponId);
+//             if (!coupon) {
+//                 throw new Error('Invalid coupon ID');
+//             }
+//             discountAmount = calculateDiscount(coupon, totalPrice);
+//             // Log discountAmount to debug
+//             console.log('Discount Amount:', discountAmount);
+//         }
+
+//         // Check if discountAmount is valid
+//         if (isNaN(discountAmount) || discountAmount < 0 || discountAmount > totalPrice) {
+//             throw new Error('Invalid discount amount');
+//         }
+
+//         // Calculate VAT
+//         const vat = (vatRate / 100) * totalPrice;
+
+//         // Log VAT to debug
+//         console.log('VAT:', vat);
+
+//         // Calculate final total price including discount and VAT
+//         const finalTotalPrice = totalPrice - discountAmount + vat;
+
+//         // Log finalTotalPrice to debug
+//         console.log('Final Total Price:', finalTotalPrice);
+
+//         // Create new order
+//         const newOrder = new OrderModel({
+//             orderId,
+//             customer,
+//             orderType,
+//             deliveryAddress,
+//             district,
+//             phoneNumber,
+//             paymentMethod,
+//             transactionId,
+//             products,
+//             coupon: couponId ? couponId : null,
+//             discountAmount,
+//             totalPrice: finalTotalPrice, // Assign final total price
+//             vatRate
+//         });
+
+//         // Save the order to the database
+//         const savedOrder = await newOrder.save();
+
+//         return {
+//             order: savedOrder,
+//             totalOrderValue: finalTotalPrice // Include final total order value in the response
+//         };
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 const createOrder = async (orderData) => {
     try {
-        // Generate orderId
-        const orderId = uuidv4();
-        const { customer, orderType, deliveryAddress, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
-
-        // Validate request body
-        if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
-            throw new Error('Please provide all required fields');
+      // Generate orderId
+      const orderId = uuidv4();
+      const { customer, orderType, deliveryAddress,deliveryCharge, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
+  
+      // Validate request body
+      if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+        throw new Error('Please provide all required fields');
+      }
+  
+      // Validate product IDs and quantities
+      if (!Array.isArray(products) || products.length === 0) {
+        throw new Error('No products provided');
+      }
+  
+      // Check if all products have a quantity field
+      for (const product of products) {
+        if (!product.quantity || typeof product.quantity !== 'number') {
+          throw new Error('Each product must have a valid quantity');
         }
-
-        // Validate product IDs
-        if (!Array.isArray(products) || products.length === 0) {
-            throw new Error('No products provided');
+      }
+  
+      const productIds = products.map(product => product._id);
+      const validProducts = await ProductModel.find({ _id: { $in: productIds } });
+  
+      if (validProducts.length !== products.length) {
+        throw new Error('Invalid product IDs');
+      }
+  
+      // Log valid products to debug
+      console.log('Valid Products:', validProducts);
+  
+      // Calculate total price using the quantity of each product
+      let totalPrice = calculateOrderValue(validProducts, products);
+  
+      // Log totalPrice to debug
+      console.log('Total Price:', totalPrice);
+  
+      // Apply discount if coupon provided
+      let discountAmount = 0;
+      if (couponId) {
+        const coupon = await CouponModel.findById(couponId);
+        if (!coupon) {
+          throw new Error('Invalid coupon ID');
         }
-
-        const productIds = products.map(product => product._id);
-        const validProducts = await ProductModel.find({ _id: { $in: productIds } });
-
-        if (validProducts.length !== products.length) {
-            throw new Error('Invalid product IDs');
+        discountAmount = calculateDiscount(coupon, totalPrice);
+        // Log discountAmount to debug
+        console.log('Discount Amount:', discountAmount);
+      }
+  
+      // Check if discountAmount is valid
+      if (isNaN(discountAmount) || discountAmount < 0 || discountAmount > totalPrice) {
+        throw new Error('Invalid discount amount');
+      }
+  
+      // Calculate VAT
+      const vat = (vatRate / 100) * totalPrice;
+  
+      // Log VAT to debug
+      console.log('VAT:', vat);
+  
+      // Calculate final total price including discount and VAT
+      const finalTotalPrice = totalPrice - discountAmount + vat;
+  
+      // Log finalTotalPrice to debug
+      console.log('Final Total Price:', finalTotalPrice);
+  
+      // Create new order
+      const newOrder = new OrderModel({
+        orderId,
+        customer,
+        orderType,
+        deliveryAddress,
+        district,
+        phoneNumber,
+        paymentMethod,
+        transactionId,
+        products,
+        coupon: couponId ? couponId : null,
+        discountAmount,
+        totalPrice: finalTotalPrice, // Assign final total price
+        vatRate
+      });
+  
+      // Save the order to the database
+      const savedOrder = await newOrder.save();
+  
+      return {
+        message: "Order created successfully",
+        createdOrder: {
+          order: savedOrder,
+          totalOrderValue: finalTotalPrice // Include final total order value in the response
         }
-
-        // Calculate total price using calculateOrderValue function
-        let totalPrice = calculateOrderValue(validProducts);
-
-        // Log totalPrice to debug
-        console.log('Total Price:', totalPrice);
-
-        // Apply discount if coupon provided
-        let discountAmount = 0;
-        if (couponId) {
-            const coupon = await CouponModel.findById(couponId);
-            if (!coupon) {
-                throw new Error('Invalid coupon ID');
-            }
-            discountAmount = calculateDiscount(coupon, totalPrice);
-            // Log discountAmount to debug
-            console.log('Discount Amount:', discountAmount);
-        }
-
-        // Check if discountAmount is valid
-        if (isNaN(discountAmount) || discountAmount < 0 || discountAmount > totalPrice) {
-            throw new Error('Invalid discount amount');
-        }
-
-        // Calculate VAT
-        const vat = (vatRate / 100) * totalPrice;
-
-        // Log VAT to debug
-        console.log('VAT:', vat);
-
-        // Calculate final total price including discount and VAT
-        const finalTotalPrice = totalPrice - discountAmount + vat;
-
-        // Log finalTotalPrice to debug
-        console.log('Final Total Price:', finalTotalPrice);
-
-        // Create new order
-        const newOrder = new OrderModel({
-            orderId,
-            customer,
-            orderType,
-            deliveryAddress,
-            district,
-            phoneNumber,
-            paymentMethod,
-            transactionId,
-            products,
-            coupon: couponId ? couponId : null,
-            discountAmount,
-            totalPrice: finalTotalPrice, // Assign final total price
-            vatRate
-        });
-
-        // Save the order to the database
-        const savedOrder = await newOrder.save();
-
-        return {
-            order: savedOrder,
-            totalOrderValue: finalTotalPrice // Include final total order value in the response
-        };
+      };
     } catch (error) {
-        throw error;
+      console.error("Error creating order:", error);
+      throw error;
     }
-}
+  };
+  
+  
+  
 
 
 
