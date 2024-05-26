@@ -1,24 +1,41 @@
-version: "3"
+version: '3.1'
 
 services:
-  #MongoDB
-  mongo_db:
-    container_name: database_container
-    image: mongo:latest
+  mongo:
+    build:
+      context: .
+      dockerfile: Dockerfile.mongodb
     restart: always
-    volumes:
-      - mongo_db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 7070:7070
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: 'false'
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 8081:8081
     environment:
-      APP_NAME: LearnDocker
-      PORT: 8080
-      DB_URI: mongodb://mongo_db:27017/dockerlearn
+      NODE_ENV: production
+      MONGODB_URI: mongodb://appuser:appuserpassword@103.191.51.220:27017/BestVcom
+      DB_NAME: BestVcom
+      DB_USER: appuser
+      DB_PASS: appuserpassword
+      AUTH_SECRET_KEY: SecretKey123456789
+      BASE_API_URL: api.beselectronics.com.bd
     depends_on:
-      - mongo_db
-
-volumes:
-  mongo_db: {}
+      - mongo
