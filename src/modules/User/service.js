@@ -33,6 +33,9 @@ const resetPassword = async (email, newPassword) => {
 //getAllUser
 const getAllUsers = async (data) => {
   const user = await User.find();
+  if(!user){
+    throw new BadRequest("Could not find users");
+  }
   return user;
 };
 

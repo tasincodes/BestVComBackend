@@ -52,8 +52,6 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
 //User Creation
 
-
-
 const addUsers = async ({ email, outletId, phoneNumber, password, role, firstName, lastName }) => {
   try {
     // Ensure a valid role is provided
@@ -145,8 +143,6 @@ const resendOTP=async (email) =>{
 }};
 
 
-
-
 // Expire OTP
 const expireOTP = async (data) => {
   const { email } = data;
@@ -156,9 +152,6 @@ const expireOTP = async (data) => {
   );
   return;
 };
-
-
-
 
 
 
@@ -201,16 +194,6 @@ const signinUser = async (email,password) => {
     throw error; 
   }
 };
-
-
-
-
-
-
-
-
-
-
 
 module.exports = {
   UserRegister,
