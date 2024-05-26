@@ -196,7 +196,7 @@ const createOrder = async (orderData) => {
       console.log('VAT:', vat);
   
       // Calculate final total price including discount and VAT
-      const finalTotalPrice = totalPrice - discountAmount + vat;
+      const finalTotalPrice = totalPrice - discountAmount + vat+deliveryCharge;
   
       // Log finalTotalPrice to debug
       console.log('Final Total Price:', finalTotalPrice);
@@ -215,7 +215,8 @@ const createOrder = async (orderData) => {
         coupon: couponId ? couponId : null,
         discountAmount,
         totalPrice: finalTotalPrice, // Assign final total price
-        vatRate
+        vatRate,
+        deliveryCharge
       });
   
       // Save the order to the database

@@ -157,7 +157,6 @@ const { BadRequest } = require("../../utility/errors");
     }
   };
   
-  
   const getSalesMetrics = async (startDate, endDate) => {
     try {
       if (!startDate || !endDate) {
@@ -216,18 +215,71 @@ const { BadRequest } = require("../../utility/errors");
         createdAt: { $gte: today, $lt: tomorrow }
       });
   
+      // Items purchased today
+      const itemsPurchasedToday = await OrderModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: today, $lt: tomorrow }
+          }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $group: {
+            _id: null,
+            totalItemsPurchased: { $sum: '$products.quantity' }
+          }
+        }
+      ]);
+  
+      // Refunded orders (assuming refunded means orderStatus: 5)
+      const refundedOrders = await OrderModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+            orderStatus: 5 // Cancelled
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalRefunded: { $sum: '$totalPrice' }
+          }
+        }
+      ]);
+  
+      // Total delivery charges in the period
+      const totalDeliveryCharge = await OrderModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalDeliveryCharge: { $sum: '$deliveryCharge' }
+          }
+        }
+      ]);
+  
       return {
         grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
         avgGrossDailySales,
         netSales: netSales.length ? netSales[0].totalNetSales : 0,
         avgNetDailySales,
-        ordersPlacedToday
+        ordersPlacedToday,
+        itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,
+        refunded: refundedOrders.length ? refundedOrders[0].totalRefunded : 0,
+        deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
       };
     } catch (error) {
       console.error('Error fetching sales metrics:', error);
       throw error;
     }
   };
+  
 
 
   

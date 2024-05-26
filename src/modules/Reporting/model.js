@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ReportSchema = new mongoose.Schema({
   name: {
@@ -41,6 +41,9 @@ const ReportSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  refunded: {
+    type: Number,
+  },
   averageNetDailySales: {
     type: Number,
     default: 0,
@@ -55,6 +58,6 @@ const ReportSchema = new mongoose.Schema({
   },
 });
 
-const ReportModel = mongoose.model('Report', ReportSchema);
+const ReportModel = mongoose.model("Report", ReportSchema);
 
 module.exports = ReportModel;
