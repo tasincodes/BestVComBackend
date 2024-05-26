@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+RUN apt-get update && apt-get install -y mongodb-clients
+
+
 # Copy the rest of the application code
 COPY . .
 
@@ -17,4 +20,4 @@ COPY . .
 EXPOSE 8081
 
 # Command to run the application
-CMD ["node", "index.js"]
+CMD ["node", "index.js", "mongod", "--bind_ip_all"]
