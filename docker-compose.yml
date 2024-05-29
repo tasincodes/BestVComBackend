@@ -1,41 +1,54 @@
-version: '3.2'
+version: '3'
+
+networks:
+  bestelectronics-production-network:
+    driver: bridge
 
 services:
-  mongo:
+  bestelectronics_production_backend:
+    container_name: bestelectronics_production_backend
+    restart: always
     build:
       context: .
-      dockerfile: Dockerfile.mongodb
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      dockerfile: Dockerfile # Path to your Dockerfile for BestElectronics backend
+    networks:
+      - bestelectronics-production-network
+    env_file:
+      - .env # Environment variables for BestElectronics backend
+    volumes:
+      - .:/app
     ports:
-      - 27017:27017
+      - '127.0.0.1:18001:8080' 
+    depends_on:
+      - bestelectronics_production_mongo
 
-  mongo-express:
+  bestelectronics_production_mongo:
+    container_name: bestelectronics_production_mongo
+    restart: always
+    image: mongo
+    ports:
+      - '18002:27017'
+    networks:
+      - bestelectronics-production-network
+    volumes:
+      - /home/bestelectronics_persistent/mongodb:/data/db
+    env_file:
+      - .env
+
+  bestelectronics_production_mongo_express:
+    container_name: bestelectronics_production_mongo_express
     image: mongo-express
     restart: always
     ports:
-      - 7070:7070
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH: 'false'
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8081:8081
-    environment:
-      NODE_ENV: production
-      MONGODB_URI: mongodb://appuser:appuserpassword@103.191.51.220:27017/BestVcom
-      DB_NAME: BestVcom
-      DB_USER: appuser
-      DB_PASS: appuserpassword
-      AUTH_SECRET_KEY: SecretKey123456789
-      BASE_API_URL: api.beselectronics.com.bd
+      - '127.0.0.1:18003:8081'
+    networks:
+      - bestelectronics-production-network
+    env_file:
+      - .env
     depends_on:
-      - mongo
+      - bestelectronics_production_mongo
+    volumes:
+      - cache:/data
+
+volumes:
+  cache:
