@@ -18,7 +18,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - '127.0.0.1:8080:8080' # New port for BestElectronics backend
+      - '127.0.0.1:5050:5050' # New port for BestElectronics backend
     depends_on:
       - bestelectronics_production_mongo
 
