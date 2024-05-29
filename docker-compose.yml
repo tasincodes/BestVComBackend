@@ -18,7 +18,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - '127.0.0.1:18001:8080' 
+      - '127.0.0.1:18005:8080' 
     depends_on:
       - bestelectronics_production_mongo
 
@@ -27,7 +27,7 @@ services:
     restart: always
     image: mongo
     ports:
-      - '18002:27017'
+      - '18006:27017'
     networks:
       - bestelectronics-production-network
     volumes:
@@ -40,7 +40,7 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - '127.0.0.1:18003:8081'
+      - '127.0.0.1:18007:8081'
     networks:
       - bestelectronics-production-network
     env_file:
