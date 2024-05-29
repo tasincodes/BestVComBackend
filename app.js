@@ -17,6 +17,9 @@ const { handleError } = require('./src/utility/errors.js');
 
 const app = new express();
 
+// Trust proxy
+app.set('trust proxy', 1); // Trust the first proxy
+
 // Security Middleware Implement
 app.use(helmet());
 app.use(mongoSanitize());
@@ -24,20 +27,16 @@ app.use(xss());
 app.use(hpp());
 
 // Serve static files from the 'upload' directory
-
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
-
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-
 app.use(cookieParser());
 
 // CORS CONFIGURATIONS
-
 const whitelist = [
   'http://localhost:3000',
   'http://localhost:3001',
@@ -77,7 +76,7 @@ app.use(handleError);
 
 // Undefined Route Implement
 app.use('*', (req, res) => {
-  res.status(404).json({ status: 'fail', data: 'Server is Okay,its Undefined Route' });
+  res.status(404).json({ status: 'fail', data: 'Server is Okay, its Undefined Route' });
 });
 
 module.exports = app;
