@@ -67,7 +67,7 @@ const userResetLink = async (email) => {
     // Send OTP to user's email using SendEmailUtility function
     await SendEmailUtility(email, 'OTP for Password Reset', `Your OTP for password reset is: ${otp}`);
   
-    return true;
+    return user;
   };
 
 

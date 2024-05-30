@@ -37,7 +37,7 @@ const resetPasswordHandler = asyncHandler(async(req,res)=>{
 const getAllUsersHandler=asyncHandler(async(req,res)=>{
     const users=await userService.getAllUsers();
     res.status(200).json({
-       
+       message:"User get successfully",
         users
     })
 })
@@ -51,7 +51,10 @@ const userResetHandler = asyncHandler(async(req,res)=>{
     const { email } = req.body;
 
       await userService.userResetLink(email);
-      res.status(200).send('OTP sent to your email');
+      res.status(200).json({
+        message:"OTP sent successfully",
+        
+      })
   
 });
 
@@ -61,7 +64,9 @@ const userResetHandler = asyncHandler(async(req,res)=>{
 const verifyOTPHandler = asyncHandler(async(req,res)=>{
     const { email, otp } = req.body;
     await userService.verifyOTP(email, otp);
-    res.status(200).send('OTP verified');
+    res.status(200).json({
+        message:"OTP verified successfully"
+    })
  
 })
 
