@@ -45,8 +45,32 @@ const getAllUsersHandler=asyncHandler(async(req,res)=>{
 
 
 
+// Route to request OTP
+
+const userResetHandler = asyncHandler(async(req,res)=>{
+    const { email } = req.body;
+
+      await userService.userResetLink(email);
+      res.status(200).send('OTP sent to your email');
+  
+});
+
+
+// verifyOTP for the forgetPassword
+
+const verifyOTPHandler = asyncHandler(async(req,res)=>{
+    const { email, otp } = req.body;
+    await userService.verifyOTP(email, otp);
+    res.status(200).send('OTP verified');
+ 
+})
+
+
+
 
 router.post('/resetPass',resetPasswordHandler);
 router.get('/allUsers', authMiddleware, roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]), getAllUsersHandler);
+router.post('/resetUser',userResetHandler);
+router.post('/checkOTP',verifyOTPHandler);
 
 module.exports = router;
