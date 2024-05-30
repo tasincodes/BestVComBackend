@@ -71,11 +71,23 @@ const verifyOTPHandler = asyncHandler(async(req,res)=>{
 })
 
 
+// resetPassword With Verification
+const resetPassHandler = asyncHandler(async(req,res)=>{
+    const { email, newPassword } = req.body;
+ 
+    await userService.resetPass(email, newPassword);
+    res.status(200).send('Password reset successfully');
+  
+})
+    
+
+
 
 
 router.post('/resetPass',resetPasswordHandler);
 router.get('/allUsers', authMiddleware, roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]), getAllUsersHandler);
 router.post('/resetUser',userResetHandler);
 router.post('/checkOTP',verifyOTPHandler);
+router.post('/setPassword',resetPassHandler);
 
 module.exports = router;
