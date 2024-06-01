@@ -18,19 +18,6 @@ const { HEAD_OFFICE,BRANCH_ADMIN } = require('../../config/constants');
 
 
 
-const resetPasswordHandler = asyncHandler(async(req,res)=>{
-
-    const { email, newPassword } = req.body;
-   
-        const response = await userService.resetPassword(email, newPassword);
-        res.status(200).json({
-            message:"Successfully reset password",
-            response
-        });
-   
-})
-
-
 
 // getAllUsers
 
@@ -84,7 +71,7 @@ const resetPassHandler = asyncHandler(async(req,res)=>{
 
 
 
-router.post('/resetPass',resetPasswordHandler);
+// router.post('/resetPass',resetPasswordHandler);
 router.get('/allUsers', authMiddleware, roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]), getAllUsersHandler);
 router.post('/resetUser',userResetHandler);
 router.post('/checkOTP',verifyOTPHandler);
