@@ -7,7 +7,6 @@ const resetPassword = async (email, newPassword) => {
   try {
     // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     // Construct the update object to set the new hashed password
     const update = { password: hashedPassword };
 

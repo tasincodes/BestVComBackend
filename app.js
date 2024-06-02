@@ -27,7 +27,7 @@ app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
 
-app.use('/images', express.static(path.join(__dirname, '/src/uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'src', 'modules', 'uploads')));
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));

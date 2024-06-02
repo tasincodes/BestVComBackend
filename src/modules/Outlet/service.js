@@ -5,21 +5,21 @@ const jwt = require('jsonwebtoken');
 
 
 
-const outletCreateService = async (outletName, outletLocation,outletImage,branchAdmin) => {
-    try {
-        
-        const newOutlet = await OutletModel.create({
-            outletName,
-            outletLocation,
-            outletImage : outletImage,
-            branchAdmin
-        });
-        return { outlet: newOutlet}
-    } catch (error) {
-        console.error(error);
-    
-        return { outlet: null };
-    }
+const outletCreateService = async (outletName, outletLocation, outletImage, branchAdmin) => {
+  try {
+      // Perform business logic, e.g., validating the branchAdmin
+      const newOutlet = await OutletModel.create({
+          outletName,
+          outletLocation,
+          outletImage,
+          branchAdmin
+      });
+      
+      return newOutlet;
+  } catch (error) {
+      console.error('Error in outletCreateService:', error);
+      throw new Error('Outlet creation failed');
+  }
 };
 
 const getAllUsers=async(data)=>{

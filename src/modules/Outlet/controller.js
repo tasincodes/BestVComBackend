@@ -2,39 +2,26 @@ const express = require("express");
 const router = express.Router();
 const outletService = require('./service');
 const { asyncHandler } = require('../../utility/common');
-const multer = require("multer");
+const multerMiddleware = require('../../middlewares/multerMiddleware');
 
-const outletCreate = async (req, res, next) => {
-    try {
-        
-        const { outletName, outletLocation, outletImage,branchAdmin} = req.body;
+const outletCreate = asyncHandler(async (req, res, next) => {
+  try {
+      const { outletName, outletLocation, branchAdmin } = req.body;
+      const outletImage = req.files['outletImage'] ? `/uploads/${req.files['outletImage'][0].filename}` : '';
+      
+      const createdOutlet = await outletService.outletCreateService(outletName, outletLocation, outletImage, branchAdmin);
+      
+      if (createdOutlet) {
+          res.status(200).json({ createdOutlet });
+      } else {
+          res.status(401).json({ message: "Outlet creation failed" });
+      }
+  } catch (error) {
+      next(error);
+  }
+});
 
-       
-        const createdOutlet = await outletService.outletCreateService(outletName, outletLocation, outletImage,branchAdmin);
 
-        if (createdOutlet) {
-            res.status(200).json({ createdOutlet });
-        }
-        else{
-        res.status(401).json({ message: "Outlet manager not found" });
-        }
-    } catch (error) {
- 
-        next(error);
-    }
-};
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./src/modules/uploads");
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname);
-    },
-  });
-  
-  const upload = multer({ storage: storage });
-  
 
 const getAllOutlet = asyncHandler(async(req, res) => {
     const outlet=await outletService.getAllUsers();
@@ -94,7 +81,9 @@ const getOutletManagerById = asyncHandler(async(req, res) => {
 
 
 
-router.post("/outletCreate", outletCreate);
+router.post("/outletCreate",  multerMiddleware.upload.fields([
+  { name: 'outletImage', maxCount: 1 }
+]),outletCreate);
 router.get("/getAllOutlet", getAllOutlet);
 router.put("/updateOutlet/:id",updateOutlet)
 router.delete("/deleteOutlet/:id",deleteOutlet)
@@ -104,18 +93,5 @@ router.get("/getOutletManagerById/:id",getOutletManagerById)
 
 
 
-router.post("/upload", upload.single("file"), async (req, res, next) => {
-    try {
-      const uploadedFile = req.file;
-      if (uploadedFile) {
-        res
-          .status(200)
-          .json({ message: "File uploaded successfully", file: uploadedFile });
-      } else {
-        res.status(401).json({ message: "File not uploaded" });
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
+
 module.exports = router;

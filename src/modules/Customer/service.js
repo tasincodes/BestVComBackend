@@ -1,6 +1,7 @@
 const customerModel = require("../Customer/model")
 const {generateOTP}=require('../../utility/common');
 const {otpMail} = require('../../utility/email')
+const {SendEmailUtility} = require('../../utility/email')
 const {
     BadRequest,
     Unauthorized,
@@ -13,6 +14,13 @@ const jwt= require('jsonwebtoken');
 
 const customerCreateService = async (customerInfo) => {
     try {
+      const {email} = customerInfo;
+      const existingCustomer = await customerModel.findOne({ email });
+      if(existingCustomer){
+        throw new BadRequest('Customer already exists');
+      }
+      const otp = generateOTP();
+      await SendEmailUtility(email, 'OTP for registration', `Your OTP for registration: ${otp}`);
       const newCustomer = await customerModel.create(customerInfo);
       return { message: "Customer added successfully", customer: newCustomer };
     } catch (error) {
