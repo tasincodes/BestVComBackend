@@ -86,11 +86,23 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
   };
 
 
+
+ // resetPassword With Verification
+const resetPassHandler = asyncHandler(async(req,res)=>{
+  const { email, newPassword } = req.body;
+
+  await customerService.resetPass(email, newPassword);
+  res.status(200).send('Password reset successfully');
+
+})
+  
+
+
 router.post('/createCustomer',createCustomerhandler)
 router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCustomerhandler)
 router.post('/forgetCred',forgetCredentialshandler)
 router.post('/otpverify',otpVerifyHandler)
 router.post('/expiredOtp',expireOTP)
 router.post('/customerSignIn',customerSignInHandler)
- module.exports = router;
- ///hfnskdncfkjsdn test
+router.put('/resetPassword',resetPassHandler)
+module.exports = router;
