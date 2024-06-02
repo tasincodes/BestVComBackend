@@ -12,15 +12,26 @@ const jwt= require('jsonwebtoken');
 
 
 const customerCreateService = async (customerInfo) => {
-    try {
-      const newCustomer = await customerModel.create(customerInfo);
-      return { message: "Customer added successfully", customer: newCustomer };
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to create customer: " + error.message);
-    }
-  };
-  
+  try {
+    // Generate OTP
+    const otp = generateOTP();
+    customerInfo.otp = otp;
+
+    // Create new customer
+    const newCustomer = await customerModel.create(customerInfo);
+
+    // Send OTP email
+    await otpMail(newCustomer.email, otp);
+
+    return { message: "Customer added successfully and OTP sent", customer: newCustomer };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create customer: " + error.message);
+  }
+};
+
+
+
 
 const getAllCustomerService = async () => {
     try {
