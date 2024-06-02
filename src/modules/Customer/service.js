@@ -47,21 +47,33 @@ const getAllCustomerService = async () => {
     }
 };
 
-const forgetInfoService = async (email,phoneNumber) => {
-    try {
-        const otp = generateOTP();
-        await otpMail(email, otp);
-        const newCustomer = new customerModel({
-            otp: otp,
-            email: email,
-           
-        });
-        const savedCustomer = await newCustomer.save();
-        console.log("Customer saved successfully:", savedCustomer);
-    } catch (error) {
-        console.error(error);
-    }
+const forgetInfoService = async (email) => {
+  try {
+      // Find the customer by email and phone number
+      const customer = await customerModel.findOne({ email });
+      if (!customer) {
+          throw new Error('Customer not found');
+      }
+
+      // Generate OTP
+      const otp = generateOTP();
+      
+      // Update the customer's OTP
+      customer.otp = otp;
+      await customer.save();
+
+      // Send OTP email
+      const emailText = `Your OTP is ${otp}`;
+      await SendEmailUtility(email, emailText, 'Password Reset OTP');
+
+      console.log("OTP sent successfully");
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
 }
+
+
 
 
 

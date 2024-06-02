@@ -32,14 +32,19 @@ const getAllCustomerhandler = asyncHandler(async (req, res) => {
 });
 
 
+const forgetCredentialshandler = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  await customerService.forgetInfoService(email);
+  res.status(200).json({
+      message: "OTP is sent to email",
+      email
+  });
+});
 
-const forgetCredentialshandler = asyncHandler(async(req,res)=>{
-    const {email} = req.body
-    await customerService.forgetInfoService(email)
-    res.status(200).json({
-        message: "OTP is sent to email",email
-    });
-})
+
+
+
+
 
 
 const otpVerifyHandler = asyncHandler(async(req,res)=>{
