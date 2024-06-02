@@ -17,7 +17,7 @@ const CustomerSchema=new mongoose.Schema({
     },
     phoneNumber:{
         type:String,
-        max:[13,"Phone Number Should be at least 13 characters"],
+        max:[14,"Phone Number Should be at least 13 characters"],
         required:[true,"Please Enter a valid phone number"],
         unique:true
     },

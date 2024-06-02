@@ -39,7 +39,9 @@ const UserSchema=new mongoose.Schema({
       otp: {
         type: Number,
       },
-
+      otpExpiry: {
+        type: Date,
+      },
       emailChangeOTP: {
         type: Number,
       },
