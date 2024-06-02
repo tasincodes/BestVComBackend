@@ -54,7 +54,7 @@ const forgetInfoService = async (email,phoneNumber) => {
         const newCustomer = new customerModel({
             otp: otp,
             email: email,
-            phoneNumber
+           
         });
         const savedCustomer = await newCustomer.save();
         console.log("Customer saved successfully:", savedCustomer);
