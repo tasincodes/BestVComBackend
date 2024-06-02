@@ -1,6 +1,5 @@
 const customerModel = require("../Customer/model")
 const {generateOTP}=require('../../utility/common');
-const {otpMail} = require('../../utility/email')
 const {SendEmailUtility} = require('../../utility/email')
 const {
     BadRequest,
@@ -10,6 +9,8 @@ const {
 }=require('../../utility/errors');
 const bcrypt = require('bcryptjs');
 const jwt= require('jsonwebtoken');
+
+
 
 
 const customerCreateService = async (customerInfo) => {
@@ -22,7 +23,7 @@ const customerCreateService = async (customerInfo) => {
     const newCustomer = await customerModel.create(customerInfo);
 
     // Send OTP email
-    await otpMail(newCustomer.email, otp);
+    await SendEmailUtility(newCustomer.email, otp);
 
     return { message: "Customer added successfully and OTP sent", customer: newCustomer };
   } catch (error) {
