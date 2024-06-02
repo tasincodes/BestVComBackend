@@ -45,33 +45,28 @@ const getAllCustomerService = async () => {
 
 const forgetInfoService = async (email) => {
   try {
-      // Find the customer by email and phone number
-      const customer = await customerModel.findOne({ email });
-      if (!customer) {
-          throw new Error('Customer not found');
-      }
+    // Find the customer by email and phone number
+    const customer = await customerModel.findOne({ email });
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
+    // Generate OTP
+    const otp = generateOTP();
 
-      // Generate OTP
-      const otp = generateOTP();
-      
-      // Update the customer's OTP
-      customer.otp = otp;
-      await customer.save();
+    // Update the customer's OTP
+    customer.otp = otp;
+    await customer.save();
 
-      // Send OTP email
-      const emailText = `Your OTP is ${otp}`;
-      await SendEmailUtility(email, emailText, 'Password Reset OTP');
+    // Send OTP email
+    const emailText = `Your OTP is ${otp}`;
+    await SendEmailUtility(email, emailText, "Password Reset OTP");
 
-      console.log("OTP sent successfully");
+    console.log("OTP sent successfully");
   } catch (error) {
-      console.error(error);
-      throw error;
+    console.error(error);
+    throw error;
   }
-}
-
-
-
-
+};
 
 // Verify OTP
 const verifyOTP = async (email, otp) => {
@@ -133,42 +128,41 @@ const customerSignInService = async (email, password) => {
   }
 };
 
+const resetPass = async (email, newPassword) => {
+  try {
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-  const resetPass = async (email, newPassword) => {
-    try {
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Construct the update object to set the new hashed password
+    const update = { password: hashedPassword };
 
-        // Construct the update object to set the new hashed password
-        const update = { password: hashedPassword };
+    console.log("Updating password for email:", email);
 
-        console.log("Updating password for email:", email);
+    // Find the user by email and update the password
+    const user = await customerModel.findOneAndUpdate(
+      { email: email },
+      update,
+      { new: true }
+    );
 
-        // Find the user by email and update the password
-        const user = await customerModel.findOneAndUpdate(
-            { email: email },
-            update,
-            { new: true } 
-        );
+    console.log("Updated user:", user);
 
-        console.log("Updated user:", user);
-
-        if (!user) {
-            throw new BadRequest("User not found with this email");
-        }
-
-        return user;
-    } catch (error) {
-        throw new Error('Failed to reset password.');
+    if (!user) {
+      throw new BadRequest("User not found with this email");
     }
-  };
 
+    return user;
+  } catch (error) {
+    throw new Error("Failed to reset password.");
+  }
+};
 
-module.exports={
-    customerCreateService,
-    getAllCustomerService,
-    forgetInfoService,
-    verifyOTP,
-    expireOTP,
-    customerSignInService,
-    resetPass
+module.exports = {
+  customerCreateService,
+  getAllCustomerService,
+  forgetInfoService,
+  verifyOTP,
+  expireOTP,
+  customerSignInService,
+  resetPass,
+};
