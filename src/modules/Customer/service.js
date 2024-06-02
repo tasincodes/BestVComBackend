@@ -43,21 +43,35 @@ const getAllCustomerService = async () => {
   }
 };
 
-const forgetInfoService = async (email, phoneNumber) => {
+const forgetInfoService = async (email) => {
   try {
-    const otp = generateOTP();
-    await otpMail(email, otp);
-    const newCustomer = new customerModel({
-      otp: otp,
-      email: email,
-      phoneNumber,
-    });
-    const savedCustomer = await newCustomer.save();
-    console.log("Customer saved successfully:", savedCustomer);
+      // Find the customer by email and phone number
+      const customer = await customerModel.findOne({ email });
+      if (!customer) {
+          throw new Error('Customer not found');
+      }
+
+      // Generate OTP
+      const otp = generateOTP();
+      
+      // Update the customer's OTP
+      customer.otp = otp;
+      await customer.save();
+
+      // Send OTP email
+      const emailText = `Your OTP is ${otp}`;
+      await SendEmailUtility(email, emailText, 'Password Reset OTP');
+
+      console.log("OTP sent successfully");
   } catch (error) {
-    console.error(error);
+      console.error(error);
+      throw error;
   }
-};
+}
+
+
+
+
 
 // Verify OTP
 const verifyOTP = async (email, otp) => {
@@ -119,11 +133,42 @@ const customerSignInService = async (email, password) => {
   }
 };
 
-module.exports = {
-  customerCreateService,
-  getAllCustomerService,
-  forgetInfoService,
-  verifyOTP,
-  expireOTP,
-  customerSignInService,
-};
+
+  const resetPass = async (email, newPassword) => {
+    try {
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Construct the update object to set the new hashed password
+        const update = { password: hashedPassword };
+
+        console.log("Updating password for email:", email);
+
+        // Find the user by email and update the password
+        const user = await customerModel.findOneAndUpdate(
+            { email: email },
+            update,
+            { new: true } 
+        );
+
+        console.log("Updated user:", user);
+
+        if (!user) {
+            throw new BadRequest("User not found with this email");
+        }
+
+        return user;
+    } catch (error) {
+        throw new Error('Failed to reset password.');
+    }
+  };
+
+
+module.exports={
+    customerCreateService,
+    getAllCustomerService,
+    forgetInfoService,
+    verifyOTP,
+    expireOTP,
+    customerSignInService,
+    resetPass
