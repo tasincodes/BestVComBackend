@@ -88,21 +88,6 @@ const getSubcategoriesHandler = asyncHandler(async(req,res)=>{
 })
 
 
-const getCategoryByIdHandler = asyncHandler(async (req, res) => {
-    const { categoryId } = req.params;
-    try {
-        const category = await categoryService.getCategoryById(categoryId);
-        res.status(200).json({
-            message: "Category fetched successfully!",
-            category
-        });
-    } catch (error) {
-        res.status(404).json({
-            error: error.message
-        });
-    }
-});
-
 
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
 router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
@@ -110,5 +95,5 @@ router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]
 router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
 router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
 router.get('/:parentCategory',getSubcategoriesHandler);
-router.get('/:categoryId',getCategoryByIdHandler)
+
 module.exports = router;
