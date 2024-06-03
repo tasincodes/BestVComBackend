@@ -119,6 +119,15 @@ const getSubcategories = async (parentCategoryId) => {
     }
 };
 
+const getCategoryById = async(categoryId)=>{
+  try {
+    const category = await Category.findById(categoryId);
+    return { success: true, data: category };
+} catch (error) {
+    console.error('Error in getting category by id:', error.message);
+    return { success: false, error: 'Failed to retrieve category' };
+}
+}
 
 module.exports ={
     addCategory,
@@ -126,5 +135,6 @@ module.exports ={
     getAllCategory,
     updateCategoryById,
     deleteCategoryById,
-    getSubcategories
+    getSubcategories,
+    getCategoryById
 }
