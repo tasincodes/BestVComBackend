@@ -42,10 +42,10 @@ const createSubCategoryHandler = asyncHandler(async (req, res) =>{
 // getAllSubcatgories
 
 const getAllCategoriesHandler = asyncHandler(async (req, res) => {
-    const getAllCategories = await categoryService.getAllCategory();
+    const allCategories = await categoryService.getAllCategory();
     res.status(200).json({
-        message: "GetAll Categories Fetched Successfully !",
-        getAllCategories
+        message: "GetAll Categories Fetched Successfully!",
+        categories: allCategories
     });
 });
 

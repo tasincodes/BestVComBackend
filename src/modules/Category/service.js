@@ -30,11 +30,37 @@ const addSubcategory = async (subcategoryData) => {
 
 
 
+
+
+
+
 const getAllCategory = async () => {
     const allCategories = await Category.find();
-    return allCategories;
-};
+    const categoryMap = {};
 
+    // Create a map of all categories by their _id and initialize subCategories array
+    allCategories.forEach(category => {
+        categoryMap[category._id] = category.toObject();
+        categoryMap[category._id].subCategories = [];
+    });
+
+    // Populate subCategories for each category
+    allCategories.forEach(category => {
+        if (category.parentCategory) {
+            if (categoryMap[category.parentCategory]) {
+                categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
+            }
+        }
+    });
+
+    // Filter out the categories which are parent categories themselves
+    const rootCategories = allCategories.filter(category => !category.parentCategory);
+
+    // Build the hierarchical structure
+    const result = rootCategories.map(category => categoryMap[category._id]);
+
+    return result;
+}
 
 // update category by ID
 
