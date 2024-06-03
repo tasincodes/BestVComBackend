@@ -27,12 +27,7 @@ const addSubcategory = async (subcategoryData) => {
     return newSubcategory;
 };
 
-
-
-
-
-
-
+// getAll Categories with all associate subcategories
 
 const getAllCategory = async () => {
     const allCategories = await Category.find();
@@ -53,10 +48,7 @@ const getAllCategory = async () => {
         }
     });
 
-    // Filter out the categories which are parent categories themselves
     const rootCategories = allCategories.filter(category => !category.parentCategory);
-
-    // Build the hierarchical structure
     const result = rootCategories.map(category => categoryMap[category._id]);
 
     return result;
