@@ -1,6 +1,6 @@
 const Category = require("../Category/model");
 const { BadRequest } = require("../../utility/errors");
-
+const productModel = require("../Products/model");
 // create Category
 const addCategory = async (categoryData) => {
   const newCategory = await Category.create(categoryData);
@@ -22,30 +22,66 @@ const addSubcategory = async (subcategoryData) => {
 
 // getAll Categories with all associate subcategories
 
+// const getAllCategory = async () => {
+//     const allCategories = await Category.find();
+//     const categoryMap = {};
+    
+
+//     // Create a map of all categories by their _id and initialize subCategories array
+//     allCategories.forEach(category => {
+//         categoryMap[category._id] = category.toObject();
+//         categoryMap[category._id].subCategories = [];
+//     });
+
+//     // Populate subCategories for each category
+//     allCategories.forEach(category => {
+//         if (category.parentCategory) {
+//             if (categoryMap[category.parentCategory]) {
+//                 categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
+//             }
+//         }
+//     });
+
+//     const rootCategories = allCategories.filter(category => !category.parentCategory);
+//     const result = rootCategories.map(category => categoryMap[category._id]);
+
+//     return result;
+// }
+
 const getAllCategory = async () => {
-    const allCategories = await Category.find();
-    const categoryMap = {};
+  const allCategories = await Category.find();
+  const allProducts = await productModel.find();
+  const categoryMap = {};
 
-    // Create a map of all categories by their _id and initialize subCategories array
-    allCategories.forEach(category => {
-        categoryMap[category._id] = category.toObject();
-        categoryMap[category._id].subCategories = [];
-    });
+  // Create a map of all categories by their _id and initialize subCategories array
+  allCategories.forEach(category => {
+      categoryMap[category._id] = category.toObject();
+      categoryMap[category._id].subCategories = [];
+      categoryMap[category._id].productCount = 0; // Initialize product count
+  });
 
-    // Populate subCategories for each category
-    allCategories.forEach(category => {
-        if (category.parentCategory) {
-            if (categoryMap[category.parentCategory]) {
-                categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
-            }
-        }
-    });
+  // Count products for each category
+  allProducts.forEach(product => {
+      if (categoryMap[product.categoryId]) {
+          categoryMap[product.categoryId].productCount++;
+      }
+  });
 
-    const rootCategories = allCategories.filter(category => !category.parentCategory);
-    const result = rootCategories.map(category => categoryMap[category._id]);
+  // Populate subCategories for each category
+  allCategories.forEach(category => {
+      if (category.parentCategory) {
+          if (categoryMap[category.parentCategory]) {
+              categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
+          }
+      }
+  });
 
-    return result;
+  const rootCategories = allCategories.filter(category => !category.parentCategory);
+  const result = rootCategories.map(category => categoryMap[category._id]);
+
+  return result;
 }
+
 
 // update category by ID
 
