@@ -166,10 +166,10 @@ const expireOTP = async (data) => {
 
 const signinUser = async (email,password) => {
   try {
-    // Find user by email
+ 
     const user = await User.findOne({ email });
 
-    // Check if user exists
+
     if (!user) {
       throw new BadRequest("Invalid email or password.");
     }
@@ -177,13 +177,12 @@ const signinUser = async (email,password) => {
     // Validate password using bcrypt.compare
     const isMatch = await bcrypt.compare(password, user.password);
 
-    // Check password match
+
     if (!isMatch) {
       throw new BadRequest("Invalid email or password.");
     }
- // Generate JWT token with user data payload
+
  const accessToken = jwt.sign({ user }, 'SecretKey12345', { expiresIn: '3d' });
-    // User is authenticated, return sanitized user data (excluding sensitive fields)
     const sanitizedUser = {
       userId: user._id,
       accessToken,
