@@ -4,35 +4,31 @@ const CouponSchema = new mongoose.Schema({
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'category',
-        required: true
+        // required: true
     },
-    general:{
-    couponName: {
-        type: String,
-        required: true,
-        unique:true,
+    general: {
+        couponName: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        discountType: {
+            type: String,
+            enum: ['percentage', 'fixed'],
+            required: true
+        },
+        couponAmount: {
+            type: Number,
+        },
+        allowFreeShipping: {
+            type: Boolean,
+            default: false
+        },
+        couponExpiry: {
+            type: Date,
+            required: true
+        },
     },
-    discountType: {
-        type: String,
-        enum: ['percentage', 'fixed'],
-        required: true
-    },
-    couponAmount: {
-        type: Number,
-        required: function () {
-            return this.discountType === 'fixed';
-        }
-    },
-    allowFreeShipping: {
-        type: Boolean,
-        default: false
-    },
-    couponExpiry: {
-        type: Date,
-        required: true
-    },
-
-},
     usageRestriction: {
         minimumSpend: Number,
         maximumSpend: Number,
@@ -44,11 +40,26 @@ const CouponSchema = new mongoose.Schema({
             type: Boolean,
             default: false
         },
-        products: [String],
-        excludeProducts: [String],
-        categories: [String],
-        excludeCategories: [String],
-        blockedAccounts: [String]
+        products: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        }],
+        excludeProducts: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        }],
+        categories: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'category'
+        }],
+        excludeCategories: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'category'
+        }],
+        blockedAccounts: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user'
+        }]
     },
     usageLimit: {
         usageLimitPerCoupon: Number,

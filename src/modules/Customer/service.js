@@ -38,7 +38,6 @@ const getAllCustomerService = async () => {
     return { customer: newCustomer };
   } catch (error) {
     console.error(error);
-
     return { customer: null };
   }
 };

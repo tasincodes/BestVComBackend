@@ -1,4 +1,4 @@
-const discountModel = require("../Discount/model");
+const couponModel = require("../Discount/model");
 const productModel = require("../Products/model");
 const Category = require("../Category/model");
 const User = require("../User/model");
@@ -10,74 +10,124 @@ const {
 }=require('../../utility/errors');
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
 
-const generateCouponService = async(couponInfo)=>{
-    try {
-        
-        const newCoupon = await discountModel.create(
-            couponInfo);
-        return { couponInfo : newCoupon}
-    } catch (error) {
-        console.error(error);
-    
-        return { couponInfo: null };
+
+const generateCouponService = async (couponInfo) => {
+  try {
+    if (!couponInfo) {
+      throw new Error('Coupon information is required');
     }
+
+    const { categoryId, general, usageRestriction, usageLimit } = couponInfo;
+
+    if (!categoryId) {
+      throw new Error('Category ID is required');
+    }
+
+    if (!general) {
+      throw new Error('General coupon information is required');
+    }
+
+    const { couponName, discountType, couponAmount, allowFreeShipping, couponExpiry } = general;
+
+    if (!couponName) {
+      throw new Error('Coupon name is required');
+    }
+    if (!discountType) {
+      throw new Error('Discount type is required');
+    }
+    if (discountType === 'fixed' && (couponAmount == null || couponAmount === undefined)) {
+      throw new Error('Coupon amount is required for fixed discount type');
+    }
+    if (!couponExpiry) {
+      throw new Error('Coupon expiry date is required');
+    }
+
+    const newCoupon = await couponModel.create({
+      categoryId,
+      general: {
+        couponName,
+        discountType,
+        couponAmount,
+        allowFreeShipping,
+        couponExpiry
+      },
+      usageRestriction,
+      usageLimit
+    });
+
+    return { couponInfo: newCoupon };
+  } catch (error) {
+    console.error('Error in generateCouponService:', error.message);
+    throw new Error('Failed to generate coupon: ' + error.message);
+  }
 };
 
 
-const updateCouponServicebyId = async(id,updatedInfo)=>{
-    try{
-const couponUpdates = await discountModel.findByIdAndUpdate(id,updatedInfo,
-    { new: true })
-if(couponUpdates){
-    return {couponUpdates: couponUpdates}
-}
-    }
-    catch(err){
-        console.error(error);
-        return { couponUpdates: null };
-    } 
-}
+const updateCouponServicebyId = async (id, updatedInfo) => {
+    try {
+        if (!id) {
+            throw new Error('Coupon ID is required');
+        }
+        if (!updatedInfo || Object.keys(updatedInfo).length === 0) {
+            throw new Error('Update information is required');
+        }
 
-const getAllCouponService = async()=>{
+        const couponUpdates = await couponModel.findByIdAndUpdate(id, updatedInfo, { new: true });
+
+        if (!couponUpdates) {
+            throw new Error('Coupon not found');
+        }
+
+        return { success: true, data: couponUpdates };
+    } catch (error) {
+        console.error('Error in updateCouponServicebyId:', error.message);
+        return { success: false, error: error.message };
+    }
+};
+
+const getAllCouponService = async () => {
+    try {
+        const allCoupons = await couponModel.find();
+        return { success: true, data: allCoupons };
+    } catch (error) {
+        console.error('Error in getAllCouponService:', error.message);
+        return { success: false, error: 'Failed to retrieve coupons' };
+    }
+};
+
+const getAllCoupoByCategoryService = async(categoryId)=>{
     try{
-        return await discountModel.find()
+        const allCoupons = await couponModel.find({ categoryId:categoryId });
+        return {success:true,data : allCoupons};
     }
     catch(error){
-        console.error(error);
-        return error
-    }
-}
-
-const getAllCoupoByCategoryService = async(userId)=>{
-    try{
-        return await discountModel.find({ userId: userId })
-    }
-    catch(error){
-        console.error(error);
-        return error
+        console.error('Error in getAllCoupoByCategoryService:', error.message);
+        return { success: false, error: 'Failed to retrieve coupons' };
     }
 }
 
 const deleteCouponByIdService = async (couponId) => {
     try {
-        return await discountModel.findByIdAndDelete(couponId);
+        const data = await couponModel.findByIdAndDelete(couponId);
+        return {success:true,data : data};
     } catch (error) {
-        console.error(error);
-        return null;
+        console.error('Error in deleteCouponByIdService:', error.message);
+        return { success: false, error: 'Failed to delete coupons' };
     }
 }
 const getCouponByCodeService = async (couponCode) => {
     try {
-        return await discountModel.findOne({ couponName: couponCode });
+        const couponInfo = await couponModel.findOne({ couponName: couponCode });
+        return {success:true, data :couponInfo };
     } catch (error) {
         console.error(error);
-        return null;
+        return { success: false, error: 'Failed to retreive coupons by coupon name' };
     }
 }
 
 
 const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userId) => {
-    const coupon = await discountModel.findById(couponId);
+    const coupon = await couponModel.findById(couponId);
     if (!coupon) {
         throw new BadRequest("Coupon code is not available");
     }
@@ -153,7 +203,7 @@ const getCouponByTypeService = async (discountType) => {
     try {
         let coupons;
         if (discountType === "fixed" || discountType === "percentage") {
-            coupons = await discountModel.find({ "general.discountType": discountType });
+            coupons = await couponModel.find({ "general.discountType": discountType });
         } else {
             coupons = [];
         }

@@ -5,61 +5,91 @@ const discountService = require('./service');
 const { addSubcategory } = require('../Category/service');
 
 
-const couponGenerateHandler = asyncHandler(async(req,res)=>{
-    const couponInfo = req.body;
-    const coupon = await discountService.generateCouponService(couponInfo)
-    res.status(200).json({
-        message: "coupon added successfully",
+const couponGenerateHandler = asyncHandler(async (req, res) => {
+    try {
+      const couponInfo = req.body;
+      const { couponInfo: coupon } = await discountService.generateCouponService(couponInfo);
+      
+      res.status(200).json({
+        message: "Coupon added successfully",
         coupon
-    });
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: error.message
+      });
+    }
+  });
 
-})
 
-
-const couponUpdateHandler = asyncHandler(async(req,res)=>{
+  const couponUpdateHandler = asyncHandler(async (req, res) => {
     const couponId = req.params.id;
     const updatedInfo = req.body;
-    const couponUpdates = await discountService.updateCouponServicebyId(couponId,updatedInfo)
-    res.status(200).json({
-        message: "coupon updated successfully",
-        couponUpdates
-    });
 
-})
+    const { success, data, error } = await discountService.updateCouponServicebyId(couponId, updatedInfo);
+
+    if (success) {
+        res.status(200).json({
+            message: "Coupon updated successfully",
+            couponUpdates: data
+        });
+    } else {
+        res.status(400).json({
+            message: "Failed to update coupon",
+            error
+        });
+    }
+});
 
 
-const getAllCouponHandler = asyncHandler(async(req,res)=>{
-    const allCoupon = await discountService.getAllCouponService()
-    res.status(200).json({
-        allCoupon
-    });
-})
+const getAllCouponHandler = asyncHandler(async (req, res) => {
+    const { success, data, error } = await discountService.getAllCouponService();
 
+    if (success) {
+        res.status(200).json({
+            message: "Coupons retrieved successfully",
+            coupons: data
+        });
+    } else {
+        res.status(500).json({
+            message: error
+        });
+    }
+});
 const getAllCouponByCategoryHandler = asyncHandler(async(req,res)=>{
-    const categoryId = req.params.userId;
-    const allCoupon = await discountService.getAllCoupoByCategoryService(categoryId)
-    res.status(200).json({
-        allCoupon
-    });
+    const categoryId = req.params.categoryId;
+    const { success, data, error } = await discountService.getAllCoupoByCategoryService(categoryId)
+    if (success) {
+        res.status(200).json({
+            message: "Coupons retrieved successfully",
+            coupons: data
+        });
+    } else {
+        res.status(500).json({
+            message: error
+        });
+    }
 })
 
 const deleteCouponByIdHandler = asyncHandler(async (req, res) => {
     const couponId = req.params.id;
-    const deletedCoupon = await discountService.deleteCouponByIdService(couponId);
-    if (deletedCoupon) {
-        res.status(200).json({ message: 'Coupon deleted successfully' });
-    } else {
-        res.status(404).json({ message: 'Coupon not found' });
+    const { success, data, error } = await discountService.deleteCouponByIdService(couponId);
+    if (success) {
+        res.status(200).json({ message: 'Coupon deleted successfully',data :data});
+    } else  {
+        res.status(500).json({
+            message: error
+        });
     }
 });
 
 const getCouponByCodeHandler = asyncHandler(async (req, res) => {
     const couponCode = req.params.code;
-    const coupon = await discountService.getCouponByCodeService(couponCode);
-    if (coupon) {
-        res.status(200).json({ coupon });
+    const { success, data , error }  = await discountService.getCouponByCodeService(couponCode);
+    if (success) {
+        res.status(200).json({ data });
     } else {
-        res.status(404).json({ message: 'Coupon not found' });
+        res.status(404).json({ message: error });
     }
 });
 
@@ -98,7 +128,7 @@ const getCouponByTypeHandler = asyncHandler(async (req, res) => {
 router.post('/createCoupon',couponGenerateHandler);
 router.put('/updateCoupon/:id',couponUpdateHandler);
 router.get('/getAllCoupon',getAllCouponHandler);
-router.get('/getAllCouponByCat/:userId',getAllCouponByCategoryHandler);
+router.get('/getAllCouponByCat/:categoryId',getAllCouponByCategoryHandler);
 router.delete('/deleteCouponById/:id', deleteCouponByIdHandler);
 router.get('/getCouponByCode/:code', getCouponByCodeHandler);
 router.get('/getDsicountByCode/:couponId/:userId', getDiscountByCouponHandler);
