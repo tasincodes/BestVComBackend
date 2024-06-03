@@ -74,9 +74,26 @@ const deleteCategoryHandler=asyncHandler(async(req,res)=>{
 
 
 
+
+const getSubcategoriesHandler = asyncHandler(async(req,res)=>{
+    const { parentCategory } = req.params;
+    
+        console.log('Received parentCategory:', parentCategory); // Debugging
+        const subcategories = await categoryService.getSubcategories(parentCategory);
+        res.status(200).json({
+            message: 'Get All Sub Categories Data!',
+            subcategories
+        });
+    
+})
+
+
+
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
 router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
 router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCategoriesHandler);
 router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
 router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
+router.get('/:parentCategory',getSubcategoriesHandler);
+
 module.exports = router;

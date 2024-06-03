@@ -60,10 +60,24 @@ const deleteCategoryById = async(id)=>{
 
 
 
+const getSubcategories = async (parentCategoryId) => {
+    try {
+        console.log('Querying subcategories for parentCategory:', parentCategoryId); // Debugging
+        const subcategories = await Category.find({ parentCategory: parentCategoryId });
+        console.log('Subcategories found:', subcategories); // Debugging
+        return subcategories;
+    } catch (error) {
+        console.error('Error while fetching subcategories:', error); // Debugging
+        throw new Error('Error while fetching subcategories');
+    }
+};
+
+
 module.exports ={
     addCategory,
     addSubcategory,
     getAllCategory,
     updateCategoryById,
-    deleteCategoryById
+    deleteCategoryById,
+    getSubcategories
 }
