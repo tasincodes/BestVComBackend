@@ -47,7 +47,6 @@ const addSubcategory = async (subcategoryData) => {
 
 //     return result;
 // }
-
 const getAllCategory = async () => {
   const allCategories = await Category.find();
   const allProducts = await productModel.find();
@@ -58,6 +57,7 @@ const getAllCategory = async () => {
       categoryMap[category._id] = category.toObject();
       categoryMap[category._id].subCategories = [];
       categoryMap[category._id].productCount = 0; // Initialize product count
+      categoryMap[category._id].slug = generateSlug(category.categoryName); // Add slug
   });
 
   // Count products for each category
@@ -81,6 +81,10 @@ const getAllCategory = async () => {
 
   return result;
 }
+
+const generateSlug = (name) => {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+};
 
 
 // update category by ID
@@ -122,12 +126,15 @@ const getSubcategories = async (parentCategoryId) => {
 const getCategoryById = async(categoryId)=>{
   try {
     const category = await Category.findById(categoryId);
+    if (category) {
     return { success: true, data: category };
-} catch (error) {
+  }
+ }
+ catch (error) {
     console.error('Error in getting category by id:', error.message);
     return { success: false, error: 'Failed to retrieve category' };
-}
-}
+}}
+
 
 
 
