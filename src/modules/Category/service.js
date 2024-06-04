@@ -1,6 +1,6 @@
 const Category = require("../Category/model");
 const { BadRequest } = require("../../utility/errors");
-
+const productModel = require("../Products/model");
 // create Category
 const addCategory = async (categoryData) => {
   const newCategory = await Category.create(categoryData);
@@ -22,30 +22,70 @@ const addSubcategory = async (subcategoryData) => {
 
 // getAll Categories with all associate subcategories
 
+// const getAllCategory = async () => {
+//     const allCategories = await Category.find();
+//     const categoryMap = {};
+    
+
+//     // Create a map of all categories by their _id and initialize subCategories array
+//     allCategories.forEach(category => {
+//         categoryMap[category._id] = category.toObject();
+//         categoryMap[category._id].subCategories = [];
+//     });
+
+//     // Populate subCategories for each category
+//     allCategories.forEach(category => {
+//         if (category.parentCategory) {
+//             if (categoryMap[category.parentCategory]) {
+//                 categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
+//             }
+//         }
+//     });
+
+//     const rootCategories = allCategories.filter(category => !category.parentCategory);
+//     const result = rootCategories.map(category => categoryMap[category._id]);
+
+//     return result;
+// }
 const getAllCategory = async () => {
-    const allCategories = await Category.find();
-    const categoryMap = {};
+  const allCategories = await Category.find();
+  const allProducts = await productModel.find();
+  const categoryMap = {};
 
-    // Create a map of all categories by their _id and initialize subCategories array
-    allCategories.forEach(category => {
-        categoryMap[category._id] = category.toObject();
-        categoryMap[category._id].subCategories = [];
-    });
+  // Create a map of all categories by their _id and initialize subCategories array
+  allCategories.forEach(category => {
+      categoryMap[category._id] = category.toObject();
+      categoryMap[category._id].subCategories = [];
+      categoryMap[category._id].productCount = 0; // Initialize product count
+      categoryMap[category._id].slug = generateSlug(category.categoryName); // Add slug
+  });
 
-    // Populate subCategories for each category
-    allCategories.forEach(category => {
-        if (category.parentCategory) {
-            if (categoryMap[category.parentCategory]) {
-                categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
-            }
-        }
-    });
+  // Count products for each category
+  allProducts.forEach(product => {
+      if (categoryMap[product.categoryId]) {
+          categoryMap[product.categoryId].productCount++;
+      }
+  });
 
-    const rootCategories = allCategories.filter(category => !category.parentCategory);
-    const result = rootCategories.map(category => categoryMap[category._id]);
+  // Populate subCategories for each category
+  allCategories.forEach(category => {
+      if (category.parentCategory) {
+          if (categoryMap[category.parentCategory]) {
+              categoryMap[category.parentCategory].subCategories.push(categoryMap[category._id]);
+          }
+      }
+  });
 
-    return result;
+  const rootCategories = allCategories.filter(category => !category.parentCategory);
+  const result = rootCategories.map(category => categoryMap[category._id]);
+
+  return result;
 }
+
+const generateSlug = (name) => {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+};
+
 
 // update category by ID
 
@@ -61,13 +101,13 @@ const updateCategoryById = async (id, value) => {
 
 // delete category By ID
 
-const deleteCategoryById = async (id) => {
-  const category = await Category.findOneAndDelete({ _id: id });
-  if (!category) {
-    throw new BadRequest("Could not Delete category Behenchodh!");
-  }
-  return category;
-};
+const deleteCategoryById = async(id)=>{
+    const category = await Category.findOneAndDelete({_id:id});
+    if(!category){
+        throw new BadRequest('Could not Delete category Behenchodh!')
+    }
+    return category;
+}
 
 
 
@@ -83,6 +123,31 @@ const getSubcategories = async (parentCategoryId) => {
     }
 };
 
+const getCategoryById = async (categoryId) => {
+  try {
+    const category = await Category.findById(categoryId).lean();
+    if (category) {
+        const allProducts = await productModel.find({ categoryId: categoryId });
+        const productCount = allProducts.length;
+
+        const categoryWithProductCount = {
+            ...category,
+            productCount: productCount,
+            slug: generateSlug(category.categoryName) 
+        };
+
+        return { success: true, data: categoryWithProductCount };
+    } else {
+        return { success: false, error: 'Category not found' };
+    }
+  } catch (error) {
+    console.error('Error in getting category by id:', error.message);
+    return { success: false, error: 'Failed to retrieve category' };
+  }
+};
+
+
+
 
 module.exports ={
     addCategory,
@@ -90,5 +155,6 @@ module.exports ={
     getAllCategory,
     updateCategoryById,
     deleteCategoryById,
-    getSubcategories
+    getSubcategories,
+    getCategoryById
 }

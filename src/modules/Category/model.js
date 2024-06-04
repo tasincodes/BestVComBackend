@@ -24,6 +24,14 @@ const CategorySchema = new mongoose.Schema({
         type:[String]
         
 
+    },
+    title:{
+        type:String,
+        max:[5000,"product descriptiopn should be under 100 characters"]
+    },
+    metaDescription:{
+        type:String,
+        max:[5000,"product descriptiopn should be under 100 characters"]
     }
 
 });
