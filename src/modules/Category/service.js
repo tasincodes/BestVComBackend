@@ -123,18 +123,28 @@ const getSubcategories = async (parentCategoryId) => {
     }
 };
 
-const getCategoryById = async(categoryId)=>{
+const getCategoryById = async (categoryId) => {
   try {
-    const category = await Category.findById(categoryId);
+    const category = await Category.findById(categoryId).lean();
     if (category) {
-    return { success: true, data: category };
-  }
- }
- catch (error) {
+        const allProducts = await productModel.find({ categoryId: categoryId });
+        const productCount = allProducts.length;
+
+        const categoryWithProductCount = {
+            ...category,
+            productCount: productCount,
+            slug: generateSlug(category.categoryName) 
+        };
+
+        return { success: true, data: categoryWithProductCount };
+    } else {
+        return { success: false, error: 'Category not found' };
+    }
+  } catch (error) {
     console.error('Error in getting category by id:', error.message);
     return { success: false, error: 'Failed to retrieve category' };
-}}
-
+  }
+};
 
 
 
