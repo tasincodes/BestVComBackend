@@ -25,20 +25,6 @@ const createCategoryHandler = asyncHandler(async (req, res) => {
 });
 
 
-
-
-
-
-//create Subcategory
-const createSubCategoryHandler = asyncHandler(async (req, res) =>{
-    const newSubcategory = await categoryService.addSubcategory(req.body);
-    res.status(200).json({
-        message:"Subcategory added successfully added",
-        newSubcategory
-    })
-});
-
-
 // getAllSubcatgories
 
 const getAllCategoriesHandler = asyncHandler(async (req, res) => {
@@ -103,7 +89,7 @@ const getCategoryByIdHandler = asyncHandler(async (req, res) => {
 
 
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
-router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
+// router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
 router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCategoriesHandler);
 router.put('/updateCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
 router.delete('/deleteCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
