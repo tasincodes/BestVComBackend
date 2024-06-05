@@ -105,8 +105,8 @@ const getCategoryByIdHandler = asyncHandler(async (req, res) => {
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
 router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
 router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCategoriesHandler);
-router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
-router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
+router.put('/updateCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
+router.delete('/deleteCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
 router.get('/:parentCategory',getSubcategoriesHandler);
 router.get('/getCategoryById/:id',getCategoryByIdHandler);
 
