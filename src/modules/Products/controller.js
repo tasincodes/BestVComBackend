@@ -67,9 +67,9 @@ const getProductByIdHandler = asyncHandler(async(req,res)=>{
 
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);
-router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
-router.get('/getAllProds',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllProductsHandler)
-router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
+router.put('/updateProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
+router.get('/getAllProducts',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllProductsHandler)
+router.delete('/deleteProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
 router.get('/getProductById/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getProductByIdHandler);
 
 module.exports = router;
