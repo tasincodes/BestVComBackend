@@ -72,6 +72,16 @@ async function generateProductCode(Product) {
   }
   
 
+  const getProductByIdService = async(id)=>{
+    try {
+        const product = await Product.findById({_id:id}) ;
+        return {success:true, data :product };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: 'Failed to retreive products by code' };
+    }
+  }
+
 
 
 
@@ -81,5 +91,6 @@ module.exports = {
     addProduct,
     updateProductById,
     getAllProducts,
-    deleteProductById
+    deleteProductById,
+    getProductByIdService
 }

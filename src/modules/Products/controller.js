@@ -54,11 +54,22 @@ const deleteProductHandler=asyncHandler(async(req,res)=>{
         deleteProduct
     })
 })
+const getProductByIdHandler = asyncHandler(async(req,res)=>{
+    const {id}=req.params;
+    const{success,data,error}= await productService.getProductByIdService(id);
+    if(success){
+        res.status(200).json({message:"Product found success",data:data})
+    }
+    else{
+        res.status(500).json({message:"fetchin product error",error:error})
+    }
+})
 
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);
 router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
 router.get('/getAllProds',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllProductsHandler)
 router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
+router.get('/getProductById/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getProductByIdHandler);
 
 module.exports = router;
