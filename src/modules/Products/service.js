@@ -38,13 +38,16 @@ const getAllProducts= async()=>{
 
 
 
-const deleteProductById = async(id)=>{
-    const products = await Product.findOneAndDelete({_id:id});
-    if(!products){
-        throw new BadRequest('Could not Delete Products Behenchodh!')
+const deleteProductById = async (id) => {
+    const product = await Product.findById(id);
+    if (!product) {
+      throw new BadRequest('Could not delete product');
     }
-    return products;
-}
+    product.isTrash = true; // Use the assignment operator (=) instead of comparison operator (==)
+    await product.save();
+    return product;
+  }
+  
 
 // generate Product Codes
 async function generateProductCode(Product) {

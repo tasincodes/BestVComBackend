@@ -20,6 +20,9 @@ const ProductSchema = new mongoose.Schema({
   },
   productGallery:[String],
   productVideos: [String],
+  isTrash:{
+    type:Boolean
+  },
   productDescription: {
     type: String,
     maxlength: 3000
