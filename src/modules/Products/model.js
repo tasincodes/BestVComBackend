@@ -15,6 +15,7 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     
   },
+  //uhfwnfiuhndcf
   productImage: {
     type :String
   },
@@ -26,7 +27,7 @@ enum:['Published','Draft']
 },
 date:{
   type: Date,
-  default: Date.now
+  default: Date.now//date added
 },
   productDescription: {
     type: String,
@@ -70,7 +71,7 @@ date:{
     stockManagement: Boolean,
     stockStatus: {
       type: String,
-      enum: ['In Stock', 'Out of stock', 'On Backorder']
+      enum: ['In Stock', 'Out of Stock', 'On Backorder']
     },
     soldIndividually: Boolean,
     inventoryStatus:{

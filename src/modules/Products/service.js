@@ -34,6 +34,7 @@ const updateProductById =async(id,value)=>{
 const getAllProducts= async()=>{
     const products= await Product.find();
     return products;
+    console.log("kire zahed")
 }
 
 
