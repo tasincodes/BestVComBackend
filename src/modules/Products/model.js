@@ -20,9 +20,14 @@ const ProductSchema = new mongoose.Schema({
   },
   productGallery:[String],
   productVideos: [String],
-  isTrash:{
-    type:Boolean
-  },
+productStatus:{
+type:String,
+enum:['Published','Draft']
+},
+date:{
+  type: Date,
+  default: Date.now
+},
   productDescription: {
     type: String,
     maxlength: 3000
@@ -56,8 +61,6 @@ const ProductSchema = new mongoose.Schema({
     },
     
     salePrice: Number,
-    salesStart: Date,
-    salesEnd: Date,
     taxStatus: String,
     taxClass: String,
   
