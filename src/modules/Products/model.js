@@ -59,7 +59,7 @@ const ProductSchema = new mongoose.Schema({
     taxClass: String,
     inventoryStatus:{
       type: String,
-      enum: ['onlyOnline', 'onlyOffline', 'online&offline']
+      enum: ['Only Online', 'Only Offline', 'Online & Offline']
     }
   },
   inventory: {
@@ -67,7 +67,7 @@ const ProductSchema = new mongoose.Schema({
     stockManagement: Boolean,
     stockStatus: {
       type: String,
-      enum: ['In stock', 'Out of stock', 'On backorder']
+      enum: ['In Stock', 'Out of stock', 'On Backorder']
     },
     soldIndividually: Boolean
   },
