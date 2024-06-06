@@ -15,7 +15,10 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     
   },
-  productImages: [String],
+  productImage: {
+    type :String
+  },
+  productGallery:[String],
   productVideos: [String],
   productDescription: {
     type: String,
@@ -53,7 +56,11 @@ const ProductSchema = new mongoose.Schema({
     salesStart: Date,
     salesEnd: Date,
     taxStatus: String,
-    taxClass: String
+    taxClass: String,
+    inventoryStatus:{
+      type: String,
+      enum: ['onlyOnline', 'onlyOffline', 'online&offline']
+    }
   },
   inventory: {
     sku: String,
