@@ -4,54 +4,77 @@ const ProductSchema = new mongoose.Schema({
   categoryId: {
     type: mongoose.Types.ObjectId,
     required: true,
-    ref: 'category'
+    ref: 'Category' // Assuming  category model is named 'Category'
   },
   productName: {
     type: String,
-    maxlength: 300, 
+    maxlength: 300,
     required: true
+  }, 
+  productCode: {
+    type: String,
+    
   },
-  productImages: {
-    type: [String], 
-  },
-  productVideos: {
-    type: [String], 
-  },
+  productImages: [String],
+  productVideos: [String],
   productDescription: {
     type: String,
-    maxlength: 3000, 
+    maxlength: 3000
   },
-  productShortDescription: {
-    type: String,
-    maxlength: 2000, 
+  seo: {
+    productTitle: {
+      type: String,
+      maxlength: 100
+    },
+    prodDescription: {
+      type: String,
+      maxlength: 100
+    },
+    productShortDescription: {
+      type: String,
+      maxlength: 2000
+    },
+    productTags: {
+      type: String,
+      maxlength: 200
+    },
+    productNotes: {
+      type: String,
+      maxlength: 1000
+    }
   },
-  productTags: {
-    type: String,
-    maxlength: 200, 
-  },
-  general: { 
+  general: {
     regularPrice: {
       type: Number,
       required: true
     },
-    salePrice: {
-      type: Number
-    },
-    salesStart: {
-      type: Date // Store start date for sales
-    },
-    salesEnd: {
-      type: Date 
-    },
-    taxStatus: {
-      type: String, 
-    },
-    taxClass: {
-      type: String // Define tax class categories
-    }
+    
+    salePrice: Number,
+    salesStart: Date,
+    salesEnd: Date,
+    taxStatus: String,
+    taxClass: String
   },
-
-
+  inventory: {
+    sku: String,
+    stockManagement: Boolean,
+    stockStatus: {
+      type: String,
+      enum: ['In stock', 'Out of stock', 'On backorder']
+    },
+    soldIndividually: Boolean
+  },
+  shipping: {
+    productDimensions: {
+      height: Number,
+      width: Number,
+      length: Number
+    },
+    weight: Number
+  }
 });
 
-module.exports = mongoose.model('Product', ProductSchema);
+
+const ProductModel=mongoose.model('Product', ProductSchema);
+
+module.exports = ProductModel;
