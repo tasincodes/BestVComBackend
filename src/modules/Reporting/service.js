@@ -280,7 +280,7 @@ const { BadRequest } = require("../../utility/errors");
     }
   };
   
-  console.log("kire zahed")
+
 
   
 
