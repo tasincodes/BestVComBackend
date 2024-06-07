@@ -34,17 +34,19 @@ const updateProductById =async(id,value)=>{
 const getAllProducts= async()=>{
     const products= await Product.find();
     return products;
+    console.log("kire zahed")
 }
 
 
 
-const deleteProductById = async(id)=>{
-    const products = await Product.findOneAndDelete({_id:id});
-    if(!products){
-        throw new BadRequest('Could not Delete Products Behenchodh!')
+const deleteProductById = async (id) => {
+    const product = await Product.findByIdAndDelete({_id:id});
+    if (!product) {
+      throw new BadRequest('Could not delete product');
     }
-    return products;
-}
+    return product;
+  }
+  
 
 // generate Product Codes
 async function generateProductCode(Product) {
@@ -72,6 +74,16 @@ async function generateProductCode(Product) {
   }
   
 
+  const getProductByIdService = async(id)=>{
+    try {
+        const product = await Product.findById({_id:id}) ;
+        return {success:true, data :product };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: 'Failed to retreive products by code' };
+    }
+  }
+
 
 
 
@@ -81,5 +93,6 @@ module.exports = {
     addProduct,
     updateProductById,
     getAllProducts,
-    deleteProductById
+    deleteProductById,
+    getProductByIdService
 }

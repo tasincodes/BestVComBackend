@@ -12,9 +12,10 @@ module.exports = (req, res, next) => {
 
             let email = decoded.email;
             let role = decoded.role;
-
+            let userId = decoded.userId
             req.email = email; // Set email directly on req
             req.role = role; // Set role directly on req
+            req.userId = userId
             next();
         }
     });

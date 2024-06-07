@@ -25,27 +25,13 @@ const createCategoryHandler = asyncHandler(async (req, res) => {
 });
 
 
-
-
-
-
-//create Subcategory
-const createSubCategoryHandler = asyncHandler(async (req, res) =>{
-    const newSubcategory = await categoryService.addSubcategory(req.body);
-    res.status(200).json({
-        message:"Subcategory added successfully added",
-        newSubcategory
-    })
-});
-
-
 // getAllSubcatgories
 
 const getAllCategoriesHandler = asyncHandler(async (req, res) => {
-    const getAllCategories = await categoryService.getAllCategory();
+    const allCategories = await categoryService.getAllCategory();
     res.status(200).json({
-        message: "GetAll Categories Fetched Successfully !",
-        getAllCategories
+        message: "GetAll Categories Fetched Successfully!",
+        categories: allCategories
     });
 });
 
@@ -74,9 +60,41 @@ const deleteCategoryHandler=asyncHandler(async(req,res)=>{
 
 
 
+
+const getSubcategoriesHandler = asyncHandler(async(req,res)=>{
+    const { parentCategory } = req.params;
+    
+        console.log('Received parentCategory:', parentCategory); // Debugging
+        const subcategories = await categoryService.getSubcategories(parentCategory);
+        res.status(200).json({
+            message: 'Get All Sub Categories Data!',
+            subcategories
+        });
+    
+})
+const getCategoryByIdHandler = asyncHandler(async (req, res) => {
+    const categoryId = req.params.id; 
+    const { success, data, error } = await categoryService.getCategoryById(categoryId);
+    if (success) {
+        res.status(200).json({
+            message: "Category by id successful",
+            category: data
+        });
+    } else {
+        res.status(400).json({
+            error
+        });
+    }
+});
+
+
+
 router.post('/addCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createCategoryHandler);
-router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
+// router.post('/addSubCategory',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),createSubCategoryHandler);
 router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCategoriesHandler);
-router.put('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
-router.delete('/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
+router.put('/updateCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
+router.delete('/deleteCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
+router.get('/:parentCategory',getSubcategoriesHandler);
+router.get('/getCategoryById/:id',getCategoryByIdHandler);
+
 module.exports = router;

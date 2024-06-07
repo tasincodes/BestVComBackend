@@ -195,7 +195,7 @@ const { BadRequest } = require("../../utility/errors");
           }
         }
       ]);
-  
+  ///hufhish
       // Calculate total days in the period
       const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
   
@@ -280,7 +280,7 @@ const { BadRequest } = require("../../utility/errors");
     }
   };
   
-
+  console.log("kire zahed")
 
   
 

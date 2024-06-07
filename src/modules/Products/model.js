@@ -15,8 +15,20 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     
   },
-  productImages: [String],
+  //uhfwnfiuhndcf
+  productImage: {
+    type :String
+  },
+  productGallery:[String],
   productVideos: [String],
+productStatus:{
+type:String,
+enum:['Published','Draft']
+},
+date:{
+  type: Date,
+  default: Date.now//date added
+},
   productDescription: {
     type: String,
     maxlength: 3000
@@ -50,19 +62,22 @@ const ProductSchema = new mongoose.Schema({
     },
     
     salePrice: Number,
-    salesStart: Date,
-    salesEnd: Date,
     taxStatus: String,
-    taxClass: String
+    taxClass: String,
+  
   },
   inventory: {
     sku: String,
     stockManagement: Boolean,
     stockStatus: {
       type: String,
-      enum: ['In stock', 'Out of stock', 'On backorder']
+      enum: ['In Stock', 'Out of Stock', 'On Backorder']
     },
-    soldIndividually: Boolean
+    soldIndividually: Boolean,
+    inventoryStatus:{
+      type: String,
+      enum: ['Only Online', 'Only Offline', 'Online & Offline']
+    }
   },
   shipping: {
     productDimensions: {
