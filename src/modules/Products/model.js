@@ -88,7 +88,10 @@ date:{
     soldIndividually: Boolean,
 
 
-   
+    inventoryStatus:{
+      type: String,
+      enum: ['Only Online', 'Only Offline', 'Online & Offline']
+    }
 
   },
 
