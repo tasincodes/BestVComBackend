@@ -100,7 +100,7 @@ const customerSignInService = async (email, password) => {
     }
 
     // Validate password using bcrypt.compare
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(password, user.password);
 
     // Check password match
     if (!isMatch) {
