@@ -29,27 +29,36 @@ date:{
   type: Date,
   default: Date.now//date added
 },
+
   productDescription: {
     type: String,
     maxlength: 3000
   },
+
   seo: {
     productTitle: {
       type: String,
       maxlength: 100
     },
+
     prodDescription: {
       type: String,
       maxlength: 100
     },
+
     productShortDescription: {
       type: String,
       maxlength: 2000
     },
-    productTags: {
-      type: String,
-      maxlength: 200
-    },
+
+    // productTags: {
+    //   type: String,
+    //   maxlength: 200
+    // },
+    productTags:[
+
+    ],
+
     productNotes: {
       type: String,
       maxlength: 1000
@@ -66,6 +75,7 @@ date:{
     taxClass: String,
   
   },
+
   inventory: {
     sku: String,
     stockManagement: Boolean,
@@ -73,12 +83,14 @@ date:{
       type: String,
       enum: ['In Stock', 'Out of Stock', 'On Backorder']
     },
+
     soldIndividually: Boolean,
     inventoryStatus:{
       type: String,
       enum: ['Only Online', 'Only Offline', 'Online & Offline']
     }
   },
+
   shipping: {
     productDimensions: {
       height: Number,
