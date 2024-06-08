@@ -77,6 +77,22 @@ const updateOrderStatusHandler = async (req, res, next) => {
 };
 
 
+const getOrderByIdHandler =asyncHandler(async(req,res)=>{
+  const {id}= req.params;
+  const {success,order,error}= await orderService.getOrderById(id);
+  if (success) {
+    res.status(200).json({
+        message: "order fetched success",
+        order: order
+    });
+} else {
+    res.status(400).json({
+        message: "Failed to fetch order",
+        error
+    });
+}
+})
+
 
 
 
@@ -85,8 +101,9 @@ const updateOrderStatusHandler = async (req, res, next) => {
 router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
-router.delete('/:id',deleteOrder);
-router.put('/:id',updateOrderStatusHandler)
+router.delete('/deleteOrder/:id',deleteOrder);
+router.put('/updateOrderStatusHandler/:id',updateOrderStatusHandler);
+router.get('/getOrderById/:id',getOrderByIdHandler);
 
 
 
