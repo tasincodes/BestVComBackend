@@ -22,6 +22,7 @@ const ProductSchema = new mongoose.Schema({
   productGallery:[String],
   productVideos: [String],
 productStatus:{
+  
 type:String,
 enum:['Published','Draft']
 },
