@@ -21,11 +21,15 @@ const ProductSchema = new mongoose.Schema({
   },
   productGallery:[String],
   productVideos: [String],
+
+
 productStatus:{
   
 type:String,
 enum:['Published','Draft']
 },
+
+
 date:{
   type: Date,
   default: Date.now//date added
@@ -46,13 +50,6 @@ date:{
       type: String,
       maxlength: 100
     },
-
-   
-
-    // productTags: {
-    //   type: String,
-    //   maxlength: 200
-    // },
 
     productTags:[
 
@@ -82,16 +79,17 @@ date:{
   inventory: {
     sku: String,
     stockManagement: Boolean,
+
     stockStatus: {
       type: String,
       enum: ['In Stock', 'Out of Stock', 'On Backorder']
     },
 
     soldIndividually: Boolean,
-    inventoryStatus:{
-      type: String,
-      enum: ['Only Online', 'Only Offline', 'Online & Offline']
-    }
+
+
+   
+
   },
 
   shipping: {
