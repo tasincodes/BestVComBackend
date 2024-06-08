@@ -275,7 +275,7 @@ const { BadRequest } = require("../../utility/errors");
         deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
       };
     } catch (error) {
-      console.error('From get sales metrics Error fetching sales metrics:', error);
+      console.error('Sales metrics Error fetching sales metrics:', error);
       throw error;
     }
   };
