@@ -9,6 +9,7 @@ const {
     NoContent,
 }=require('../../utility/errors');
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
+const OrderModel = require("../Order/model");
 
 
 const generateCouponService = async (couponInfo) => {
@@ -214,6 +215,18 @@ const getCouponByTypeService = async (discountType) => {
     }
 }
 
+const getDiscountById = async(id)=>{
+    try{
+        const coupon = await couponModel.findById(id);
+        return {success:true,coupon:coupon};  
+    }
+    catch(error){
+        console.error('Error in getDiscountById:', error.message);
+        return { success: false, error: 'Failed to retrieve discount by id' };
+    }   
+    
+    
+}
 
 
 
@@ -225,5 +238,6 @@ module.exports = {
     deleteCouponByIdService,
     getCouponByCodeService,
     getDiscountByCoupon,
-    getCouponByTypeService
+    getCouponByTypeService,
+    getDiscountById
 }

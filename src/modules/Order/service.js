@@ -1,7 +1,7 @@
 const OrderModel = require('../Order/model');
 const ProductModel = require('../Products/model');
 const CouponModel = require('../Discount/model');
-const { BadRequest,NotFound} = require('../../utility/errors');
+const { BadRequest, NotFound } = require('../../utility/errors');
 
 const { v4: uuidv4 } = require('uuid');
 //zahed bhai er function
@@ -322,9 +322,6 @@ const getOrderById = async (id) => {
     return { success: false, error: error.message };
 
   }
-
-
-
 }
 
 
