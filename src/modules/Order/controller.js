@@ -64,7 +64,6 @@ const updateOrderStatusHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-
     const order = await orderService.updateOrderStatus(id, req.body);
 
     res.status(200).json({
@@ -75,6 +74,9 @@ const updateOrderStatusHandler = async (req, res, next) => {
     next(err, req, res);
   }
 };
+
+
+
 
 
 const getOrderByIdHandler =asyncHandler(async(req,res)=>{
@@ -102,7 +104,7 @@ router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/deleteOrder/:id',deleteOrder);
-router.put('/updateOrderStatusHandler/:id',updateOrderStatusHandler);
+router.put('/:id',updateOrderStatusHandler);
 router.get('/getOrderById/:id',getOrderByIdHandler);
 
 
