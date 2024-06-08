@@ -46,15 +46,13 @@ date:{
       maxlength: 100
     },
 
-    productShortDescription: {
-      type: String,
-      maxlength: 2000
-    },
+   
 
     // productTags: {
     //   type: String,
     //   maxlength: 200
     // },
+
     productTags:[
 
     ],
@@ -63,6 +61,10 @@ date:{
       type: String,
       maxlength: 1000
     }
+  },
+  productShortDescription: {
+    type: String,
+    maxlength: 2000
   },
   general: {
     regularPrice: {
