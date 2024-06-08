@@ -176,6 +176,7 @@ const signinUser = async (email,password) => {
     }
 
  const accessToken = jwt.sign({ user }, 'SecretKey12345', { expiresIn: '3d' });
+
     const sanitizedUser = {
       userId: user._id,
       accessToken,
