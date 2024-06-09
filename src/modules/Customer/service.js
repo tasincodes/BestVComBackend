@@ -3,6 +3,7 @@ const { generateOTP } = require("../../utility/common");
 const { SendEmailUtility } = require("../../utility/email");
 const productModel = require("../Products/model");
 
+
 const {
   BadRequest,
   Unauthorized,
@@ -91,6 +92,7 @@ const expireOTP = async (data) => {
   return;
 };
 
+
 const customerSignInService = async (email, password) => {
   try {
     // Find user by email
@@ -108,7 +110,7 @@ const customerSignInService = async (email, password) => {
     if (!isMatch) {
       throw new BadRequest("Invalid email or password.");
     }
-    // Generate JWT token with user data payload
+    // Generate JWT token with user data payloads
     const accessToken = jwt.sign({ user }, "SecretKey12345", {
       expiresIn: "3d",
     });

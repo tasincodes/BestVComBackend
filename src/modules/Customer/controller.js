@@ -70,7 +70,7 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
     }
   };
 
-  const customerSignInHandler= async (req, res, next) => {
+  const customerSignInHandler = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
     try {
       const user = await customerService.customerSignInService(email, password);
@@ -83,7 +83,7 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
         error: error.message
       });
     }
-  };
+  });
 
 
 
