@@ -131,10 +131,6 @@ const removeWishListHandler = asyncHandler(async(req, res) => {
   });
 })
 
-router.delete('/wishlist/:userId', removeWishListHandler);
-
-
-
 
 
 
