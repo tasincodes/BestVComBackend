@@ -30,9 +30,9 @@ enum:['Published','Draft']
 },
 
 
-date:{
+date: {
   type: Date,
-  default: Date.now//date added
+  default: Date.now // Automatically set the date when the product is added
 },
 
   productDescription: {

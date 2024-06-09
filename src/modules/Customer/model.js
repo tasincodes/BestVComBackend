@@ -45,7 +45,10 @@ const CustomerSchema=new mongoose.Schema({
     },
     isVerified:{type:Boolean},
     refreshToken:[String],
-
+    wishList:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Product'
+    }],
     district:{
         type:String,
         max:[45,"District Should be at least 45 characters"],
