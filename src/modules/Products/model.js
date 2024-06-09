@@ -36,7 +36,7 @@ date: {
 
   productDescription: {
     type: String,
-    maxlength: 3000
+    
   },
 
   seo: {

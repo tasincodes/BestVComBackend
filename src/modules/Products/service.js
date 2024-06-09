@@ -39,6 +39,8 @@ const getAllProducts= async()=>{
 
 
 
+
+
 const deleteProductById = async (id) => {
     const product = await Product.findByIdAndDelete({_id:id});
     if (!product) {
@@ -51,10 +53,9 @@ const deleteProductById = async (id) => {
 // generate Product Codes
 async function generateProductCode(Product) {
     try {
-      // Get the count of existing products
+
       const productCount = await Product.countDocuments();
   
-      // Increment the product count to get the next available product number
       const productNumber = productCount + 1;
   
       // Format the product number with leading zeros
