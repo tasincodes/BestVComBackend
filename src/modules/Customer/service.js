@@ -1,6 +1,7 @@
 const customerModel = require("../Customer/model");
 const { generateOTP } = require("../../utility/common");
 const { SendEmailUtility } = require("../../utility/email");
+
 const {
   BadRequest,
   Unauthorized,
@@ -156,6 +157,58 @@ const resetPass = async (email, newPassword) => {
   }
 };
 
+const addWishListService = async(userId, productIds)=>{
+  const customer = await customerModel.findById(userId);
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+
+  // Ensure productIds is an array
+  productIds = Array.isArray(productIds) ? productIds : [productIds];
+
+  // Add each product ID to the wishlist
+  for (const productId of productIds) {
+    customer.wishList.push(productId);
+  }
+
+  await customer.save();
+  return customer;
+}
+
+const getWishListService = async(userId)=>{
+  const customer = await customerModel.findById(userId).populate('wishList');
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+  return customer.wishList;
+}
+
+// const removeWishListService = async(userId, productId) => {
+//   const customer = await customerModel.findById(userId);
+//   if (!customer) {
+//     throw new Error('Customer not found');
+//   }
+
+//   const index = customer.wishList.indexOf(productId);
+//   if (index !== -1) {
+//     customer.wishList.splice(index, 1);
+//   }
+
+//   await customer.save();
+//   return customer;
+// }
+
+const removeWishListService = async (userId, productIds) => {
+  const customer = await customerModel.findById(userId);
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+
+  customer.wishList = customer.wishList.filter(id => !productIds.includes(id.toString()));
+  await customer.save();
+
+  return customer;
+};
 
 module.exports = {
   customerCreateService,
@@ -165,4 +218,7 @@ module.exports = {
   expireOTP,
   customerSignInService,
   resetPass,
+  addWishListService,
+  getWishListService,
+  removeWishListService
 };
