@@ -95,6 +95,7 @@ router.get('/getAllCat',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]
 router.put('/updateCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateCategoryHandler);
 router.delete('/deleteCategory/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteCategoryHandler);
 router.get('/:parentCategory',getSubcategoriesHandler);
-router.get('/getCategoryById/:id',getCategoryByIdHandler);
+router.get('/getCategoryById/:id',getCategoryByIdHandler);//auth and role must be added
+
 
 module.exports = router;

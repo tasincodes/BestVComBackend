@@ -1,6 +1,7 @@
 const customerModel = require("../Customer/model");
 const { generateOTP } = require("../../utility/common");
 const { SendEmailUtility } = require("../../utility/email");
+const productModel = require("../Products/model");
 
 const {
   BadRequest,
@@ -111,6 +112,7 @@ const customerSignInService = async (email, password) => {
     const accessToken = jwt.sign({ user }, "SecretKey12345", {
       expiresIn: "3d",
     });
+
     // User is authenticated, return sanitized user data (excluding sensitive fields)
     const sanitizedUser = {
       accessToken,
@@ -162,7 +164,13 @@ const addWishListService = async(userId, productIds)=>{
   if (!customer) {
     throw new Error('Customer not found');
   }
+  const products = await productModel.find({
+    _id: { $in: productIds }
+});
 
+if (!products || products.length !== productIds.length) {
+    throw new Error('Products not found');
+}
   // Ensure productIds is an array
   productIds = Array.isArray(productIds) ? productIds : [productIds];
 

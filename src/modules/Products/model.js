@@ -31,7 +31,7 @@ enum:['Published','Draft']
 
 
 date: {
-  type: String 
+  type:String// Automatically set the date when the product is added
 },
 
   productDescription: {
