@@ -203,7 +203,7 @@ const removeWishListService = async (userId, productIds) => {
   if (!customer) {
     throw new Error('Customer not found');
   }
-
+//remove multiple products from wishlist
   customer.wishList = customer.wishList.filter(id => !productIds.includes(id.toString()));
   await customer.save();
 
