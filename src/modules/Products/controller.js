@@ -67,16 +67,22 @@ const getProductByIdHandler = asyncHandler(async(req,res)=>{
     }
 })
 
-const getProductByCategoryIdHandler = asyncHandler(async(req,res)=>{
-    const {categoryId}=req.params;
-    console.log("categoryId",categoryId);
+const getProductByCategoryIdHandler = asyncHandler(async (req, res) => {
+    const { categoryId } = req.params;
+  
     const products = await productService.getProductByCategoryId(categoryId);
+    if (products.length === 0) {
+      return res.status(404).json({
+        message: "No products found for the specified category ID",
+      });
+    }
+  
     res.status(200).json({
-        message:"Get AllProducts Fetched Successfully!",
-        products
-    })
-})
-
+      message: "Get All Products Fetched Successfully!",
+      products
+    });
+  });
+  
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);
 router.put('/updateProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);

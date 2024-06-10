@@ -87,16 +87,21 @@ async function generateProductCode(Product) {
 
   const getProductByCategoryId = async (categoryId) => {
     try {
-      const products = await Product.find({ categoryId });
-      if(!products){
-        throw new Error('Products not found');
+      const products = await Product.find({ categoryId: categoryId });
+  
+      if (!products || products.length === 0) {
+        console.log('No products found for categoryId:', categoryId);
+        return [];
       }
+  
+      console.log('Products found:', products.length);
       return products;
     } catch (error) {
-      console.error(error);
+      console.error('Error in getProductByCategoryId:', error);
       throw new Error('Failed to retrieve products by category');
     }
   }
+  
 
 
 
