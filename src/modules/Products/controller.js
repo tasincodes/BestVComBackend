@@ -46,6 +46,8 @@ const getAllProductsHandler = asyncHandler(async(req,res)=>{
 })
 
 
+
+
 const deleteProductHandler=asyncHandler(async(req,res)=>{
     const {id}=req.params;
     const deleteProduct = await productService.deleteProductById(id,req.body);
