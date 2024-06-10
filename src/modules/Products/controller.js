@@ -67,11 +67,22 @@ const getProductByIdHandler = asyncHandler(async(req,res)=>{
     }
 })
 
+const getProductByCategoryIdHandler = asyncHandler(async(req,res)=>{
+    const {categoryId}=req.params;
+    console.log("categoryId",categoryId);
+    const products = await productService.getProductByCategoryId(categoryId);
+    res.status(200).json({
+        message:"Get AllProducts Fetched Successfully!",
+        products
+    })
+})
+
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);
 router.put('/updateProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
-router.get('/getAllProducts',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllProductsHandler)
+router.get('/getAllProducts',getAllProductsHandler)
 router.delete('/deleteProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
 router.get('/getProductById/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getProductByIdHandler);
+router.get('/getProductByCategoryId/:categoryId',getProductByCategoryIdHandler);
 
 module.exports = router;

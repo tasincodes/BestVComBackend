@@ -237,14 +237,6 @@ const createOrder = async (orderData) => {
 
 
 
-
-
-
-
-
-
-
-
 //updateOrderByOrder ID
 
 const updateOrder = async (orderId, orderData) => {
@@ -256,9 +248,6 @@ const updateOrder = async (orderId, orderData) => {
     throw error;
   }
 };
-
-
-
 
 // delete OrderBy ID
 
@@ -281,9 +270,6 @@ const getAllOrders = async () => {
     throw error;
   }
 };
-
-
-
 
 
 // Update Order Status

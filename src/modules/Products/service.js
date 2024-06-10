@@ -85,6 +85,19 @@ async function generateProductCode(Product) {
     }
   }
 
+  const getProductByCategoryId = async (categoryId) => {
+    try {
+      const products = await Product.find({ categoryId });
+      if(!products){
+        throw new Error('Products not found');
+      }
+      return products;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to retrieve products by category');
+    }
+  }
+
 
 
 
@@ -95,5 +108,6 @@ module.exports = {
     updateProductById,
     getAllProducts,
     deleteProductById,
-    getProductByIdService
+    getProductByIdService,
+    getProductByCategoryId
 }
