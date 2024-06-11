@@ -88,7 +88,7 @@ router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_A
 router.put('/updateProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
 router.get('/getAllProducts',getAllProductsHandler)
 router.delete('/deleteProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
-router.get('/getProductById/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getProductByIdHandler);
+router.get('/getProductById/:id',getProductByIdHandler);
 router.get('/getProductByCategoryId/:categoryId',getProductByCategoryIdHandler);
 
 module.exports = router;
