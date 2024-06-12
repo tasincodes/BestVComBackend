@@ -11,43 +11,43 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     maxlength: 300,
     required: true
-  }, 
-  productSlug:{
+  },
+  productSlug: {
     type: String,
     required: true,
     unique: true
   },
-  productBrand:{
+  productBrand: {
     type: String,
     required: true
   },
   productCode: {
     type: String,
-    
+
   },
   //uhfwnfiuhndcf
   productImage: {
-    type :String
+    type: String
   },
-  productGallery:[String],
+  productGallery: [String],
   productVideos: [String],
 
 
-productStatus:{
-  
-type:String,
-enum:['Published','Draft'],
-required: true
-},
+  productStatus: {
+
+    type: String,
+    enum: ['Published', 'Draft'],
+    required: true
+  },
 
 
-date: {
-  type:String// Automatically set the date when the product is added
-},
+  date: {
+    type: String// Automatically set the date when the product is added
+  },
 
   productDescription: {
     type: String,
-    
+
   },
 
   seo: {
@@ -61,7 +61,7 @@ date: {
       maxlength: 100
     },
 
-    productTags:[
+    productTags: [
 
     ],
 
@@ -79,11 +79,11 @@ date: {
       type: Number,
       required: true
     },
-    
+
     salePrice: Number,
     taxStatus: String,
     taxClass: String,
-  
+
   },
 
   inventory: {
@@ -98,7 +98,7 @@ date: {
     soldIndividually: Boolean,
 
 
-    inventoryStatus:{
+    inventoryStatus: {
       type: String,
       enum: ['Only Online', 'Only Offline', 'Online & Offline']
     }
@@ -116,6 +116,6 @@ date: {
 });
 
 
-const ProductModel=mongoose.model('Product', ProductSchema);
+const ProductModel = mongoose.model('Product', ProductSchema);
 
 module.exports = ProductModel;

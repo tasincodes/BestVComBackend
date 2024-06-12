@@ -1,7 +1,7 @@
 const Category = require("../Category/model");
 const { BadRequest } = require("../../utility/errors");
 const productModel = require("../Products/model");
-const {generateSlug} = require('../../utility/slug');
+const { generateSlug } = require('../../utility/slug');
 
 const addCategory = async (categoryData) => {
   const { parentCategory, ...restOfData } = categoryData;

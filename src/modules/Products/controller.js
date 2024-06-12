@@ -24,23 +24,23 @@ const addProductHandler = asyncHandler(async (req, res) => {
 
 // editProducts
 
-const updateProductByIdHandler = asyncHandler(async(req,res)=>{
-    const {id}=req.params;
-    const editProducts = await productService.updateProductById(id,req.body);
+const updateProductByIdHandler = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const editProducts = await productService.updateProductById(id, req.body);
     res.status(200).json({
-        message:"Product Updated Successfully!",
+        message: "Product Updated Successfully!",
         editProducts
     });
-    
+
 });
 
 
 // getAllProducts
 
-const getAllProductsHandler = asyncHandler(async(req,res)=>{
+const getAllProductsHandler = asyncHandler(async (req, res) => {
     const products = await productService.getAllProducts();
     res.status(200).json({
-        message:"Get AllProducts Fetched Successfully!",
+        message: "Get AllProducts Fetched Successfully!",
         products
     })
 })
@@ -48,47 +48,47 @@ const getAllProductsHandler = asyncHandler(async(req,res)=>{
 
 
 
-const deleteProductHandler=asyncHandler(async(req,res)=>{
-    const {id}=req.params;
-    const deleteProduct = await productService.deleteProductById(id,req.body);
+const deleteProductHandler = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const deleteProduct = await productService.deleteProductById(id, req.body);
     res.status(200).json({
-        message:"Delete Category Successfully!",
+        message: "Delete Category Successfully!",
         deleteProduct
     })
 })
-const getProductByIdHandler = asyncHandler(async(req,res)=>{
-    const {id}=req.params;
-    const{success,data,error}= await productService.getProductByIdService(id);
-    if(success){
-        res.status(200).json({message:"Product found success",data:data})
+const getProductByIdHandler = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { success, data, error } = await productService.getProductByIdService(id);
+    if (success) {
+        res.status(200).json({ message: "Product found success", data: data })
     }
-    else{
-        res.status(500).json({message:"fetchin product error",error:error})
+    else {
+        res.status(500).json({ message: "fetchin product error", error: error })
     }
 })
 
 const getProductByCategoryIdHandler = asyncHandler(async (req, res) => {
     const { categoryId } = req.params;
-  
+
     const products = await productService.getProductByCategoryId(categoryId);
     if (products.length === 0) {
-      return res.status(404).json({
-        message: "No products found for the specified category ID",
-      });
+        return res.status(404).json({
+            message: "No products found for the specified category ID",
+        });
     }
-  
+
     res.status(200).json({
-      message: "Get All Products Fetched Successfully!",
-      products
+        message: "Get All Products Fetched Successfully!",
+        products
     });
-  });
-  
+});
+
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);
-router.put('/updateProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),updateProductByIdHandler);
-router.get('/getAllProducts',getAllProductsHandler)
-router.delete('/deleteProduct/:id',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),deleteProductHandler);
-router.get('/getProductById/:id',getProductByIdHandler);
-router.get('/getProductByCategoryId/:categoryId',getProductByCategoryIdHandler);
+router.put('/updateProduct/:id', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), updateProductByIdHandler);
+router.get('/getAllProducts', getAllProductsHandler)
+router.delete('/deleteProduct/:id', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), deleteProductHandler);
+router.get('/getProductById/:id', getProductByIdHandler);
+router.get('/getProductByCategoryId/:categoryId', getProductByCategoryIdHandler);
 
 module.exports = router;

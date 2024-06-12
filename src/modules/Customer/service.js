@@ -122,6 +122,7 @@ const customerSignInService = async (email, password) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       isActive: true,
+      userId: user._id,
       // isVerified: user.isVerified,
     };
 
