@@ -1,6 +1,7 @@
 const Category = require("../Category/model");
 const { BadRequest } = require("../../utility/errors");
 const productModel = require("../Products/model");
+const {generateSlug} = require('../../utility/slug');
 
 const addCategory = async (categoryData) => {
   const { parentCategory, ...restOfData } = categoryData;
@@ -31,6 +32,7 @@ const getAllCategory = async () => {
 
   // Create a map of all categories by their _id and initialize subCategories array
   allCategories.forEach((category) => {
+
     categoryMap[category._id] = category.toObject();
     categoryMap[category._id].subCategories = [];
     categoryMap[category._id].productCount = 0; // Initialize product count
@@ -63,12 +65,7 @@ const getAllCategory = async () => {
   return result;
 };
 
-const generateSlug = (name) => {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_|_$/g, "");
-};
+
 
 // update category by ID
 

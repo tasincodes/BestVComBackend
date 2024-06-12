@@ -1,4 +1,4 @@
-const { required } = require('joi');
+const { required, types } = require('joi');
 const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
@@ -12,6 +12,15 @@ const ProductSchema = new mongoose.Schema({
     maxlength: 300,
     required: true
   }, 
+  productSlug:{
+    type: String,
+    required: true,
+    unique: true
+  },
+  productBrand:{
+    type: String,
+    required: true
+  },
   productCode: {
     type: String,
     

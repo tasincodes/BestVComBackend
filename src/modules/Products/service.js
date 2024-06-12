@@ -1,12 +1,15 @@
 const Product = require('../Products/model');
 const { BadRequest } = require('../../utility/errors');
+const {generateSlug}= require('../../utility/slug');
 
 
 // addProduct
 
 const addProduct = async (productData) => {
+   const {productName} = productData
+   const productSlug = generateSlug(productName);
     const productCode = await generateProductCode(Product);
-    const newProduct = await Product.create({ ...productData, productCode }); // Combine productData and productCode directly
+    const newProduct = await Product.create({ ...productData, productCode,productSlug }); // Combine productData and productCode directly
     if (!newProduct) {
       throw new BadRequest('Could Not Create Product');
     }
