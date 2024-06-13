@@ -8,7 +8,6 @@ const {
     Unauthorized,
     Forbidden,
 } = require("../../utility/errors");
-const { mode } = require("crypto-js");
 
 
 const addWishlist = async (wishlistData) => {
@@ -60,13 +59,9 @@ const addWishlist = async (wishlistData) => {
 };
 const getWishlistByCustomerId = async (customerId) => {
     try {
-        // Validate input
-        if (!customerId) {
-            throw new BadRequest('Customer Id not provided');
-        }
-
+        
         // Find wishlist by customer ID
-        const wishlist = await wishlistModel.findOne({ customerId }).populate('products');
+        const wishlist = await wishlistModel.findOne().populate('products');
         if (!wishlist) {
             throw new BadRequest('Wishlist not found');
         }
@@ -126,6 +121,8 @@ const removeWishlistByCustomerId = async (customerId) => {
         throw new Error("Failed to remove wishlist: " + error.message);
     }
 };
+
+
 
 module.exports = {
     addWishlist,

@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const roleMiddleware = require('../../middlewares/roleMiddleware');
-const authMiddleware = require('../../middlewares/authMiddleware');
 const { asyncHandler } = require('../../utility/common');
 const wishlistService = require('./service');
 
@@ -14,8 +12,8 @@ const addWishlistHandler = asyncHandler(async (req, res) => {
     });
 });
 const getWishlistByCustomerIdHandler = asyncHandler(async (req, res) => {
-    const { customerId } = req.params;
-    const wishlist = await wishlistService.getWishlistByCustomerId(customerId);
+    
+    const wishlist = await wishlistService.getWishlistByCustomerId();
     res.status(200).json({
         message: "Wishlist retrieved successfully",
         wishlist
@@ -40,7 +38,7 @@ const removeWishlistByCustomerIdHandler = asyncHandler(async (req, res) => {
 
 
 router.post('/addWishList', addWishlistHandler);
-router.get('/getWishlist/:customerId', getWishlistByCustomerIdHandler);
+router.get('/getWishlist', getWishlistByCustomerIdHandler);
 router.delete('/removeItem', removeWishlistItemHandler);
 router.delete('/deleteWishlist/:customerId', removeWishlistByCustomerIdHandler);
 

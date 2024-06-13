@@ -97,41 +97,6 @@ const resetPassHandler = asyncHandler(async(req,res)=>{
 })
   
 
-const addWishListHandler = asyncHandler(async(req,res)=>{
-  const { id } = req.params;
-  const { productId } = req.body;
-  const customer = await customerService.addWishListService(id, productId);
-  res.status(200).json({
-    message: 'Product added to wishlist',
-    customer
-  });
-})
-
-const getWishListHandler = asyncHandler(async(req,res)=>{
-  const { id } = req.params;
-  const wishList = await customerService.getWishListService(id);
-  res.status(200).json({
-    message: 'Wishlist fetched successfully',
-    wishList
-  });
-})
-
-const removeWishListHandler = asyncHandler(async(req, res) => {
-  const { userId } = req.params;
-  const productIds = req.body.productIds;
-
-  if (!Array.isArray(productIds)) {
-    return res.status(400).json({ message: 'productIds must be an array' });
-  }
-
-  const customer = await customerService.removeWishListService(userId, productIds);
-  res.status(200).json({
-    message: 'Products removed from wishlist',
-    customer
-  });
-})
-
-
 
 
 router.post('/createCustomer',createCustomerhandler)
@@ -141,7 +106,4 @@ router.post('/otpverify',otpVerifyHandler)
 router.post('/expiredOtp',expireOTP)
 router.post('/customerSignIn',customerSignInHandler)
 router.put('/resetPassword',resetPassHandler)
-router.post('/addWishList/:id',addWishListHandler);
-router.get('/getWishList/:id',getWishListHandler);
-router.delete('/removeWishlist/:userId', removeWishListHandler);
 module.exports = router;
