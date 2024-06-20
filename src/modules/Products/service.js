@@ -1,6 +1,7 @@
 const Product = require('../Products/model');
 const { BadRequest } = require('../../utility/errors');
 const {generateSlug}= require('../../utility/slug');
+const e = require('express');
 
 
 // addProduct
@@ -105,7 +106,23 @@ async function generateProductCode(Product) {
     }
   }
   
-
+  const getProductByproductStatus = async (productStatus) => {
+    try {
+      const products = await Product.find({ productStatus: productStatus });
+      if (!products || products.length === 0) {
+        console.log('No products found for productStatus:', productStatus);
+        return [];
+      }
+      else{
+        console.log('Products found:', products.length);
+        return products;
+      }
+  }
+    catch (error) {
+      console.error('Error in getProductByproductStatus:', error);
+      throw new Error('Failed to retrieve products by productStatus');
+    }
+  }
 
 
 
@@ -117,5 +134,6 @@ module.exports = {
     getAllProducts,
     deleteProductById,
     getProductByIdService,
-    getProductByCategoryId
+    getProductByCategoryId,
+    getProductByproductStatus
 }
