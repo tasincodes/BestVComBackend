@@ -137,12 +137,15 @@ const createOrder = async (orderData) => {
   try {
     // Generate orderId
     const orderId = uuidv4();
-    const { customer, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
+    const { customer,firstName,lastName, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
     // Validate request body
-    if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+    if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName) {
       throw new Error('Please provide all required fields');
     }
+     // Create userName from firstName and lastName (if provided)
+    const userName = lastName ? `${firstName}${lastName}` : firstName;
+
 
     // Validate product IDs and quantities
     if (!Array.isArray(products) || products.length === 0) {
@@ -206,6 +209,7 @@ const createOrder = async (orderData) => {
       orderId,
       customer,
       orderType,
+      userName,
       deliveryAddress,
       district,
       phoneNumber,

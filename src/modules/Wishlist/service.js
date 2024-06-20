@@ -59,7 +59,7 @@ const addWishlist = async (wishlistData) => {
 };
 const getWishlistByCustomerId = async (customerId) => {
     try {
-        
+
         // Find wishlist by customer ID
         const wishlist = await wishlistModel.findOne().populate('products');
         if (!wishlist) {

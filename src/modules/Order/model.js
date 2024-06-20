@@ -10,6 +10,10 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     ref: 'customer'
   },
+  userName: {
+    type: String,
+    required: true
+  },
   orderType: {
     type: String,
     enum: ["Delivery", "Pickup", "Online"],
