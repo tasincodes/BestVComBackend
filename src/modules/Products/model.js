@@ -33,7 +33,7 @@ required: true
 
 
 date: {
-  type:String// Automatically set the date when the product is added
+  type:String 
 },
 
   productDescription: {

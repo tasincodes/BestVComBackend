@@ -67,6 +67,8 @@ const getProductByIdHandler = asyncHandler(async(req,res)=>{
     }
 })
 
+
+
 const getProductByCategoryIdHandler = asyncHandler(async(req,res)=>{
     const {categoryId}=req.params;
     console.log("categoryId",categoryId);
@@ -76,6 +78,8 @@ const getProductByCategoryIdHandler = asyncHandler(async(req,res)=>{
         products
     })
 })
+
+
 
 
 router.post('/addProduct', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), addProductHandler);

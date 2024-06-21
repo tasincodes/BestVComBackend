@@ -50,6 +50,7 @@ const deleteProductById = async (id) => {
   }
   
 
+  
 // generate Product Codes
 async function generateProductCode(Product) {
     try {
@@ -75,6 +76,8 @@ async function generateProductCode(Product) {
   }
   
 
+
+
   const getProductByIdService = async(id)=>{
     try {
         const product = await Product.findById({_id:id}) ;
@@ -84,6 +87,8 @@ async function generateProductCode(Product) {
         return { success: false, error: 'Failed to retreive products by code' };
     }
   }
+
+
 
   const getProductByCategoryId = async (categoryId) => {
     try {
