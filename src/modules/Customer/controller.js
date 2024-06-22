@@ -26,7 +26,7 @@ const createCustomerhandler = asyncHandler(async (req, res) => {
 const getAllCustomerhandler = asyncHandler(async (req, res) => {
     const customer = await customerService.getAllCustomerService();
     res.status(200).json({
-        message: "customer added successfully",
+        message: "customer get successfully",
         customer
     });
 });
