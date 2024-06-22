@@ -12,9 +12,7 @@ const UserSchema = new mongoose.Schema({
   },
 
   outlet: {
-    type: mongoose.Types.ObjectId,
-    ref: 'outlet',
-    required: false
+    type: String,
   },
 
   firstName: {
