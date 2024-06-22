@@ -67,6 +67,8 @@ const getProductByIdHandler = asyncHandler(async (req, res) => {
     }
 })
 
+
+
 const getProductByCategoryIdHandler = asyncHandler(async (req, res) => {
     const { categoryId } = req.params;
 
