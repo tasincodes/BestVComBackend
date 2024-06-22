@@ -40,17 +40,11 @@ function calculateDiscount(coupon, totalPrice) {
 
 const createOrder = async (orderData) => {
   try {
-<<<<<<< HEAD
-    // Generate orderId
-    const orderId = uuidv4();
-    const { customer,firstName,lastName, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
-=======
     // Generate custom orderId
     const orderId = generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
     const { customer, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
->>>>>>> cc81c66a235a202d8ce7481fbc0bdcd64a2b3148
 
     // Validate request body
     if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName) {
