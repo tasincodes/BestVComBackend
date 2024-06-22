@@ -316,7 +316,21 @@ const getOrderById = async (id) => {
   }
 }
 
-
+const getCustomerHistory = async (customerId) => {
+  try {
+    const orderInfo = await OrderModel.find({ customer: customerId });
+    const totalOrders = orderInfo.length;
+    let totalOrderValue = 0;
+    for (const order of orderInfo) {
+      totalOrderValue += order.totalPrice;
+    }
+    const averageOrderValue = totalOrderValue / totalOrders;
+    return { totalOrders, averageOrderValue };
+  } catch (error) {
+    console.error('Error in getCustomerHistory:', error.message);
+    throw error;
+  }
+}
 
 
 
@@ -330,5 +344,6 @@ module.exports = {
   deleteOrder,
   getAllOrders,
   updateOrderStatus,
-  getOrderById
+  getOrderById,
+  getCustomerHistory
 };

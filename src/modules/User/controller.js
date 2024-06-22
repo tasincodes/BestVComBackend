@@ -58,6 +58,21 @@ const resetPassHandler = asyncHandler(async (req, res) => {
   res.status(200).send("Password reset successfully");
 });
 
+
+
+const updateUserDetailsHandler = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  // const { error } = changeUserDetailsValidate(req.body);
+  // if (error) {
+  //   return res.status(400).json({ error: error.details[0].message });
+  // }
+  const user = await userService.updateUserService(id, req.body);
+  res.status(200).json({
+    message: "User updated successfully",
+    user,
+  })
+});
+
 // router.post('/resetPass',resetPasswordHandler);
 router.get(
   "/allUsers",
@@ -68,5 +83,9 @@ router.get(
 router.post("/resetUser", userResetHandler);
 router.post("/checkOTP", verifyOTPHandler);
 router.post("/setPassword", resetPassHandler);
+router.put(
+  "/updateUserDetails/:id",
+  updateUserDetailsHandler
+);//not tested yet
 
 module.exports = router;

@@ -6,6 +6,7 @@ const { NotFound, BadRequest } = require('../../utility/errors');
 const crypto = require('crypto');
 const { otpMail } = require('../../utility/email');
 const{SendEmailUtility}=require('../../utility/email');
+const { error } = require('console');
 
 
 
@@ -101,12 +102,31 @@ const resetPass = async (email, newPassword) => {
     }
   };
 
+const updateUserService = async (id, data) => {
+    try {
+      if(!data){
+        throw new Error('data is required');
+      }
+      const user = await User.findByIdAndUpdate(id, data,{new:true});
+      if (!user) {
+        throw new NotFound('User not found');
+      }
+      return user;
+    }
+    catch (error) {
+      throw new Error('Failed to update user');
+    }};
+
+
+
+
 
 module.exports = {
 
   getAllUsers,
   userResetLink,
   verifyOTP,
-  resetPass
+  resetPass,
+  updateUserService
  
 };

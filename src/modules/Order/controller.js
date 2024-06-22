@@ -95,11 +95,21 @@ const getOrderByIdHandler =asyncHandler(async(req,res)=>{
 }
 })
 
+const getCustomerHistoryHandler = asyncHandler(async (req, res) => {
+    const { customerId } = req.params;
+    const orders = await orderService.getCustomerHistory(customerId);
+    res.status(200).json({
+        message: "Successfully retrieved customer order information",
+        orders
+    });
+});
 
 
 
 
 
+
+router.get('/customerHistory/:customerId', getCustomerHistoryHandler);
 router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
