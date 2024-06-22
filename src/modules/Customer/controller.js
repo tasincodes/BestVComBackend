@@ -95,10 +95,19 @@ const resetPassHandler = asyncHandler(async(req,res)=>{
   res.status(200).send('Password reset successfully');
 
 })
+
+const updateCustomerHandler = asyncHandler(async(req,res)=>{
+  const {id} = req.params;
+  const customer = await customerService.updateCustomerService(id, req.body);
+  res.status(200).json({
+    message: "Customer Updated Successfully!",
+    customer
+  });
+});
   
 
 
-
+router.put('/updateCustomer/:id',updateCustomerHandler);
 router.post('/createCustomer',createCustomerhandler)
 router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCustomerhandler)
 router.post('/forgetCred',forgetCredentialshandler)

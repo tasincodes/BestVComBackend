@@ -84,8 +84,8 @@ const getProductByCategoryIdHandler = asyncHandler(async (req, res) => {
 });
 
 const getProductByproductStatusHandler = asyncHandler(async (req, res) => {
-    const { productStatus } = req.body;
-    const products = await productService.getProductByproductStatus(productStatus);
+
+    const products = await productService.getProductByproductStatus();
     if (products.length === 0) {
         return res.status(404).json({
             message: "No products found for the specified product status",
