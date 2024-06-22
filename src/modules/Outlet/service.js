@@ -14,6 +14,10 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
     if (managerInfo.email !== outletManagerEmail || managerInfo.phoneNumber !== outletManagerPhone) {
       throw new Error('Invalid outlet manager email or phone number');
     }
+    const existingOutlet = await OutletModel.findOne({ outletName });
+    if (existingOutlet) {
+      throw new Error('Outlet with the same name already exists');
+    }
     const newOutlet = await OutletModel.create({
       outletName,
       outletLocation,
@@ -24,7 +28,7 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
     });
     return newOutlet;
   } catch (error) {
-    console.error('Error in outletCreateService:', error.message);
+    console.error('Error in outletCreateService:', error.message); 
     throw new Error('Outlet creation failed: ' + error.message);
   }
 };
