@@ -4,8 +4,8 @@ const { passEmailForOutlet } = require('../../utility/email');
 
 const outletCreateService = async (outletName, outletLocation, outletImage, branchAdmin) => {
   try {
-    if (!outletName || !outletLocation || !branchAdmin) {
-      throw new Error('Outlet name, location, and branch admin are required');
+    if (!outletName || !outletLocation || !branchAdmin || !outletImage) {
+      throw new Error('Outlet name, location, and branch admin with image are required');
     }
     const newOutlet = await OutletModel.create({
       outletName,

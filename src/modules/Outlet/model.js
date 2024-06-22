@@ -16,13 +16,22 @@ const OutletSchema= new mongoose.Schema({
         type : String,
         required:true
     },
-    branchAdmin: {
+    outletManager: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user' 
+    },
+    outletManagerEmail:{
+        type:String,
+        required:true
+    },
+    outletManagerPhone:{
+        type:String,
+        required:true
+    },
     }
  
 
-},{versionKey:false});
+,{versionKey:false});
 
 const OutletModel=mongoose.model('outlet',OutletSchema);
 

@@ -127,7 +127,7 @@ const getCouponByCodeService = async (couponCode) => {
 }
 
 
-const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userId) => {
+const getDiscountByCoupon = async (couponId, totalPrice, products, userId) => {
     const coupon = await couponModel.findById(couponId);
     if (!coupon) {
         throw new BadRequest("Coupon code is not available");
@@ -162,7 +162,8 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
     }
 
     // Check if requested products are included/excluded based on coupon restrictions
-    const requestedProductData = await productModel.find({ _id: { $in: requestedProducts } });
+    const productIds = products.map(product => product._id);
+    const requestedProductData = await productModel.find({ _id: { $in: productIds } });
     requestedProductData.forEach(product => {
         if (!coupon.usageRestriction.products.includes(product._id.toString())) {
             throw new BadRequest(`Product ${product.productName} is not eligible for this coupon`);
@@ -175,7 +176,6 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
     const categoryIds = [...new Set(requestedProductData.map(product => product.categoryId))];
     const categoryData = await Category.find({ _id: { $in: categoryIds } });
 
-    
     categoryData.forEach(category => {
         if (!coupon.usageRestriction.categories.includes(category._id.toString())) {
             throw new BadRequest(`Category ${category.categoryName} is not eligible for this coupon`);
@@ -197,8 +197,19 @@ const getDiscountByCoupon = async (couponId, totalPrice, requestedProducts,userI
 
     await coupon.save();
 
-    return discount;
+    const discountedPrice = totalPrice - discount;
+    const vat = (coupon.general.vatRate / 100) * discountedPrice;
+    const finalPrice = discountedPrice + vat;
+
+    return {
+        discount,
+        totalPrice,
+        discountedPrice,
+        vat,
+        finalPrice
+    };
 };
+
 
 const getCouponByTypeService = async (discountType) => {
     try {
