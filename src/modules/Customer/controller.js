@@ -9,16 +9,12 @@ const { HEAD_OFFICE,BRANCH_ADMIN } = require('../../config/constants');
 
 const createCustomerhandler = asyncHandler(async (req, res) => {
   const customer = await customerService.customerCreateService(req.body);
-  if (customer) {
+  
     res.status(200).json({
       message: "customer added successfully",
       customer,
     });
-  } else {
-    res.status(400).json({
-      message: "Couldn't add customer successfully",
-    });
-  }
+  
 });
 
 
@@ -58,32 +54,33 @@ const otpVerifyHandler = asyncHandler(async(req,res)=>{
   });
 
 
-  const expireOTP = async (req, res, next) => {
-    try {
-      await customerService.expireOTP(req.body);
+
+
+  const expireOTP = asyncHandler(async(req,res)=>{
+    await customerService.expireOTP(req.body);
   
-      res.status(200).json({
-        message: 'OTP expired',
-      });
-    } catch (err) {
-      next(err, req, res);
-    }
-  };
+    res.status(200).json({
+      message: 'OTP expired',
+
+    });
+  })
+
+
 
   const customerSignInHandler = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
-    try {
+
       const user = await customerService.customerSignInService(email, password);
       res.status(200).json({
         message: 'User signed in successfully.',
         user
       });
-    } catch (error) {
-      res.status(401).json({
-        error: error.message
-      });
-    }
+   
+  
   });
+
+
+
 
 
 
@@ -96,6 +93,9 @@ const resetPassHandler = asyncHandler(async(req,res)=>{
 
 })
 
+
+
+
 const updateCustomerHandler = asyncHandler(async(req,res)=>{
   const {id} = req.params;
   const customer = await customerService.updateCustomerService(id, req.body);
@@ -107,12 +107,17 @@ const updateCustomerHandler = asyncHandler(async(req,res)=>{
   
 
 
-router.put('/updateCustomer/:id',updateCustomerHandler);
-router.post('/createCustomer',createCustomerhandler)
-router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCustomerhandler)
-router.post('/forgetCred',forgetCredentialshandler)
-router.post('/otpverify',otpVerifyHandler)
-router.post('/expiredOtp',expireOTP)
-router.post('/customerSignIn',customerSignInHandler)
-router.put('/resetPassword',resetPassHandler)
+
+
+
+
+
+router.post('/createCustomer',createCustomerhandler);
+router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCustomerhandler);
+router.post('/forgetCred',forgetCredentialshandler);
+router.post('/otpverify',otpVerifyHandler);
+router.post('/expiredOtp',expireOTP);
+router.post('/customerSignIn',customerSignInHandler);
+router.put('/resetPassword',resetPassHandler);
+router.patch('/updateCustomer/:id',updateCustomerHandler);
 module.exports = router;
