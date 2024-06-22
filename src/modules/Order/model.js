@@ -16,24 +16,24 @@ const OrderSchema = new mongoose.Schema({
     required: true
   },
   orderStatus: {
-    type: Number,
-
-//Order Received-->0
-// Order Confirmed (Processing) -->1
-// Order Dispatched --->2
-// Order Delivered-->3
-// Order On-Hold --->4
-// Order Cancelled--->5
-// Order Spammed --->6
-    enum: [0, 1, 2, 3, 4, 5, 6],
-    default: 0
+    type: String,
+    enum: [
+      'Order Received', 
+      'Order Confirmed', 
+      'Order Dispatched',
+      'Order Delivered',
+      'Order On-Hold',
+      'Order Cancelled',
+      'Order Spammed'
+    ],
+    default: "Order Received"
   },
   deliveryAddress: {
     type: String,
     required: true
   },
-  deliveryCharge:{
-    type:Number,
+  deliveryCharge: {
+    type: Number,
   },
   district: {
     type: String,
