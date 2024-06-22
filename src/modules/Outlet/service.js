@@ -18,6 +18,7 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
     if (existingOutlet) {
       throw new Error('Outlet with the same name already exists');
     }
+    
     const newOutlet = await OutletModel.create({
       outletName,
       outletLocation,

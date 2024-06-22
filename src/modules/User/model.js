@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { required } = require('joi');
 const mongoose = require('mongoose');
 
 
@@ -12,7 +13,8 @@ const UserSchema=new mongoose.Schema({
 
    outlet:{
     type:mongoose.Types.ObjectId,
-    ref:'outlet'
+    ref:'outlet',
+    required:false
    },
 
    firstName:{
