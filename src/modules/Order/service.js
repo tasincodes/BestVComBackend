@@ -47,12 +47,9 @@ const createOrder = async (orderData) => {
     const { customer, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
     // Validate request body
-    if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName) {
+    if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
       throw new Error('Please provide all required fields');
     }
-     // Create userName from firstName and lastName (if provided)
-    const userName = lastName ? `${firstName}${lastName}` : firstName;
-
 
     // Validate product IDs and quantities
     if (!Array.isArray(products) || products.length === 0) {
@@ -117,7 +114,6 @@ const createOrder = async (orderData) => {
       orderId,
       customer,
       orderType,
-      userName,
       orderTime,
       deliveryAddress,
       orderStatus: 'Order Received', // Assign the correct status string
@@ -148,6 +144,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
