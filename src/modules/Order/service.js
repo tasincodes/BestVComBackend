@@ -256,17 +256,47 @@ const updateOrderStatus = async (id, updateOrder) => {
 
 const getOrderById = async (id) => {
   try {
-    const orderInfo = await OrderModel.findById({ _id: id });
+    const orderInfo = await OrderModel.findById(id)
+      .populate({
+        path: 'products._id',
+        model: 'Product',
+        select: 'productName productImage general.regularPrice inventory.sku general.salePrice'
+      })
+      .populate({
+        path: 'customer',
+        model: 'customer',
+        select: 'email'
+      });
+
     if (!orderInfo) {
       throw new NotFound("Order not found");
     }
-    return { success: true, order: orderInfo };
+
+    const formattedOrder = {
+      ...orderInfo.toObject(),
+      products: orderInfo.products.map(productItem => {
+        const productDetails = productItem._id;
+        return {
+          _id: productDetails._id,
+          productName: productDetails.productName,
+          productImage: productDetails.productImage,
+          sku: productDetails.inventory.sku,
+          quantity: productItem.quantity,
+          price: productDetails.general.regularPrice,
+          totalPrice: productDetails.general.regularPrice * productItem.quantity,
+          offerPrice: productDetails.general.salePrice
+        };
+      })
+    };
+
+    return { success: true, order: formattedOrder };
   } catch (error) {
     console.error('Error in getOrderById:', error.message);
     return { success: false, error: error.message };
-
   }
-}
+};
+
+
 
 const getCustomerHistory = async (customerId) => {
   try {
