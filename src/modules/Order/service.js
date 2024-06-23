@@ -38,16 +38,23 @@ function calculateDiscount(coupon, totalPrice) {
 }
 
 
+
 const createOrder = async (orderData) => {
   try {
     // Generate custom orderId
     const orderId = generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
-    const { email, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
+    const { email, orderType, deliveryAddress, 
+      deliveryCharge = 0, district, phoneNumber,
+       paymentMethod, transactionId, products, couponId, 
+       vatRate,
+       firstName,
+       lastName
+       } = orderData;
 
     // Validate request body
-    if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+    if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName || !lastName) {
       throw new Error('Please provide all required fields');
     }
 
@@ -57,7 +64,19 @@ const createOrder = async (orderData) => {
       throw new Error('Customer not found');
     }
 
-    // Validate product IDs and quantities
+
+    const customerFirstName = await CustomerModel.findOne({ firstName });
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const customerLastName = await CustomerModel.findOne({ lastName });
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+
+   
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
@@ -119,6 +138,8 @@ const createOrder = async (orderData) => {
     const newOrder = new OrderModel({
       orderId,
       customer: customer._id,
+      firstName,
+      lastName,
       orderType,
       orderTime,
       deliveryAddress,
@@ -142,8 +163,10 @@ const createOrder = async (orderData) => {
       message: "Order created successfully",
       createdOrder: {
         order: savedOrder,
-        customerEmail: customer.email, // Include customer email in the response
-        totalOrderValue: finalTotalPrice // Include final total order value in the response
+        customerEmail: customer.email,
+        customerFirstName:customer.firstName,
+        customerLastName:customer.lastName,
+        totalOrderValue: finalTotalPrice 
       }
     };
   } catch (error) {
@@ -151,6 +174,14 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+
+
+
+
+
+
+
 
 
 
