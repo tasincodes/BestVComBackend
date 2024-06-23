@@ -23,7 +23,7 @@ const { decrypt } = require('dotenv');
 // Admin Register a new user
 
 const UserRegister = async (email, phoneNumber, password, role) => {
-  try {
+
     // Generate OTP
     const otp = generateOTP();
 
@@ -42,10 +42,7 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
     // Return user
     return user;
-  } catch (error) {
-    console.error(error);
-    throw new BadRequest('Failed to register user.');
-  }
+ 
 };
 
 

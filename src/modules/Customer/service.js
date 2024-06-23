@@ -35,6 +35,9 @@ const customerCreateService = async (customerInfo) => {
   }
 };
 
+
+
+
 const getAllCustomerService = async () => {
   try {
     const newCustomer = await customerModel.find();
@@ -44,6 +47,10 @@ const getAllCustomerService = async () => {
     return { customer: null };
   }
 };
+
+
+
+
 
 const forgetInfoService = async (email) => {
   try {
@@ -162,6 +169,9 @@ const resetPass = async (email, newPassword) => {
   }
 };
 
+
+
+
 const updateCustomerService = async (customerId, customerData) => {
   try {
     // Find the customer by customerId and update it with the provided data
@@ -177,6 +187,13 @@ const updateCustomerService = async (customerId, customerData) => {
 };
 
 
+
+
+
+
+
+
+
 module.exports = {
   updateCustomerService,
   customerCreateService,
@@ -186,5 +203,6 @@ module.exports = {
   expireOTP,
   customerSignInService,
   resetPass,
+
 
 };
