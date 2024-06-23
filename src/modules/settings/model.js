@@ -4,18 +4,18 @@ const settingSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        
     },
     tax: {
         priceWithTax: {
             type: String,
             enum: ['inclusive', 'exclusive'],
-            required: true//not sure yet
+            
         },
         calculateTax: {
             type: String,
             enum: ['shopBased', 'anotherOption'],
-            required: true
+            
         },
         rounding: {
             type: Boolean,
@@ -82,11 +82,14 @@ const settingSchema = new mongoose.Schema({
         }
     },
     emails: {
-        orderStatus: {
+        emailStatus: {
             type: String,
             enum: ['newOrder', 'cancelOrder', 'failedOrder', 'orderOnHold', 'processingOrder', 'completedOrder', 'refundedOrder', 'customerInvoice', 'customerNote', 'resetPass', 'newAccount'],
-            required: true
         },
+        emailReciepent:[{
+            type: String,
+
+        }],
         enable: {
             type: Boolean,
             default: false
@@ -100,6 +103,10 @@ const settingSchema = new mongoose.Schema({
                 type: String,
                 default: ''
             }
+        },
+        emailBody: {
+            type: String,
+            default: ''
         },
         emailTemplate: {
             headerImage: {
