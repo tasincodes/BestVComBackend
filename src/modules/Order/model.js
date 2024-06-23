@@ -18,13 +18,13 @@ const OrderSchema = new mongoose.Schema({
   orderStatus: {
     type: String,
     enum: [
-      'Order Received', 
-      'Order Confirmed', 
-      'Order Dispatched',
-      'Order Delivered',
-      'Order On-Hold',
-      'Order Cancelled',
-      'Order Spammed'
+      'Received', 
+      'Confirmed', 
+      'Dispatched',
+      'Delivered',
+      'On-Hold',
+      'Cancelled',
+      'Spammed'
     ],
     default: "Order Received"
   },
