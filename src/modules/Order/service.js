@@ -325,7 +325,7 @@ const getCustomerHistory = async (customerId) => {
 // update OrderNoteStatus
 
 const updateOrderNoteById = async (orderId, orderNote) => {
-  try {
+
     const updatedOrder = await OrderModel.findOneAndUpdate(
       { _id: orderId },
       { $set: { orderNote } },
@@ -337,10 +337,7 @@ const updateOrderNoteById = async (orderId, orderNote) => {
     }
 
     return { success: true, order: updatedOrder };
-  } catch (error) {
-    console.error('Error in updateOrderNoteById:', error.message);
-    return { success: false, error: error.message };
-  }
+  
 };
 
 

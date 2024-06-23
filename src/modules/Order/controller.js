@@ -117,19 +117,13 @@ const updateOrderNoteByIdHandler = asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     const { orderNote } = req.body;
   
-    const { success, order, error } = await orderService.updateOrderNoteById(orderId, orderNote);
-  
-    if (success) {
+    const {  order } = await orderService.updateOrderNoteById(orderId, orderNote);
+
       res.status(200).json({
         message: "Order note updated successfully",
-        order
+        order,
       });
-    } else {
-      res.status(404).json({
-        message: "Failed to update order note",
-        error
-      });
-    }
+    
   });
 
 
