@@ -154,6 +154,8 @@ const createOrder = async (orderData) => {
       totalPrice: finalTotalPrice, // Assign final total price
       vatRate,
       deliveryCharge,
+      customerFirstName,
+      customerLastName,
     });
 
     // Save the order to the database
@@ -221,7 +223,7 @@ const getAllOrders = async () => {
     }).populate({
       path: 'customer',
       model: 'customer',
-      select: 'email'
+      select: 'firstName lastName email phoneNumber district address'
     });
 
     const formattedOrders = orders.map(order => {
@@ -242,7 +244,16 @@ const getAllOrders = async () => {
             offerPrice: productDetails.general.salePrice,
             totalPrice: productDetails.general.salePrice * productItem.quantity
           };
-        })
+        }),
+        customer: order.customer ? {
+          _id: order.customer._id,
+          firstName: order.customer.firstName,
+          lastName: order.customer.lastName,
+          email: order.customer.email,
+          phoneNumber: order.customer.phoneNumber,
+          district: order.customer.district,
+          address: order.customer.address,
+        } : null,
       };
     });
 
@@ -252,6 +263,7 @@ const getAllOrders = async () => {
     throw error;
   }
 };
+
 
 
 
@@ -297,7 +309,7 @@ const getOrderById = async (id) => {
       .populate({
         path: 'customer',
         model: 'customer',
-        select: 'email'
+        select: 'firstName lastName email phoneNumber district address'
       });
 
     if (!orderInfo) {
@@ -307,7 +319,6 @@ const getOrderById = async (id) => {
     const formattedOrder = {
       ...orderInfo.toObject(),
       products: orderInfo.products.map(productItem => {
-
         const productDetails = productItem._id;
         return {
           _id: productDetails._id,
@@ -319,7 +330,16 @@ const getOrderById = async (id) => {
           offerPrice: productDetails.general.salePrice,
           totalPrice: productDetails.general.salePrice * productItem.quantity,
         };
-      })
+      }),
+      customer: orderInfo.customer ? {
+        _id: orderInfo.customer._id,
+        firstName: orderInfo.customer.firstName,
+        lastName: orderInfo.customer.lastName,
+        email: orderInfo.customer.email,
+        phoneNumber: orderInfo.customer.phoneNumber,
+        district: orderInfo.customer.district,
+        address: orderInfo.customer.address,
+      } : null,
     };
 
     return { success: true, order: formattedOrder };
@@ -328,6 +348,7 @@ const getOrderById = async (id) => {
     return { success: false, error: error.message };
   }
 };
+
 
 
 
