@@ -26,7 +26,7 @@ const OrderSchema = new mongoose.Schema({
       'Cancelled',
       'Spammed'
     ],
-    default: "Order Received"
+    default: "Received"
   },
   deliveryAddress: {
     type: String,
