@@ -70,6 +70,12 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  orderNote:{
+    type: String,
+    default:"Order Note",
+    max:[3000,'Greater Then Reserved']
+  },
+  
   vatRate: Number
 }, { timestamps: true });
 
