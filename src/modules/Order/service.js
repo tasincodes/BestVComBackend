@@ -45,13 +45,11 @@ const createOrder = async (orderData) => {
     const orderId = generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
-    const { email, orderType, deliveryAddress, 
-      deliveryCharge = 0, district, phoneNumber,
-       paymentMethod, transactionId, products, couponId, 
-       vatRate,
-       firstName,
-       lastName
-       } = orderData;
+    const { 
+      email, orderType, deliveryAddress, deliveryCharge = 0, 
+      district, phoneNumber, paymentMethod, transactionId, 
+      products, couponId, vatRate, firstName, lastName 
+    } = orderData;
 
     // Validate request body
     if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName || !lastName) {
@@ -64,19 +62,6 @@ const createOrder = async (orderData) => {
       throw new Error('Customer not found');
     }
 
-
-    const customerFirstName = await CustomerModel.findOne({ firstName });
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
-    const customerLastName = await CustomerModel.findOne({ lastName });
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
-
-   
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
@@ -95,14 +80,8 @@ const createOrder = async (orderData) => {
       throw new Error('Invalid product IDs');
     }
 
-    // Log valid products to debug
-    console.log('Valid Products:', validProducts);
-
     // Calculate total price using the quantity of each product
     let totalPrice = calculateOrderValue(validProducts, products);
-
-    // Log totalPrice to debug
-    console.log('Total Price:', totalPrice);
 
     // Apply discount if coupon provided
     let discountAmount = 0;
@@ -112,27 +91,13 @@ const createOrder = async (orderData) => {
         throw new Error('Invalid coupon ID');
       }
       discountAmount = calculateDiscount(coupon, totalPrice);
-      // Log discountAmount to debug
-      console.log('Discount Amount:', discountAmount);
-    }
-
-    // Check if discountAmount is valid
-    if (isNaN(discountAmount) || discountAmount < 0 || discountAmount > totalPrice) {
-      throw new Error('Invalid discount amount');
     }
 
     // Calculate VAT
     const vat = (vatRate / 100) * totalPrice;
 
-    // Log VAT to debug
-    console.log('VAT:', vat);
-    console.log(discountAmount, deliveryCharge);
-
     // Calculate final total price including discount and VAT
     const finalTotalPrice = totalPrice - discountAmount + vat + deliveryCharge;
-
-    // Log finalTotalPrice to debug
-    console.log('Final Total Price:', finalTotalPrice);
 
     // Create new order
     const newOrder = new OrderModel({
@@ -154,8 +119,6 @@ const createOrder = async (orderData) => {
       totalPrice: finalTotalPrice, // Assign final total price
       vatRate,
       deliveryCharge,
-      customerFirstName,
-      customerLastName,
     });
 
     // Save the order to the database
@@ -166,8 +129,6 @@ const createOrder = async (orderData) => {
       createdOrder: {
         order: savedOrder,
         customerEmail: customer.email,
-        customerFirstName:customer.firstName,
-        customerLastName:customer.lastName,
         totalOrderValue: finalTotalPrice 
       }
     };
@@ -176,6 +137,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
@@ -223,7 +185,7 @@ const getAllOrders = async () => {
     }).populate({
       path: 'customer',
       model: 'customer',
-      select: 'firstName lastName email phoneNumber district address'
+      select: 'email phoneNumber district address'
     });
 
     const formattedOrders = orders.map(order => {
@@ -244,8 +206,6 @@ const getAllOrders = async () => {
         }),
         customer: order.customer ? {
           _id: order.customer._id,
-          firstName: order.customer.firstName,
-          lastName: order.customer.lastName,
           email: order.customer.email,
           phoneNumber: order.customer.phoneNumber,
           district: order.customer.district,
