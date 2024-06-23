@@ -283,8 +283,8 @@ const getOrderById = async (id) => {
           sku: productDetails.inventory.sku,
           quantity: productItem.quantity,
           price: productDetails.general.regularPrice,
-          totalPrice: productDetails.general.regularPrice * productItem.quantity,
-          offerPrice: productDetails.general.salePrice
+          offerPrice: productDetails.general.salePrice,
+          totalPrice: productDetails.general.offerPrice * productItem.quantity,
         };
       })
     };
