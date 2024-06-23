@@ -45,13 +45,13 @@ const createOrder = async (orderData) => {
     const orderId = generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
-    const { email, orderType, deliveryAddress, 
+    const { email, orderType, deliveryAddress,
       deliveryCharge = 0, district, phoneNumber,
-       paymentMethod, transactionId, products, couponId, 
-       vatRate,
-       firstName,
-       lastName
-       } = orderData;
+      paymentMethod, transactionId, products, couponId,
+      vatRate,
+      firstName,
+      lastName
+    } = orderData;
 
     // Validate request body
     if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName || !lastName) {
@@ -76,7 +76,7 @@ const createOrder = async (orderData) => {
     }
 
 
-   
+
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
@@ -164,9 +164,9 @@ const createOrder = async (orderData) => {
       createdOrder: {
         order: savedOrder,
         customerEmail: customer.email,
-        customerFirstName:customer.firstName,
-        customerLastName:customer.lastName,
-        totalOrderValue: finalTotalPrice 
+        customerFirstName: customer.firstName,
+        customerLastName: customer.lastName,
+        totalOrderValue: finalTotalPrice
       }
     };
   } catch (error) {
@@ -192,10 +192,10 @@ const createOrder = async (orderData) => {
 
 const updateOrder = async (orderId, orderData) => {
 
-    // Find the order by OrderId and update it with the provided data
-    const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
-    return updatedOrder;
-  
+  // Find the order by OrderId and update it with the provided data
+  const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
+  return updatedOrder;
+
 };
 
 // delete OrderBy ID
@@ -227,8 +227,11 @@ const getAllOrders = async () => {
     const formattedOrders = orders.map(order => {
       return {
         ...order.toObject(),
+        customerFirstName: order.customer.firstName,
+        customerLastName: order.customer.lastName,
         products: order.products.map(productItem => {
           const productDetails = productItem._id;
+          
           return {
             _id: productDetails._id,
             productName: productDetails.productName,
@@ -237,7 +240,7 @@ const getAllOrders = async () => {
             quantity: productItem.quantity,
             price: productDetails.general.regularPrice,
             offerPrice: productDetails.general.salePrice,
-            totalPrice: productDetails.general.salePrice * productItem.quantity,
+            totalPrice: productDetails.general.salePrice * productItem.quantity
           };
         })
       };
@@ -304,7 +307,7 @@ const getOrderById = async (id) => {
     const formattedOrder = {
       ...orderInfo.toObject(),
       products: orderInfo.products.map(productItem => {
-        
+
         const productDetails = productItem._id;
         return {
           _id: productDetails._id,
@@ -355,18 +358,18 @@ const getCustomerHistory = async (customerId) => {
 
 const updateOrderNoteById = async (orderId, orderNote) => {
 
-    const updatedOrder = await OrderModel.findOneAndUpdate(
-      { _id: orderId },
-      { $set: { orderNote } },
-      { new: true } // To return the updated document
-    );
+  const updatedOrder = await OrderModel.findOneAndUpdate(
+    { _id: orderId },
+    { $set: { orderNote } },
+    { new: true } // To return the updated document
+  );
 
-    if (!updatedOrder) {
-      throw new NotFound("Order not found");
-    }
+  if (!updatedOrder) {
+    throw new NotFound("Order not found");
+  }
 
-    return { success: true, order: updatedOrder };
-  
+  return { success: true, order: updatedOrder };
+
 };
 
 

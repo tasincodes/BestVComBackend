@@ -18,6 +18,7 @@ const discountRoute = require('../modules/Discount/controller');
 const orderRoute = require('../modules/Order/controller');
 const reportingRoute = require('../modules/Reporting/controller');
 const wishListRoute = require('../modules/Wishlist/controller');
+const settingsRoute = require('../modules/settings/controller');
 
 //EndPoint
 router.use('/auth', authRoute);
@@ -32,6 +33,7 @@ router.use('/discount',discountRoute);
 router.use('/order',orderRoute);
 router.use('/reports',reportingRoute);
 router.use('/wishlist',wishListRoute);
+router.use('/settings',settingsRoute);
 
 router.use(authVerifyMiddleware);
 
