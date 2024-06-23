@@ -4,6 +4,7 @@ const orderService = require('../Order/service');
 const roleMiddleware = require('../../middlewares/roleMiddleware');
 const authMiddleware = require('../../middlewares/authMiddleware');
 const { asyncHandler } = require('../../utility/common');
+const { BRANCH_ADMIN,HEAD_OFFICE,MANAGER,CUSTOMER, ADMIN} = require('../../config/constants');
 
 
 
@@ -114,7 +115,7 @@ router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/deleteOrder/:id',deleteOrder);
-router.put('/:id',updateOrderStatusHandler);
+router.put('/:id',authMiddleware,roleMiddleware([BRANCH_ADMIN,HEAD_OFFICE,ADMIN]),updateOrderStatusHandler);
 router.get('/getOrderById/:id',getOrderByIdHandler);
 
 
