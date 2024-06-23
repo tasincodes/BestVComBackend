@@ -39,7 +39,7 @@ const settingSchema = new mongoose.Schema({
         },
         displayTaxTotal: {
             type: String,
-            enum: ['option1', 'option2'],  // Specify all possible values here
+            enum: ['option1', 'option2'], 
             default: 'option1'
         },
     },
@@ -75,6 +75,10 @@ const settingSchema = new mongoose.Schema({
         cashOndelivery: {
             type: Boolean,
             default: false
+        },
+        deliveryCharge:{
+            type : Number,
+            default:0
         }
     },
     emails: {
