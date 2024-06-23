@@ -184,37 +184,43 @@ const deleteOrder = async (orderId) => {
 
 
 const getAllOrders = async () => {
-  const orders = await OrderModel.find().populate({
+  try {
+    const orders = await OrderModel.find().populate({
       path: 'products._id',
       model: 'Product',
-      select: 'name picture sku price offerPrice'
-  }).populate({
+      select: 'productName productImage general.regularPrice inventory.sku general.salePrice'
+    }).populate({
       path: 'customer',
-      model: 'Customer', // Ensure this matches your actual Customer model name
+      model: 'customer',
       select: 'email'
-  });
+    });
 
-  // Format the response
-  const formattedOrders = orders.map(order => {
+    const formattedOrders = orders.map(order => {
       return {
-          ...order.toObject(),
-          products: order.products.map(productItem => {
-              const productDetails = productItem._id;
-              return {
-                  _id: productDetails._id,
-                  quantity: productItem.quantity,
-                  picture: productDetails.picture,
-                  price: productDetails.price,
-                  sku: productDetails.sku,
-                  totalPrice: productDetails.price * productItem.quantity, // Assuming total price calculation
-                  offerPrice: productDetails.offerPrice // If offer price is available
-              };
-          })
+        ...order.toObject(),
+        products: order.products.map(productItem => {
+          const productDetails = productItem._id;
+          return {
+            _id: productDetails._id,
+            productName: productDetails.productName,
+            productImage: productDetails.productImage,
+            sku: productDetails.inventory.sku,
+            quantity: productItem.quantity,
+            price: productDetails.general.regularPrice,
+            totalPrice: productDetails.general.regularPrice * productItem.quantity,
+            offerPrice: productDetails.general.salePrice
+          };
+        })
       };
-  });
+    });
 
-  return formattedOrders;
+    return formattedOrders;
+  } catch (error) {
+    console.error("Error retrieving orders:", error);
+    throw error;
+  }
 };
+
 
 
 
