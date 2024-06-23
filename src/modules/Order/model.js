@@ -75,7 +75,12 @@ const OrderSchema = new mongoose.Schema({
     default:"Order Note",
     max:[3000,'Greater Then Reserved']
   },
-  
+  customerIp:{
+    type:String,
+    max:[20,'Ip Address'],
+    default:""
+  },
+
   vatRate: Number
 }, { timestamps: true });
 

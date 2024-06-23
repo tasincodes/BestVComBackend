@@ -321,6 +321,14 @@ const getCustomerHistory = async (customerId) => {
 
 
 
+
+// update OrderNoteStatus
+
+const updateOrderNoteStatus = async ()=>{
+  
+}
+
+
 module.exports = {
   createOrder,
   updateOrder,
