@@ -2,7 +2,7 @@ const OrderModel = require('../Order/model');
 const ProductModel = require('../Products/model');
 const CouponModel = require('../Discount/model');
 const { BadRequest, NotFound } = require('../../utility/errors');
-
+const CustomerModel = require('../Customer/model');
 const { v4: uuidv4 } = require('uuid');
 
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
@@ -44,11 +44,17 @@ const createOrder = async (orderData) => {
     const orderId = generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
-    const { customer, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
+    const { email, orderType, deliveryAddress, deliveryCharge = 0, district, phoneNumber, paymentMethod, transactionId, products, couponId, vatRate } = orderData;
 
     // Validate request body
-    if (!customer || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
+    if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products) {
       throw new Error('Please provide all required fields');
+    }
+
+    // Find the customer by email
+    const customer = await CustomerModel.findOne({ email });
+    if (!customer) {
+      throw new Error('Customer not found');
     }
 
     // Validate product IDs and quantities
@@ -112,11 +118,11 @@ const createOrder = async (orderData) => {
     // Create new order
     const newOrder = new OrderModel({
       orderId,
-      customer,
+      customer: customer._id,
       orderType,
       orderTime,
       deliveryAddress,
-      orderStatus: 'Order Received', // Assign the correct status string
+      orderStatus: 'Received', // Assign the correct status string
       district,
       phoneNumber,
       paymentMethod,
@@ -126,7 +132,7 @@ const createOrder = async (orderData) => {
       discountAmount,
       totalPrice: finalTotalPrice, // Assign final total price
       vatRate,
-      deliveryCharge
+      deliveryCharge,
     });
 
     // Save the order to the database
@@ -136,6 +142,7 @@ const createOrder = async (orderData) => {
       message: "Order created successfully",
       createdOrder: {
         order: savedOrder,
+        customerEmail: customer.email, // Include customer email in the response
         totalOrderValue: finalTotalPrice // Include final total order value in the response
       }
     };
@@ -144,6 +151,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
