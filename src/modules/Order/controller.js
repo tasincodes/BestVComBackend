@@ -47,6 +47,8 @@ const deleteOrder = asyncHandler(async (req, res) => {
 });
 
 
+
+
 const getAllOrders = asyncHandler(async (req, res) => {
     const orders = await orderService.getAllOrders();
     res.status(200).json({
@@ -54,6 +56,8 @@ const getAllOrders = asyncHandler(async (req, res) => {
         orders
     });
 });
+
+  
 
 
 

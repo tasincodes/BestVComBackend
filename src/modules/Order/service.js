@@ -181,15 +181,45 @@ const deleteOrder = async (orderId) => {
 };
 
 
+
+
 const getAllOrders = async () => {
-  try {
-    // Find all orders
-    const orders = await OrderModel.find();
-    return orders;
-  } catch (error) {
-    throw error;
-  }
+  const orders = await OrderModel.find().populate({
+      path: 'products._id',
+      model: 'Product',
+      select: 'name picture sku price offerPrice'
+  }).populate({
+      path: 'customer',
+      model: 'Customer', // Ensure this matches your actual Customer model name
+      select: 'email'
+  });
+
+  // Format the response
+  const formattedOrders = orders.map(order => {
+      return {
+          ...order.toObject(),
+          products: order.products.map(productItem => {
+              const productDetails = productItem._id;
+              return {
+                  _id: productDetails._id,
+                  quantity: productItem.quantity,
+                  picture: productDetails.picture,
+                  price: productDetails.price,
+                  sku: productDetails.sku,
+                  totalPrice: productDetails.price * productItem.quantity, // Assuming total price calculation
+                  offerPrice: productDetails.offerPrice // If offer price is available
+              };
+          })
+      };
+  });
+
+  return formattedOrders;
 };
+
+
+
+
+
 
 
 // Update Order Status
