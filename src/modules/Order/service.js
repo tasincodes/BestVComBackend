@@ -191,13 +191,11 @@ const createOrder = async (orderData) => {
 //updateOrderByOrder ID
 
 const updateOrder = async (orderId, orderData) => {
-  try {
+
     // Find the order by OrderId and update it with the provided data
     const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
     return updatedOrder;
-  } catch (error) {
-    throw error;
-  }
+  
 };
 
 // delete OrderBy ID
