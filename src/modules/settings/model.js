@@ -10,7 +10,7 @@ const settingSchema = new mongoose.Schema({
         priceWithTax: {
             type: String,
             enum: ['inclusive', 'exclusive'],
-            required: true
+            required: true//not sure
         },
         calculateTax: {
             type: String,
