@@ -207,8 +207,8 @@ const getAllOrders = async () => {
             sku: productDetails.inventory.sku,
             quantity: productItem.quantity,
             price: productDetails.general.regularPrice,
-            totalPrice: productDetails.general.regularPrice * productItem.quantity,
-            offerPrice: productDetails.general.salePrice
+            offerPrice: productDetails.general.salePrice,
+            totalPrice: productDetails.general.salePrice * productItem.quantity,
           };
         })
       };
@@ -275,6 +275,7 @@ const getOrderById = async (id) => {
     const formattedOrder = {
       ...orderInfo.toObject(),
       products: orderInfo.products.map(productItem => {
+        
         const productDetails = productItem._id;
         return {
           _id: productDetails._id,
@@ -284,7 +285,7 @@ const getOrderById = async (id) => {
           quantity: productItem.quantity,
           price: productDetails.general.regularPrice,
           offerPrice: productDetails.general.salePrice,
-          totalPrice: productDetails.general.offerPrice * productItem.quantity,
+          totalPrice: productDetails.general.salePrice * productItem.quantity,
         };
       })
     };
