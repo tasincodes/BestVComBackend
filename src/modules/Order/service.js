@@ -324,9 +324,24 @@ const getCustomerHistory = async (customerId) => {
 
 // update OrderNoteStatus
 
-const updateOrderNoteStatus = async ()=>{
-  
-}
+const updateOrderNoteById = async (orderId, orderNote) => {
+  try {
+    const updatedOrder = await OrderModel.findOneAndUpdate(
+      { _id: orderId },
+      { $set: { orderNote } },
+      { new: true } // To return the updated document
+    );
+
+    if (!updatedOrder) {
+      throw new NotFound("Order not found");
+    }
+
+    return { success: true, order: updatedOrder };
+  } catch (error) {
+    console.error('Error in updateOrderNoteById:', error.message);
+    return { success: false, error: error.message };
+  }
+};
 
 
 module.exports = {
@@ -336,5 +351,6 @@ module.exports = {
   getAllOrders,
   updateOrderStatus,
   getOrderById,
-  getCustomerHistory
+  getCustomerHistory,
+  updateOrderNoteById
 };

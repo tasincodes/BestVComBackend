@@ -100,6 +100,8 @@ const getOrderByIdHandler =asyncHandler(async(req,res)=>{
 }
 })
 
+
+
 const getCustomerHistoryHandler = asyncHandler(async (req, res) => {
     const { customerId } = req.params;
     const orders = await orderService.getCustomerHistory(customerId);
@@ -109,6 +111,26 @@ const getCustomerHistoryHandler = asyncHandler(async (req, res) => {
     });
 });
 
+
+
+const updateOrderNoteByIdHandler = asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    const { orderNote } = req.body;
+  
+    const { success, order, error } = await orderService.updateOrderNoteById(orderId, orderNote);
+  
+    if (success) {
+      res.status(200).json({
+        message: "Order note updated successfully",
+        order
+      });
+    } else {
+      res.status(404).json({
+        message: "Failed to update order note",
+        error
+      });
+    }
+  });
 
 
 
@@ -121,7 +143,6 @@ router.put('/:orderId', updateOrder);
 router.delete('/deleteOrder/:id',deleteOrder);
 router.put('/:id',authMiddleware,roleMiddleware([BRANCH_ADMIN,HEAD_OFFICE,ADMIN]),updateOrderStatusHandler);
 router.get('/getOrderById/:id',getOrderByIdHandler);
-
-
+router.put('/updateNote/:orderId', updateOrderNoteByIdHandler);
 
 module.exports = router;
