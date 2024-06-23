@@ -193,7 +193,7 @@ const getAllOrders = async () => {
         ...order.toObject(),
         products: order.products.map(productItem => {
           const productDetails = productItem._id;
-          return {
+          return productDetails ? {
             _id: productDetails._id,
             productName: productDetails.productName,
             productImage: productDetails.productImage,
@@ -202,8 +202,8 @@ const getAllOrders = async () => {
             price: productDetails.general.regularPrice,
             offerPrice: productDetails.general.salePrice,
             totalPrice: productDetails.general.salePrice * productItem.quantity,
-          };
-        }),
+          } : null;
+        }).filter(product => product !== null),
         customer: order.customer ? {
           _id: order.customer._id,
           email: order.customer.email,
