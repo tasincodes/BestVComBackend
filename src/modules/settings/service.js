@@ -4,15 +4,20 @@ const {
     Unauthorized,
     Forbidden,
     NoContent,
-  } = require('../../utility/errors');
-  const { SendEmailUtility } = require('../../utility/email');
+} = require('../../utility/errors');
+const { SendEmailUtility } = require('../../utility/email');
 
 
-  const createSetting = async (setting) => {
+const updateEmailSettings = async (id, settings) => {
     try {
-      const newSetting = await settingModel.create(setting);
-      return newSetting;
+        const newSetting = await settingModel.findOneAndUpdate({ id }, settings, { new: true });
+        return newSetting;
     } catch (error) {
-      throw new BadRequest(error.message);
+        throw new BadRequest(error.message);
     }
-  }
+}
+
+
+module.exports = {
+    updateEmailSettings
+} 

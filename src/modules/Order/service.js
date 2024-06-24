@@ -143,10 +143,10 @@ const createOrder = async (orderData) => {
 
 const updateOrder = async (orderId, orderData) => {
 
-    // Find the order by OrderId and update it with the provided data
-    const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
-    return updatedOrder;
-  
+  // Find the order by OrderId and update it with the provided data
+  const updatedOrder = await OrderModel.findByIdAndUpdate(orderId, orderData, { new: true });
+  return updatedOrder;
+
 };
 
 // delete OrderBy ID
@@ -178,6 +178,8 @@ const getAllOrders = async () => {
     const formattedOrders = orders.map(order => {
       return {
         ...order.toObject(),
+        customerFirstName: order.customer.firstName,
+        customerLastName: order.customer.lastName,
         products: order.products.map(productItem => {
           const productDetails = productItem._id;
           return productDetails ? {
@@ -323,18 +325,18 @@ const getCustomerHistory = async (customerId) => {
 
 const updateOrderNoteById = async (orderId, orderNote) => {
 
-    const updatedOrder = await OrderModel.findOneAndUpdate(
-      { _id: orderId },
-      { $set: { orderNote } },
-      { new: true } // To return the updated document
-    );
+  const updatedOrder = await OrderModel.findOneAndUpdate(
+    { _id: orderId },
+    { $set: { orderNote } },
+    { new: true } // To return the updated document
+  );
 
-    if (!updatedOrder) {
-      throw new NotFound("Order not found");
-    }
+  if (!updatedOrder) {
+    throw new NotFound("Order not found");
+  }
 
-    return { success: true, order: updatedOrder };
-  
+  return { success: true, order: updatedOrder };
+
 };
 
 
