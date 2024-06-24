@@ -32,6 +32,14 @@ const getBrandByIdHandler = asyncHandler(async (req, res) => {
     });
 })
 
+const updateBrandHandler = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const updateBrand = await brandService.updateBrandById(id, req.body);
+    res.status(200).json({
+        message: "Update Brand Successfully",
+        updateBrand
+    })
+})
 
 
 

@@ -47,9 +47,24 @@ const getBrandById = async (brandId) => {
 
 }
 
+const updateBrandById = async (id, value) => { 
+    try{
+    const brand = await brandModel.findOneAndUpdate({ _id: id }, value, {
+        new: true,
+    });
+    if (!brand) {
+        throw new BadRequest("Could not update brand");
+    }
+    return brand;
+} catch (error) {
+    console.log(error);
+    throw new Error('Brand update failed: ' + error.message);
+}}
+
 module.exports = {
     addBrand,
     getAllBrands,
-    getBrandById
+    getBrandById,
+    updateBrandById
 
 };
