@@ -195,13 +195,43 @@ const signinUser = async (email, password) => {
   }
 };
 
+
+
+
+const getAllManagers = async () => {
+
+    const users = await User.find({ role: { $ne: 'CUS' } }); // Exclude users with role 'CUS'
+    return users;
+
+};
+
+
+const getUserById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    throw error;
+  }
+};
+
+
+
+
+
 module.exports = {
   UserRegister,
   verifyOTP,
   resendOTP,
   expireOTP,
   signinUser,
-  addUsers
+  addUsers,
+  getAllManagers,
+  getUserById
 };
 
 

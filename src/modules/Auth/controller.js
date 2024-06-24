@@ -132,12 +132,36 @@ const userSignInHandler = async (req, res, next) => {
 
 
 
+const getAllManagers = asyncHandler(async (req, res) => {
+  
+    const users = await authService.getAllManagers();
+    res.status(200).json({
+      message: "Successfully retrieved all users",
+      users
+    });
+
+});
+
+
+const getUserByIdHandler = asyncHandler(async (req, res) => {
+ 
+    const userId = req.params.id;
+    const user = await authService.getUserById(userId);
+    res.status(200).json({
+      message: "Successfully retrieved user",
+      user
+    });
+
+});
+
+
+
 router.post('/adminRegister', registerHandler);
 router.post('/otpVerification', otpVerifyHandler);
 router.post('/otpResend', resendOTPHandler);
 router.post('/expireOTP', expireOTP);
 router.post('/signInAdmin', userSignInHandler)
 router.post('/userManage', authMiddleware, roleMiddleware([HEAD_OFFICE]), addUsersHandler);
-
-
+router.get('/managers', getAllManagers);
+router.get('/users/:id',getUserByIdHandler);
 module.exports = router;
