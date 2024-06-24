@@ -139,19 +139,6 @@ const createOrder = async (orderData) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //updateOrderByOrder ID
 
 const updateOrder = async (orderId, orderData) => {

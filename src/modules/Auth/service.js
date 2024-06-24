@@ -195,13 +195,31 @@ const signinUser = async (email, password) => {
   }
 };
 
+
+
+
+const getAllManagers = async () => {
+
+    const users = await User.find({ role: { $ne: 'CUS' } }); // Exclude users with role 'CUS'
+    return users;
+
+};
+
+
+
+
+
+
+
+
 module.exports = {
   UserRegister,
   verifyOTP,
   resendOTP,
   expireOTP,
   signinUser,
-  addUsers
+  addUsers,
+  getAllManagers
 };
 
 

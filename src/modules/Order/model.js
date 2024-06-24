@@ -25,6 +25,10 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     max: [232, 'Last Name Should be less than 232 characters']
   },
+  customerIp: {
+    type: String,
+    max: [20, 'IP Address should be less than 20 characters'],
+  },
   orderStatus: {
     type: String,
     enum: [
@@ -85,11 +89,7 @@ const OrderSchema = new mongoose.Schema({
     default: "Order Note",
     max: [3000, 'Order Note Should be less than 3000 characters']
   },
-  customerIp: {
-    type: String,
-    max: [20, 'IP Address should be less than 20 characters'],
-    default: ""
-  },
+  
   vatRate: Number
 }, { timestamps: true });
 
