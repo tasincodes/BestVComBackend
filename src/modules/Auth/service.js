@@ -206,7 +206,18 @@ const getAllManagers = async () => {
 };
 
 
-
+const getUserById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    throw error;
+  }
+};
 
 
 
@@ -219,7 +230,8 @@ module.exports = {
   expireOTP,
   signinUser,
   addUsers,
-  getAllManagers
+  getAllManagers,
+  getUserById
 };
 
 
