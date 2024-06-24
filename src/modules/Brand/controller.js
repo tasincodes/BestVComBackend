@@ -23,7 +23,19 @@ const getAllBrandsHandler = asyncHandler(async (req, res) => {
 }
 )
 
+const getBrandByIdHandler = asyncHandler(async (req, res) => { 
+    const { id } = req.params;
+    const brand = await brandService.getBrandById(id);
+    res.status(200).json({
+        message: "Get Brand by ID Successfully!",
+        brand
+    });
+})
+
+
+
 
 router.post('/create', createBrandHandler);
 router.get('/getAll', getAllBrandsHandler);
+router.get('/getBrandId/:id', getBrandByIdHandler);
 module.exports = router;
