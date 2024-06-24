@@ -15,6 +15,16 @@ const OrderSchema = new mongoose.Schema({
     enum: ["Delivery", "Pickup", "Online"],
     required: true
   },
+  firstName: {
+    type: String,
+    required: true,
+    max: [232, 'First Name Should be less than 232 characters']
+  },
+  lastName: {
+    type: String,
+    required: true,
+    max: [232, 'Last Name Should be less than 232 characters']
+  },
   orderStatus: {
     type: String,
     enum: [
@@ -70,17 +80,16 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  orderNote:{
+  orderNote: {
     type: String,
-    default:"Order Note",
-    max:[3000,'Greater Then Reserved']
+    default: "Order Note",
+    max: [3000, 'Order Note Should be less than 3000 characters']
   },
-  customerIp:{
-    type:String,
-    max:[20,'Ip Address'],
-    default:""
+  customerIp: {
+    type: String,
+    max: [20, 'IP Address should be less than 20 characters'],
+    default: ""
   },
-
   vatRate: Number
 }, { timestamps: true });
 
