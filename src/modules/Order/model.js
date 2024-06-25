@@ -10,6 +10,9 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     ref: 'customer'
   },
+  customerIp:{
+    type : String
+  },
   orderType: {
     type: String,
     enum: ["Delivery", "Pickup", "Online"],
