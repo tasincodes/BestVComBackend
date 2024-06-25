@@ -233,6 +233,22 @@ const getUserById = async (userId) => {
 
 
 
+const deleteUserById = async (userId) => {
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return { status: 404, message: "User not found" };
+    }
+    return { status: 200, message: "User deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { status: 500, message: "Internal server error" };
+  }
+};
+
+
+
+
 
 module.exports = {
   UserRegister,
@@ -242,7 +258,8 @@ module.exports = {
   signinUser,
   addUsers,
   getAllManagers,
-  getUserById
+  getUserById,
+  deleteUserById
 };
 
 

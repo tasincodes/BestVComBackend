@@ -156,6 +156,15 @@ const getUserByIdHandler = asyncHandler(async (req, res) => {
 
 
 
+const deleteUserByIdHandler = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const result = await authService.deleteUserById(userId);
+  res.status(result.status).json(result);
+});
+
+
+
+
 router.post('/adminRegister', registerHandler);
 router.post('/otpVerification', otpVerifyHandler);
 router.post('/otpResend', resendOTPHandler);
@@ -164,4 +173,5 @@ router.post('/signInAdmin', userSignInHandler)
 router.post('/userManage', authMiddleware, roleMiddleware([HEAD_OFFICE]), addUsersHandler);
 router.get('/managers', getAllManagers);
 router.get('/users/:id',getUserByIdHandler);
+router.delete('/users/:userId', deleteUserByIdHandler);
 module.exports = router;
