@@ -37,21 +37,18 @@ const registerHandler = asyncHandler(async (req, res) => {
 
 
 
-const  addUsersHandler = asyncHandler(async (req, res) => {
-  const { email, firstName, lastName, phoneNumber, role, password, outletId,profilePicture} = req.body;
+const addUsersHandler = asyncHandler(async (req, res) => {
+  const { email, phoneNumber, password, role, firstName, lastName, userName, profilePicture, outletId } = req.body;
+  const user  = await authService.addUsers({ email, phoneNumber, password, role, firstName, lastName, userName, profilePicture, outletId });
 
-  try {
-    const result = await authService.addUsers({ email, phoneNumber, firstName, lastName, password, role, outletId, profilePicture });
-
-    res.status(201).json({
-      message: "Your account has been registered. Please Login!!",
-      email: result.user.email,
-      user: result.user,
-    });
-  } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
-  }
+  res.status(200).json({
+    message: "Your account has been registered.",
+    email: user.email,
+    user
+  });
 });
+
+
 
 
 
