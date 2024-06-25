@@ -5,17 +5,38 @@ const e = require('express');
 
 
 // addProduct
-
 const addProduct = async (productData) => {
-  const { productName } = productData
-  const productSlug = generateSlug(productName);
-  const productCode = await generateProductCode(Product);
-  const newProduct = await Product.create({ ...productData, productCode, productSlug }); // Combine productData and productCode directly
-  if (!newProduct) {
-    throw new BadRequest('Could Not Create Product');
+  try {
+    const { productName } = productData;
+    let productSlug = generateSlug(productName);
+    const existingProduct = await Product.findOne({ productSlug });
+
+    if (existingProduct) {
+      let counter = 2;
+      let newSlug;
+      do {
+        newSlug = `${productSlug}-${counter}`;
+        counter++;
+      } while (await Product.findOne({ productSlug: newSlug }));
+
+      productSlug = newSlug;
+    }
+    const productCode = await generateProductCode(Product);
+
+    const newProduct = await Product.create({ ...productData, productCode, productSlug });
+
+    if (!newProduct) {
+      throw new BadRequest('Could not create product');
+    }
+    return newProduct;
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw new Error('Failed to add product');
   }
-  return newProduct;
-}
+};
+
+
+
 
 
 //Edit Product
