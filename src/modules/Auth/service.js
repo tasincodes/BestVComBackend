@@ -247,6 +247,18 @@ const deleteUserById = async (userId) => {
 };
 
 
+const updateUserById = async (userId, userData) => {
+  
+    const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true });
+    if (!updatedUser) {
+      return { status: 404, message: "User not found" };
+    }
+    return { status: 200, message: "User updated successfully", user: updatedUser };
+
+};
+
+
+
 
 
 
@@ -259,7 +271,8 @@ module.exports = {
   addUsers,
   getAllManagers,
   getUserById,
-  deleteUserById
+  deleteUserById,
+  updateUserById 
 };
 
 
