@@ -78,7 +78,7 @@ const addUsers = async ({ email, phoneNumber, firstName, lastName, password, rol
       lastName,
       profilePicture,
       isActive: true,
-      isVerified: true // Optionally set user as active
+      isVerified: true 
     });
 
     return { success: true, user };

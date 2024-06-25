@@ -7,6 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
 
+
+
 function calculateOrderValue(products, orderProducts) {
   return orderProducts.reduce((total, orderProduct) => {
     const product = products.find(p => p._id.equals(orderProduct._id));
@@ -42,7 +44,7 @@ function calculateDiscount(coupon, totalPrice) {
 const createOrder = async (orderData) => {
   try {
     // Generate custom orderId
-    const orderId = generateCustomOrderId();
+    const orderId = await generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
     const { 
@@ -137,6 +139,9 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+
+
 
 
 //updateOrderByOrder ID
