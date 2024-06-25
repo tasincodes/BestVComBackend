@@ -53,7 +53,7 @@ const updateBrandById = async (id, value) => {
         new: true,
     });
     if (!brand) {
-        throw new BadRequest("Could not update brand");
+        throw new BadRequest("Could not find the brand with the given id.");
     }
     return brand;
 } catch (error) {
@@ -68,3 +68,4 @@ module.exports = {
     updateBrandById
 
 };
+
