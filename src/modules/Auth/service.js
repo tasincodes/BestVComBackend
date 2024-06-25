@@ -49,17 +49,13 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
 //User Creation
 
-const addUsers = async ({ email, phoneNumber, firstName, lastName, password, role, outletId, profilePicture }) => {
+
+const addUsers = async ({ email, phoneNumber, firstName, lastName, password, role, outletId, profilePicture, userName }) => {
   try {
     // Ensure a valid role is provided
     if (!['HQ', 'BA', 'AD', 'MGR'].includes(role)) {
       throw new Error('Invalid role');
     }
-
-    // Ensure a valid outlet ID is provided
-    // if (!outletId || !isValidObjectId(outletId)) {
-    //   throw new Error('Invalid outlet ID');
-    // }
 
     // Ensure a valid phone number is provided (simple regex check)
     const phoneRegex = /^[0-9]{10,15}$/; // Adjust regex based on your specific phone number format requirements
@@ -67,7 +63,13 @@ const addUsers = async ({ email, phoneNumber, firstName, lastName, password, rol
       throw new Error('Must be a valid phone number');
     }
 
-    // Create the user based on the provided role
+    // Ensure email is unique
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error('Email already in use');
+    }
+
+    // Create the user
     const user = await User.create({
       email,
       outlet: outletId,
@@ -76,6 +78,7 @@ const addUsers = async ({ email, phoneNumber, firstName, lastName, password, rol
       role,
       firstName,
       lastName,
+      userName,
       profilePicture,
       isActive: true,
       isVerified: true 
@@ -86,6 +89,13 @@ const addUsers = async ({ email, phoneNumber, firstName, lastName, password, rol
     throw new Error(error.message);
   }
 };
+
+module.exports = {
+  addUsers,
+};
+
+
+
 
 const isValidObjectId = (id) => {
   // Use mongoose or any other relevant library to validate ObjectId

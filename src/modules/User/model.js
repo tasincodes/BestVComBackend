@@ -14,7 +14,12 @@ const UserSchema = new mongoose.Schema({
   outlet: {
     type: String,
   },
-
+  userName: {
+    type: String,
+    max: [20, "Name should be at least 20 characters"],
+    // required: [true, 'Username is required'],
+  },
+  
   firstName: {
     type: String,
     max: [20, "Name should be at least 20 "]
@@ -72,6 +77,7 @@ const UserSchema = new mongoose.Schema({
     default: false,
   },
   refreshToken: [String],
+
   profilePicture: {
     type: String
   }
