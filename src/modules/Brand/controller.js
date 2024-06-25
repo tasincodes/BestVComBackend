@@ -46,4 +46,5 @@ const updateBrandHandler = asyncHandler(async (req, res) => {
 router.post('/create', createBrandHandler);
 router.get('/getAll', getAllBrandsHandler);
 router.get('/getBrandId/:id', getBrandByIdHandler);
+router.put('/update/:id', updateBrandHandler);
 module.exports = router;
