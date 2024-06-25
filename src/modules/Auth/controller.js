@@ -37,7 +37,7 @@ const registerHandler = asyncHandler(async (req, res) => {
 
 
 
-const addUsersHandler = asyncHandler(async (req, res) => {
+const  addUsersHandler = asyncHandler(async (req, res) => {
   const { email, firstName, lastName, phoneNumber, role, password, outletId,profilePicture} = req.body;
 
   try {

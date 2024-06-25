@@ -2,6 +2,12 @@ const OutletModel = require("./model");
 const userModel = require("../User/model");
 const { passEmailForOutlet } = require('../../utility/email');
 
+
+
+
+
+
+
 const outletCreateService = async (outletName, outletLocation, outletImage, outletManager, outletManagerEmail, outletManagerPhone) => {
   try {
     if (!outletName || !outletLocation || !outletManager || !outletImage) {
@@ -34,6 +40,11 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
   }
 };
 
+
+
+
+
+
 const getAllUsers = async () => {
   try {
     const users = await OutletModel.find();
@@ -43,6 +54,10 @@ const getAllUsers = async () => {
     throw new Error('Failed to retrieve users: ' + error.message);
   }
 };
+
+
+
+
 
 const updateOutlet = async (userId, updatedInfo) => {
   try {
@@ -70,6 +85,11 @@ const updateOutlet = async (userId, updatedInfo) => {
   }
 };
 
+
+
+
+
+
 const deleteOutlet = async (id) => {
   try {
     if (!id) {
@@ -86,6 +106,9 @@ const deleteOutlet = async (id) => {
   }
 };
 
+
+
+
 const searchOutlet = async (outletName) => {
   try {
     if (!outletName) {
@@ -101,6 +124,9 @@ const searchOutlet = async (outletName) => {
     throw new Error('Search failed: ' + error.message);
   }
 };
+
+
+
 
 const getOutletManagerByIdService = async (id) => {
   try {
