@@ -48,11 +48,11 @@ const createOrder = async (orderData) => {
     const { 
       email, orderType, deliveryAddress, deliveryCharge = 0, 
       district, phoneNumber, paymentMethod, transactionId, 
-      products, couponId, vatRate, firstName, lastName 
+      products, couponId, vatRate, firstName, lastName,customerIp
     } = orderData;
 
     // Validate request body
-    if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName || !lastName) {
+    if (!email || !orderType || !deliveryAddress || !district || !phoneNumber || !paymentMethod || !products || !firstName || !lastName || !customerIp) {
       throw new Error('Please provide all required fields');
     }
 
@@ -119,6 +119,7 @@ const createOrder = async (orderData) => {
       totalPrice: finalTotalPrice, // Assign final total price
       vatRate,
       deliveryCharge,
+      customerIp
     });
 
     // Save the order to the database
