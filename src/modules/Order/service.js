@@ -41,8 +41,6 @@ function calculateDiscount(coupon, totalPrice) {
   }
 }
 
-
-
 const createOrder = async (orderData) => {
   try {
     // Generate custom orderId
@@ -144,17 +142,11 @@ const createOrder = async (orderData) => {
         totalOrderValue: finalTotalPrice 
       }
     };
-    
-
-
   } catch (error) {
     console.error("Error creating order:", error);
     throw error;
   }
 };
-
-
-
 
 
 //updateOrderByOrder ID
