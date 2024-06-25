@@ -246,6 +246,7 @@ const updateOrderStatus = async (id, updateOrder) => {
 
 const getOrderById = async (id) => {
   try {
+
     const orderInfo = await OrderModel.findById(id)
       .populate({
         path: 'products._id',
@@ -266,6 +267,11 @@ const getOrderById = async (id) => {
       ...orderInfo.toObject(),
       products: orderInfo.products.map(productItem => {
         const productDetails = productItem._id;
+        if (!productDetails) {
+          console.warn('Product not found:', productItem);
+          return null;
+          
+        }
         return {
           _id: productDetails._id,
           productName: productDetails.productName,

@@ -1,7 +1,7 @@
 const Product = require('../Products/model');
 const { BadRequest } = require('../../utility/errors');
 const { generateSlug } = require('../../utility/slug');
-const e = require('express');
+
 
 
 // addProduct
@@ -34,7 +34,6 @@ const addProduct = async (productData) => {
     throw new Error('Failed to add product');
   }
 };
-
 
 
 
