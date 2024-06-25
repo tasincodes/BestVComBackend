@@ -22,11 +22,11 @@ const { decrypt } = require('dotenv');
 
 // Admin Register a new user
 
-const UserRegister = async (email, phoneNumber, password, role) => {
 
+const UserRegister = async (email, phoneNumber, password, role, firstName, lastName, profilePicture) => {
+  try {
     // Generate OTP
     const otp = generateOTP();
-
 
     const user = new User({
       email,
@@ -34,7 +34,12 @@ const UserRegister = async (email, phoneNumber, password, role) => {
       role,
       otp,
       password,
+      firstName,
+      lastName,
+      profilePicture,
+    
     });
+
     await user.save();
 
     // Send OTP to email
@@ -42,8 +47,12 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
     // Return user
     return user;
- 
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
+
+
 
 
 
@@ -256,6 +265,8 @@ const updateUserById = async (userId, userData) => {
     return { status: 200, message: "User updated successfully", user: updatedUser };
 
 };
+
+
 
 
 

@@ -23,8 +23,8 @@ const { asyncHandler } = require('../../utility/common');
 // Register a new user
 
 const registerHandler = asyncHandler(async (req, res) => {
-  const { email, phoneNumber, password, role } = req.body;
-  const user = await authService.UserRegister(email, phoneNumber, password, role);
+  const { email, phoneNumber, password, role, firstName, lastName, profilePicture } = req.body;
+  const user = await authService.UserRegister(email, phoneNumber, password, role, firstName, lastName, profilePicture);
 
   res.status(200).json({
     message: "Your account has been registered. Please check your email for the OTP.",
@@ -32,6 +32,7 @@ const registerHandler = asyncHandler(async (req, res) => {
     user,
   });
 });
+
 
 
 
