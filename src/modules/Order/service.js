@@ -4,6 +4,8 @@ const CouponModel = require('../Discount/model');
 const { BadRequest, NotFound } = require('../../utility/errors');
 const CustomerModel = require('../Customer/model');
 const { v4: uuidv4 } = require('uuid');
+const settingModel = require('../settings/model');
+const {SendEmailUtility} = require('../../utility/email');
 
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
 
@@ -125,6 +127,13 @@ const createOrder = async (orderData) => {
     // Save the order to the database
     const savedOrder = await newOrder.save();
 
+    const newOrderMailReciepent = await settingModel.findOne({ 'emails.emailStatus': 'newOrder' });
+    if (newOrderMailReciepent && newOrderMailReciepent.emails && newOrderMailReciepent.emails.enable) {
+      const { emailReciepent, subject, emailBody } = newOrderMailReciepent.emails;
+      await SendEmailUtility(emailReciepent.join(','), emailBody, subject); 
+    } else {
+      console.warn("No email settings found for 'newOrder' or email notifications are disabled");
+    }
     return {
       message: "Order created successfully",
       createdOrder: {
@@ -133,6 +142,9 @@ const createOrder = async (orderData) => {
         totalOrderValue: finalTotalPrice 
       }
     };
+    
+
+
   } catch (error) {
     console.error("Error creating order:", error);
     throw error;
