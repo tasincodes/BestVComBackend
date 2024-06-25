@@ -130,14 +130,17 @@ const userSignInHandler = async (req, res, next) => {
 
 
 const getAllManagers = asyncHandler(async (req, res) => {
-  
+ 
     const users = await authService.getAllManagers();
     res.status(200).json({
       message: "Successfully retrieved all users",
       users
     });
-
+ 
 });
+
+
+
 
 
 const getUserByIdHandler = asyncHandler(async (req, res) => {

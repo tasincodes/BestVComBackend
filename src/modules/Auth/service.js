@@ -96,7 +96,6 @@ module.exports = {
 
 
 
-
 const isValidObjectId = (id) => {
   // Use mongoose or any other relevant library to validate ObjectId
   return /^[0-9a-fA-F]{24}$/.test(id);
@@ -208,12 +207,14 @@ const signinUser = async (email, password) => {
 
 
 
+
 const getAllManagers = async () => {
-
-    const users = await User.find({ role: { $ne: 'CUS' } }); // Exclude users with role 'CUS'
-    return users;
-
+  // Exclude users with role 'CUS'
+  const users = await User.find({ role: { $ne: 'CUS' } }).select('-password -refreshToken'); // Exclude sensitive information
+  return users;
 };
+
+
 
 
 const getUserById = async (userId) => {
