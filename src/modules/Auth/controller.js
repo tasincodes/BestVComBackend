@@ -42,7 +42,7 @@ const addUsersHandler = asyncHandler(async (req, res) => {
   const user  = await authService.addUsers({ email, phoneNumber, password, role, firstName, lastName, userName, profilePicture, outletId });
 
   res.status(200).json({
-    message: "Your account has been registered. Please check your email for the OTP.",
+    message: "Your account has been registered.",
     email: user.email,
     user
   });
