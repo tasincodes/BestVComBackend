@@ -29,7 +29,7 @@ exports.SendEmailUtility = async (EmailTo, EmailText, EmailSubject) => {
       console.log({ info });
       if (err) {
         resolve(err);
-      }
+      }  
       resolve(info);
     });
   });

@@ -77,11 +77,18 @@ const getOutletManagerById = asyncHandler(async (req, res) => {
 });
 
 
+const getOutletById = asyncHandler(async (req, res) => {
+  const outlet = await outletService.getOutletById(req.params.id);
+  res.status(200).json({ message: "Outlet found", outlet });
+});
 
 
 
 
 
+
+
+router.get("/getOutletById/:id", getOutletById);
 
 router.post("/outletCreate", multerMiddleware.upload.fields([
   { name: 'outletImage', maxCount: 1 }

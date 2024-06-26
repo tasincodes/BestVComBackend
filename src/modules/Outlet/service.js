@@ -144,11 +144,30 @@ const getOutletManagerByIdService = async (id) => {
   }
 };
 
+
+const getOutletById = async (id) => {
+  try {
+    if (!id) {
+      throw new Error('Outlet ID is required');
+    }
+    const outlet = await OutletModel.findById(id);
+    if (!outlet) {
+      throw new Error('Outlet not found');
+    }
+    return outlet;
+  } catch (error) {  
+    console.error('Error in getOutletById:', error.message);
+    throw new Error('Failed to retrieve outlet: ' + error.message);
+  }
+}
+
 module.exports = {
   outletCreateService,
   getAllUsers,
   updateOutlet,
   deleteOutlet,
   searchOutlet,
-  getOutletManagerByIdService
-};
+  getOutletManagerByIdService,
+  getOutletById
+
+}
