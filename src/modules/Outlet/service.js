@@ -23,7 +23,7 @@ const outletCreateService = async (outletName, cityName, outletLocation, outletI
     if (existingOutlet) {
       throw new Error('Outlet with the same name already exists');
     }
-    
+
     const newOutlet = await OutletModel.create({
       outletName,
       outletLocation,
@@ -35,18 +35,10 @@ const outletCreateService = async (outletName, cityName, outletLocation, outletI
     });
     return newOutlet;
   } catch (error) {
-    console.error('Error in outletCreateService:', error.message); 
+    console.error('Error in outletCreateService:', error.message);
     throw new Error('Outlet creation failed: ' + error.message);
   }
 };
-
-module.exports = {
-  outletCreateService,
-};
-
-
-
-
 
 
 
@@ -90,11 +82,6 @@ const updateOutlet = async (userId, updatedInfo) => {
   }
 };
 
-
-
-
-
-
 const deleteOutlet = async (id) => {
   try {
     if (!id) {
@@ -119,7 +106,7 @@ const searchOutlet = async (outletName) => {
     if (!outletName) {
       throw new Error('Outlet name is required');
     }
-    const searchedOutlet = await OutletModel.find({ outletName: { $in: outletName }});
+    const searchedOutlet = await OutletModel.find({ outletName: { $in: outletName } });
     if (searchedOutlet.length === 0) {
       throw new Error('No outlets found matching the search criteria');
     }
@@ -155,12 +142,13 @@ const getOutletById = async (id) => {
     if (!id) {
       throw new Error('Outlet ID is required');
     }
-    const outlet = await OutletModel.findById(id);
+    const outlet = await OutletModel.findById(id)
+    .populate('outletManager', 'firstName lastName email phoneNumber');
     if (!outlet) {
       throw new Error('Outlet not found');
     }
     return outlet;
-  } catch (error) {  
+  } catch (error) {
     console.error('Error in getOutletById:', error.message);
     throw new Error('Failed to retrieve outlet: ' + error.message);
   }
