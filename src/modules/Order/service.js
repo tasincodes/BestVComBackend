@@ -5,7 +5,7 @@ const { BadRequest, NotFound } = require('../../utility/errors');
 const CustomerModel = require('../Customer/model');
 const { v4: uuidv4 } = require('uuid');
 const settingModel = require('../settings/model');
-const {SendEmailUtility} = require('../../utility/email');
+const {SendEmailUtilityForAdmin} = require('../../utility/email');
 
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
 
@@ -43,14 +43,15 @@ function calculateDiscount(coupon, totalPrice) {
 
 const createOrder = async (orderData) => {
   try {
-    // Generate custom orderId
+    // Generate custom orderId and orderTime
     const orderId = await generateCustomOrderId();
     const orderTime = formatOrderTime(new Date());
 
+    // Destructure orderData
     const { 
       email, orderType, deliveryAddress, deliveryCharge = 0, 
       district, phoneNumber, paymentMethod, transactionId, 
-      products, couponId, vatRate, firstName, lastName,customerIp
+      products, couponId, vatRate, firstName, lastName, customerIp 
     } = orderData;
 
     // Validate request body
@@ -64,11 +65,11 @@ const createOrder = async (orderData) => {
       throw new Error('Customer not found');
     }
 
+    // Validate products
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
 
-    // Check if all products have a quantity field
     for (const product of products) {
       if (!product.quantity || typeof product.quantity !== 'number') {
         throw new Error('Each product must have a valid quantity');
@@ -82,7 +83,7 @@ const createOrder = async (orderData) => {
       throw new Error('Invalid product IDs');
     }
 
-    // Calculate total price using the quantity of each product
+    // Calculate total price
     let totalPrice = calculateOrderValue(validProducts, products);
 
     // Apply discount if coupon provided
@@ -110,7 +111,7 @@ const createOrder = async (orderData) => {
       orderType,
       orderTime,
       deliveryAddress,
-      orderStatus: 'Received', // Assign the correct status string
+      orderStatus: 'Received',
       district,
       phoneNumber,
       paymentMethod,
@@ -118,22 +119,70 @@ const createOrder = async (orderData) => {
       products,
       coupon: couponId ? couponId : null,
       discountAmount,
-      totalPrice: finalTotalPrice, // Assign final total price
+      totalPrice: finalTotalPrice,
       vatRate,
       deliveryCharge,
       customerIp
     });
-
-    // Save the order to the database
     const savedOrder = await newOrder.save();
 
+    // Retrieve email settings for 'newOrder' status
     const newOrderMailReciepent = await settingModel.findOne({ 'emails.emailStatus': 'newOrder' });
     if (newOrderMailReciepent && newOrderMailReciepent.emails && newOrderMailReciepent.emails.enable) {
-      const { emailReciepent, subject, emailBody } = newOrderMailReciepent.emails;
-      await SendEmailUtility(emailReciepent.join(','), emailBody, subject); 
+      const { emailReciepent, subject, emailBody, emailHeader, emailType, emailTemplate } = newOrderMailReciepent.emails;
+
+      // Format the product details into a HTML table
+      const productsTable = products.map(product => {
+        const productDetails = validProducts.find(p => p._id.equals(product._id));
+        return `
+          <tr>
+            <td>${productDetails.productName}</td>
+            <td>${product.quantity}</td>
+            <td>${productDetails.general.regularPrice}</td>
+            <td>${product.quantity * productDetails.general.regularPrice}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Construct the email body with the template and order details
+      const fullEmailBody = `
+        <div style="background-color: ${emailTemplate.backgroundColor}; color: ${emailTemplate.bodyTextColour}; padding: 20px;">
+          <div style="text-align: center;">
+            <img src="${emailTemplate.headerImage}" alt="Header Image" style="max-width: 100%;">
+          </div>
+          <h1>${emailHeader}</h1>
+          <div>${emailBody}</div> 
+          <div>
+            <h2>Order Details</h2>
+            <p>Order ID: ${orderId}</p>
+            <p>Order Time: ${orderTime}</p>
+            <p>Customer Name: ${firstName} ${lastName}</p>
+            <p>Delivery Address: ${deliveryAddress}, ${district}</p>
+            <h3>Products:</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <th style="border: 1px solid #ddd; padding: 8px;">Product</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Quantity</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Unit Price</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Total Price</th>
+              </tr>
+              ${productsTable}
+            </table>
+            <p>Total Price: ${totalPrice}</p>
+            <p>Discount: ${discountAmount}</p>
+            <p>VAT: ${vat}</p>
+            <p>Delivery Charge: ${deliveryCharge}</p>
+            <p><strong>Final Total Price: ${finalTotalPrice}</strong></p>
+          </div>
+          <div>${emailTemplate.footerText}</div>
+        </div>
+      `;
+
+      await SendEmailUtilityForAdmin(emailReciepent.join(','), fullEmailBody, subject, emailType);
     } else {
       console.warn("No email settings found for 'newOrder' or email notifications are disabled");
     }
+
     return {
       message: "Order created successfully",
       createdOrder: {
@@ -142,11 +191,14 @@ const createOrder = async (orderData) => {
         totalOrderValue: finalTotalPrice 
       }
     };
+
   } catch (error) {
     console.error("Error creating order:", error);
     throw error;
   }
 };
+
+
 
 
 //updateOrderByOrder ID
