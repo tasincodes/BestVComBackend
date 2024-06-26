@@ -22,11 +22,11 @@ const { decrypt } = require('dotenv');
 
 // Admin Register a new user
 
-const UserRegister = async (email, phoneNumber, password, role) => {
 
+const UserRegister = async (email, phoneNumber, password, role, firstName, lastName, profilePicture) => {
+  try {
     // Generate OTP
     const otp = generateOTP();
-
 
     const user = new User({
       email,
@@ -34,7 +34,12 @@ const UserRegister = async (email, phoneNumber, password, role) => {
       role,
       otp,
       password,
+      firstName,
+      lastName,
+      profilePicture,
+    
     });
+
     await user.save();
 
     // Send OTP to email
@@ -42,8 +47,12 @@ const UserRegister = async (email, phoneNumber, password, role) => {
 
     // Return user
     return user;
- 
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
+
+
 
 
 
@@ -93,7 +102,6 @@ const addUsers = async ({ email, phoneNumber, firstName, lastName, password, rol
 module.exports = {
   addUsers,
 };
-
 
 
 
@@ -208,12 +216,14 @@ const signinUser = async (email, password) => {
 
 
 
+
 const getAllManagers = async () => {
-
-    const users = await User.find({ role: { $ne: 'CUS' } }); // Exclude users with role 'CUS'
-    return users;
-
+  // Exclude users with role 'CUS'
+  const users = await User.find({ role: { $ne: 'CUS' } }).select('-password -refreshToken'); // Exclude sensitive information
+  return users;
 };
+
+
 
 
 const getUserById = async (userId) => {
@@ -232,6 +242,36 @@ const getUserById = async (userId) => {
 
 
 
+const deleteUserById = async (userId) => {
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return { status: 404, message: "User not found" };
+    }
+    return { status: 200, message: "User deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { status: 500, message: "Internal server error" };
+  }
+};
+
+
+const updateUserById = async (userId, userData) => {
+  
+    const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true });
+    if (!updatedUser) {
+      return { status: 404, message: "User not found" };
+    }
+    return { status: 200, message: "User updated successfully", user: updatedUser };
+
+};
+
+
+
+
+
+
+
 
 module.exports = {
   UserRegister,
@@ -241,7 +281,9 @@ module.exports = {
   signinUser,
   addUsers,
   getAllManagers,
-  getUserById
+  getUserById,
+  deleteUserById,
+  updateUserById 
 };
 
 

@@ -23,8 +23,8 @@ const { asyncHandler } = require('../../utility/common');
 // Register a new user
 
 const registerHandler = asyncHandler(async (req, res) => {
-  const { email, phoneNumber, password, role } = req.body;
-  const user = await authService.UserRegister(email, phoneNumber, password, role);
+  const { email, phoneNumber, password, role, firstName, lastName, profilePicture } = req.body;
+  const user = await authService.UserRegister(email, phoneNumber, password, role, firstName, lastName, profilePicture);
 
   res.status(200).json({
     message: "Your account has been registered. Please check your email for the OTP.",
@@ -32,6 +32,7 @@ const registerHandler = asyncHandler(async (req, res) => {
     user,
   });
 });
+
 
 
 
@@ -130,14 +131,17 @@ const userSignInHandler = async (req, res, next) => {
 
 
 const getAllManagers = asyncHandler(async (req, res) => {
-  
+ 
     const users = await authService.getAllManagers();
     res.status(200).json({
       message: "Successfully retrieved all users",
       users
     });
-
+ 
 });
+
+
+
 
 
 const getUserByIdHandler = asyncHandler(async (req, res) => {
@@ -153,6 +157,25 @@ const getUserByIdHandler = asyncHandler(async (req, res) => {
 
 
 
+const deleteUserByIdHandler = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const result = await authService.deleteUserById(userId);
+  res.status(result.status).json(result);
+});
+
+
+
+
+const updateUserByIdHandler = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const userData = req.body;
+  const result = await authService.updateUserById(userId, userData);
+  res.status(result.status).json(result);
+});
+
+
+
+
 router.post('/adminRegister', registerHandler);
 router.post('/otpVerification', otpVerifyHandler);
 router.post('/otpResend', resendOTPHandler);
@@ -161,4 +184,6 @@ router.post('/signInAdmin', userSignInHandler)
 router.post('/userManage', authMiddleware, roleMiddleware([HEAD_OFFICE]), addUsersHandler);
 router.get('/managers', getAllManagers);
 router.get('/users/:id',getUserByIdHandler);
+router.delete('/users/:userId', deleteUserByIdHandler);
+router.put('/users/:userId', updateUserByIdHandler);
 module.exports = router;
