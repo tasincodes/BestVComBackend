@@ -135,13 +135,14 @@ const getOutletManagerByIdService = async (id) => {
     throw new Error('Failed to retrieve outlet manager: ' + error.message);
   }
 };
-
+  
 
 const getOutletById = async (id) => {
   try {
     if (!id) {
       throw new Error('Outlet ID is required');
     }
+    console.log('Fetching outlet with ID:', id);
     const outlet = await OutletModel.findById(id)
     .populate('outletManager', 'firstName lastName email phoneNumber');
     if (!outlet) {
