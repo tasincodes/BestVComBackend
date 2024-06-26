@@ -7,8 +7,7 @@ const { passEmailForOutlet } = require('../../utility/email');
 
 
 
-
-const outletCreateService = async (outletName, outletLocation, outletImage, outletManager, outletManagerEmail, outletManagerPhone) => {
+const outletCreateService = async (outletName, cityName, outletLocation, outletImage, outletManager, outletManagerEmail, outletManagerPhone) => {
   try {
     if (!outletName || !outletLocation || !outletManager || !outletImage) {
       throw new Error('Outlet name, location, and branch admin with image are required');
@@ -31,7 +30,8 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
       outletImage,
       outletManager,
       outletManagerEmail,
-      outletManagerPhone
+      outletManagerPhone,
+      cityName
     });
     return newOutlet;
   } catch (error) {
@@ -39,6 +39,11 @@ const outletCreateService = async (outletName, outletLocation, outletImage, outl
     throw new Error('Outlet creation failed: ' + error.message);
   }
 };
+
+module.exports = {
+  outletCreateService,
+};
+
 
 
 
