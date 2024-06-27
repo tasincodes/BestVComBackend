@@ -24,8 +24,6 @@ function calculateOrderValue(products, orderProducts) {
 }
 
 
-
-
 // Define calculateDiscount function
 function calculateDiscount(coupon, totalPrice) {
   if (!coupon) {
@@ -112,7 +110,7 @@ const createOrder = async (orderData) => {
       orderType,
       orderTime,
       deliveryAddress,
-      orderStatus: 'Received', // Assign the correct status string
+      orderStatus: 'Received', 
       district,
       phoneNumber,
       paymentMethod,
@@ -120,7 +118,7 @@ const createOrder = async (orderData) => {
       products,
       coupon: couponId ? couponId : null,
       discountAmount,
-      totalPrice: finalTotalPrice, // Assign final total price
+      totalPrice: finalTotalPrice, 
       vatRate,
       deliveryCharge,
       customerIp
@@ -152,6 +150,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
@@ -236,6 +235,7 @@ const getAllOrders = async () => {
 
 
 
+
 // Update Order Status
 const updateOrderStatus = async (id, updateOrder) => {
   const { orderStatus } = updateOrder;
@@ -260,6 +260,8 @@ const updateOrderStatus = async (id, updateOrder) => {
 
   }
 }
+
+
 
 
 const getOrderById = async (id) => {
