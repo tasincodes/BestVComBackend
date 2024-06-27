@@ -109,11 +109,7 @@ const createOrder = async (orderData) => {
       orderType,
       orderTime,
       deliveryAddress,
-<<<<<<< HEAD
       orderStatus: 'Received', 
-=======
-      orderStatus: 'Received',
->>>>>>> origin/development
       district,
       phoneNumber,
       paymentMethod,
@@ -121,11 +117,7 @@ const createOrder = async (orderData) => {
       products,
       coupon: couponId ? couponId : null,
       discountAmount,
-<<<<<<< HEAD
       totalPrice: finalTotalPrice, 
-=======
-      totalPrice: finalTotalPrice,
->>>>>>> origin/development
       vatRate,
       deliveryCharge,
       customerIp
@@ -207,11 +199,8 @@ const createOrder = async (orderData) => {
 
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> origin/development
 //updateOrderByOrder ID
 
 const updateOrder = async (orderId, orderData) => {
