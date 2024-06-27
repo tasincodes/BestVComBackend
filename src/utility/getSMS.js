@@ -1,16 +1,17 @@
-// utils/getSMSText.js
-const getSMSText = (status, firstName) => {
-    const messages = {
-      'Received': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি গ্রহন করা হলো - ${firstName}`,
-      'Confirmed': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি নিশ্চিত করা হলো - ${firstName}`,
-      'Dispatched': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি প্রেরণ করা হলো - ${firstName}`,
-      'Delivered': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি পৌঁছে গেছে - ${firstName}`,
-      'On-Hold': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি স্থগিত রাখা হয়েছে - ${firstName}`,
-      'Cancelled': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি বাতিল করা হয়েছে - ${firstName}`,
-      'Spammed': `সম্মানিত গ্রাহক,\nআপনার অর্ডারটি স্প্যাম হিসাবে চিহ্নিত করা হয়েছে - ${firstName}`
-    };
-    return messages[status] || `সম্মানিত গ্রাহক,\nআপনার অর্ডারের স্ট্যাটাস পরিবর্তন করা হয়েছে - ${firstName}`;
+const getSMSText = (orderStatus, customerName) => {
+  const messages = {
+    'Received': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি গ্রহন করা হলো - অন্ন`,
+    'Confirmed': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি নিশ্চিত করা হলো - অন্ন`,
+    'Dispatched': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি প্রেরণ করা হয়েছে - অন্ন`,
+    'Delivered': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি সরবরাহ করা হয়েছে - অন্ন`,
+    'On-Hold': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি স্থগিত রাখা হয়েছে - অন্ন`,
+    'Cancelled': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি বাতিল করা হয়েছে - অন্ন`,
+    'Spammed': `সম্মানিত গ্রাহক ${customerName},\nআপনার অর্ডারটি স্প্যাম হিসাবে চিহ্নিত করা হয়েছে - অন্ন`,
   };
-  
-module.exports = getSMSText;
-  
+
+  return messages[orderStatus] || '';
+};
+
+module.exports = {
+  getSMSText
+};
