@@ -20,12 +20,10 @@ const OrderSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
     max: [232, 'First Name Should be less than 232 characters']
   },
   lastName: {
     type: String,
-    required: true,
     max: [232, 'Last Name Should be less than 232 characters']
   },
   customerIp: {

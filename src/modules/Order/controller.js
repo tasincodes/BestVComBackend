@@ -20,10 +20,12 @@ const createOrder = asyncHandler(async (req, res) => {
     const order = await orderService.createOrder(orderData); // Get total order value from the service
     res.status(200).json({
         message: "Order created successfully",
-        createdOrder: order,
-        // totalOrderValue: totalOrderValue // Include total order value in the response
+        order
     });
 });
+
+
+
 
 
 
