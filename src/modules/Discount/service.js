@@ -198,7 +198,7 @@ const getDiscountByCoupon = async (couponId, totalPrice, products, userId) => {
     await coupon.save();
 
     const discountedPrice = totalPrice - discount;
-    const vat = (coupon.general.vatRate / 100) * discountedPrice;
+    const vat = (15 / 100) * discountedPrice;
     const finalPrice = discountedPrice + vat;
 
     return {
