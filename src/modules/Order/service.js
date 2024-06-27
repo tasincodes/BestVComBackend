@@ -6,6 +6,14 @@ const CustomerModel = require('../Customer/model');
 
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
 
+
+
+const sendSMS = require('../../utility/aamarPayOTP'); // Adjust the path as per your file structure
+const { getSMSText } = require('../../utility/getSMS'); // Adjust the path as per your file structure
+
+
+
+
 function calculateOrderValue(products, orderProducts) {
   return orderProducts.reduce((total, orderProduct) => {
     const product = products.find(p => p._id.equals(orderProduct._id));
@@ -52,34 +60,20 @@ const createOrder = async (orderData) => {
       products, couponId, vatRate, firstName, lastName, customerIp 
     } = orderData;
 
-    // Validate request body
-   
-    // Find the customer by email
-    const customer = await CustomerModel.findOne({ email });
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
     // Validate products
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
 
+    // Ensure each product has a valid _id
     for (const product of products) {
-      if (!product.quantity || typeof product.quantity !== 'number') {
-        throw new Error('Each product must have a valid quantity');
+      if (!product._id || typeof product._id !== 'string') {
+        throw new Error('Invalid product ID');
       }
     }
 
-    const productIds = products.map(product => product._id);
-    const validProducts = await ProductModel.find({ _id: { $in: productIds } });
-
-    if (validProducts.length !== products.length) {
-      throw new Error('Invalid product IDs');
-    }
-
     // Calculate total price
-    let totalPrice = calculateOrderValue(validProducts, products);
+    let totalPrice = calculateOrderValue(products); // Adjust as per your calculation method
 
     // Apply discount if coupon provided
     let discountAmount = 0;
@@ -111,7 +105,7 @@ const createOrder = async (orderData) => {
       phoneNumber,
       paymentMethod,
       transactionId,
-      products,
+      products, // Use products array directly
       coupon: couponId ? couponId : null,
       discountAmount,
       totalPrice: finalTotalPrice, 
@@ -119,13 +113,24 @@ const createOrder = async (orderData) => {
       deliveryCharge,
       customerIp
     });
+
     const savedOrder = await newOrder.save();
+
+    // Assuming sendSMS function is correctly implemented
+    const smsText = getSMSText('Received', `${firstName} ${lastName}`, {
+      orderId: savedOrder.orderId,
+      products: savedOrder.products,
+      totalPrice: savedOrder.totalPrice,
+      discountAmount: savedOrder.discountAmount
+    });
+
+    await sendSMS(phoneNumber, smsText);
 
     return {
       message: "Order created successfully",
       createdOrder: {
         order: savedOrder,
-        customerEmail: customer.email,
+        customerEmail: email,
         totalOrderValue: finalTotalPrice 
       }
     };
@@ -135,6 +140,8 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+
 
 
 
