@@ -20,10 +20,6 @@ const generateCouponService = async (couponInfo) => {
 
     const { categoryId, general, usageRestriction, usageLimit } = couponInfo;
 
-    if (!categoryId) {
-      throw new Error('Category ID is required');
-    }
-
     if (!general) {
       throw new Error('General coupon information is required');
     }
