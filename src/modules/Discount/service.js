@@ -35,6 +35,9 @@ const generateCouponService = async (couponInfo) => {
     if (discountType === 'fixed' && (couponAmount == null || couponAmount === undefined)) {
       throw new Error('Coupon amount is required for fixed discount type');
     }
+    if(discountType==='percentage' && (couponAmount == null || couponAmount === undefined||couponAmount<0 || couponAmount>100)){
+        throw new Error('Coupon amount is required for percentage discount type and should be between 0 to 100');
+    }
     if (!couponExpiry) {
       throw new Error('Coupon expiry date is required');
     }
