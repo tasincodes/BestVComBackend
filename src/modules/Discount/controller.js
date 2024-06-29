@@ -95,10 +95,10 @@ const getCouponByCodeHandler = asyncHandler(async (req, res) => {
 
 
 const getDiscountByCouponHandler = asyncHandler(async(req,res)=>{
-    const couponId = req.params.couponId;
-    const userId = req.params.userId;
-    const {totalPrice,requestedProducts} = req.body;
-    const discountAmount = await discountService.getDiscountByCoupon(couponId,totalPrice,requestedProducts,userId);
+    const couponId = req.body.couponId;
+    const userId = req.body.userId;
+    const {requestedProducts} = req.body;
+    const discountAmount = await discountService.getDiscountByCoupon(couponId,requestedProducts,userId);
     if(discountAmount){
         res.status(200).json({discountAmount})
     }
@@ -142,7 +142,7 @@ router.get('/getAllCoupon',getAllCouponHandler);
 router.get('/getAllCouponByCat/:categoryId',getAllCouponByCategoryHandler);
 router.delete('/deleteCouponById/:id', deleteCouponByIdHandler);
 router.get('/getCouponByCode/:code', getCouponByCodeHandler);
-router.get('/getDsicountByCode/:couponId/:userId', getDiscountByCouponHandler);
+router.get('/getDsicountByCode', getDiscountByCouponHandler);
 router.get('/getCouponByTypeHandler/:discountType', getCouponByTypeHandler);
 router.get('/getCouponById/:id',getCouponByIdHandler);
 module.exports = router;
