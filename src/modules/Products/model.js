@@ -25,7 +25,7 @@ const ProductSchema = new mongoose.Schema({
     type: String,
 
   },
-  //uhfwnfiuhndcf
+
   productImage: {
     type: String
   },
@@ -85,6 +85,8 @@ const ProductSchema = new mongoose.Schema({
     taxClass: String,
 
   },
+
+
 
   inventory: {
     sku: String,

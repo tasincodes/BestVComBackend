@@ -3,11 +3,7 @@ const ProductModel = require('../Products/model');
 const CouponModel = require('../Discount/model');
 const { BadRequest, NotFound } = require('../../utility/errors');
 const CustomerModel = require('../Customer/model');
-
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
-
-
-
 const sendSMS = require('../../utility/aamarPayOTP'); // Adjust the path as per your file structure
 const { getSMSText } = require('../../utility/getSMS'); // Adjust the path as per your file structure
 
@@ -26,10 +22,6 @@ function calculateOrderValue(products, orderProducts) {
   }, 0);
 }
 
-
-
-
-// Define calculateDiscount function
 function calculateDiscount(coupon, totalPrice) {
   if (!coupon) {
     return 0; // No coupon, so no discount
@@ -44,9 +36,6 @@ function calculateDiscount(coupon, totalPrice) {
   }
 }
 
-
-
-
 const createOrder = async (orderData) => {
   try {
     // Generate custom orderId and orderTime
@@ -60,20 +49,32 @@ const createOrder = async (orderData) => {
       products, couponId, vatRate, firstName, lastName, customerIp 
     } = orderData;
 
+    // Find the customer by email
+    const customer = await CustomerModel.findOne({ email });
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
     // Validate products
     if (!Array.isArray(products) || products.length === 0) {
       throw new Error('No products provided');
     }
 
-    // Ensure each product has a valid _id
     for (const product of products) {
-      if (!product._id || typeof product._id !== 'string') {
-        throw new Error('Invalid product ID');
+      if (!product.quantity || typeof product.quantity !== 'number') {
+        throw new Error('Each product must have a valid quantity');
       }
     }
 
+    const productIds = products.map(product => product._id);
+    const validProducts = await ProductModel.find({ _id: { $in: productIds } });
+
+    if (validProducts.length !== products.length) {
+      throw new Error('Invalid product IDs');
+    }
+
     // Calculate total price
-    let totalPrice = calculateOrderValue(products); // Adjust as per your calculation method
+    let totalPrice = calculateOrderValue(validProducts, products);
 
     // Apply discount if coupon provided
     let discountAmount = 0;
@@ -105,7 +106,7 @@ const createOrder = async (orderData) => {
       phoneNumber,
       paymentMethod,
       transactionId,
-      products, // Use products array directly
+      products,
       coupon: couponId ? couponId : null,
       discountAmount,
       totalPrice: finalTotalPrice, 
@@ -114,15 +115,37 @@ const createOrder = async (orderData) => {
       customerIp
     });
 
+    // Save the order to the database
     const savedOrder = await newOrder.save();
 
-    // Assuming sendSMS function is correctly implemented
+    // Check if orderId exists in savedOrder
+    if (!savedOrder.orderId) {
+      console.error('orderId is missing from savedOrder:', savedOrder);
+      throw new Error('Order creation failed: orderId is missing');
+    }
+
+    // Prepare products info for SMS
+    const productInfoForSMS = savedOrder.products.map(product => {
+      const validProduct = validProducts.find(p => p._id.equals(product._id));
+      console.log('validProduct:', validProduct); // Debugging line
+      return {
+        name: validProduct ? validProduct.productName : 'Unknown',
+        quantity: product.quantity,
+        price: validProduct ? validProduct.general.regularPrice : 0
+      };
+    });
+
+    console.log('productInfoForSMS:', productInfoForSMS); // Debugging line
+
+    // Send SMS to customer
     const smsText = getSMSText('Received', `${firstName} ${lastName}`, {
       orderId: savedOrder.orderId,
-      products: savedOrder.products,
+      products: productInfoForSMS,
       totalPrice: savedOrder.totalPrice,
       discountAmount: savedOrder.discountAmount
     });
+
+    console.log(smsText);
 
     await sendSMS(phoneNumber, smsText);
 
@@ -130,7 +153,7 @@ const createOrder = async (orderData) => {
       message: "Order created successfully",
       createdOrder: {
         order: savedOrder,
-        customerEmail: email,
+        customerEmail: customer.email,
         totalOrderValue: finalTotalPrice 
       }
     };
@@ -140,6 +163,8 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+
 
 
 
