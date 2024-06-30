@@ -66,7 +66,7 @@ const CustomerSchema=new mongoose.Schema({
         ref:'Product'
     }],
 
-    billingInfo:[{
+    billingInfo:{
 
         district:{
             type:String,
@@ -95,8 +95,9 @@ const CustomerSchema=new mongoose.Schema({
             type:String,
             max:[12 , 'Zip Code Should be at least 12 characters']
         }
-    }],
-    shippingInfo:[{
+    },
+
+    shippingInfo:{
 
         district:{
             type:String,
@@ -125,7 +126,7 @@ const CustomerSchema=new mongoose.Schema({
             type:String,
             max:[12 , 'Zip Code Should be at least 12 characters']
         }
-    }]
+    }
   
     
 

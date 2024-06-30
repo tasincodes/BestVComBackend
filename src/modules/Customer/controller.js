@@ -107,8 +107,16 @@ const updateCustomerHandler = asyncHandler(async(req,res)=>{
   
 
 
+const getCustomerInfoByIdHandler = asyncHandler(async(req,res)=>{
 
-
+    const customerId = req.params.id;
+    const customerInfo = await customerService.getCustomerInfoById(customerId);
+   return res.status(200).json({
+    message:"Customer Information Fetched Successfully",
+    customerInfo
+   })
+  
+})
 
 
 
@@ -120,4 +128,5 @@ router.post('/expiredOtp',expireOTP);
 router.post('/customerSignIn',customerSignInHandler);
 router.put('/resetPassword',resetPassHandler);
 router.patch('/updateCustomer/:id',updateCustomerHandler);
+router.get('/info/:id',getCustomerInfoByIdHandler)
 module.exports = router;

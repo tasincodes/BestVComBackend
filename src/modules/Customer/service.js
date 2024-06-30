@@ -188,8 +188,14 @@ const updateCustomerService = async (customerId, customerData) => {
 
 
 
-
-
+const getCustomerInfoById = async (id) => {
+  try {
+    const customer = await customerModel.findById(id);
+    return customer;
+  } catch (error) {
+    throw new Error('Error retrieving customer information');
+  }
+};
 
 
 
@@ -203,6 +209,6 @@ module.exports = {
   expireOTP,
   customerSignInService,
   resetPass,
-
+  getCustomerInfoById
 
 };
