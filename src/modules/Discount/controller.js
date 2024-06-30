@@ -94,18 +94,15 @@ const getCouponByCodeHandler = asyncHandler(async (req, res) => {
 });
 
 
-const getDiscountByCouponHandler = asyncHandler(async(req,res)=>{
-    const couponId = req.body.couponId;
-    const userId = req.body.userId;
-    const {requestedProducts} = req.body;
-    const discountAmount = await discountService.getDiscountByCoupon(couponId,requestedProducts,userId);
-    if(discountAmount){
-        res.status(200).json({discountAmount})
+const getDiscountByCouponHandler = asyncHandler(async (req, res) => {
+    const { couponId, userId, requestedProducts } = req.body;
+    try {
+      const discountAmount = await discountService.getDiscountByCoupon(couponId, requestedProducts, userId);
+      res.status(200).json({ discountAmount });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ message: error.message });
     }
-    else {
-        res.status(404).json({ message: 'Coupon coudnt get authorized' });
-    }
-})
+  });
 
 const getCouponByTypeHandler = asyncHandler(async (req, res) => {
     const discountType = req.params.discountType;
@@ -142,7 +139,7 @@ router.get('/getAllCoupon',getAllCouponHandler);
 router.get('/getAllCouponByCat/:categoryId',getAllCouponByCategoryHandler);
 router.delete('/deleteCouponById/:id', deleteCouponByIdHandler);
 router.get('/getCouponByCode/:code', getCouponByCodeHandler);
-router.get('/getDsicountByCode', getDiscountByCouponHandler);
+router.post('/getDiscountByCode', getDiscountByCouponHandler);
 router.get('/getCouponByTypeHandler/:discountType', getCouponByTypeHandler);
 router.get('/getCouponById/:id',getCouponByIdHandler);
 module.exports = router;
