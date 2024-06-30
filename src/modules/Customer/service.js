@@ -172,9 +172,9 @@ const resetPass = async (email, newPassword) => {
 
 
 
+
 const updateCustomerService = async (customerId, customerData) => {
   try {
-    // Find the customer by customerId and update it with the provided data
     const updatedCustomer = await customerModel.findByIdAndUpdate(
       customerId,
       customerData,
