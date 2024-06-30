@@ -6,7 +6,7 @@ const getSMSText = (orderStatus, customerName, order) => {
     }).join(', ');
   };
 
-  // Function to translate order status to Bangla
+  // my custom eng to bang
   const translateOrderStatus = (status) => {
     const statusMap = {
       'Received': 'গ্রহণ করা হয়েছে',
@@ -22,13 +22,45 @@ const getSMSText = (orderStatus, customerName, order) => {
 
   // Generate SMS message based on order status
   const messages = {
-    'Received': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'Confirmed': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'Dispatched': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'Delivered': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'On-Hold': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'Cancelled': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
-    'Spammed': `প্রিয় ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)}`,
+    'Received': `সম্মানিত ${customerName},\nআপনার অর্ডার 
+    (${order.orderId}) ${translateOrderStatus(orderStatus)} 
+    হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+
+    'Confirmed': `সম্মানিত  ${customerName},\nআপনার অর্ডার 
+    (${order.orderId}) ${translateOrderStatus(orderStatus)}
+     হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+    'Dispatched': `সম্মানিত ${customerName},\nআপনার অর্ডার 
+    (${order.orderId}) ${translateOrderStatus(orderStatus)} 
+    হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+    'Delivered': `সম্মানিত ${customerName},\nআপনার অর্ডার 
+    (${order.orderId}) ${translateOrderStatus(orderStatus)}
+     হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+
+
+    'On-Hold': `সম্মানিত ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} 
+    হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+
+    'Cancelled': `সম্মানিত ${customerName},\nআপনার অর্ডার (${order.orderId}) ${translateOrderStatus(orderStatus)} 
+    হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
+
+
+    'Spammed': `সম্মানিত ${customerName},\nআপনার অর্ডার
+     (${order.orderId}) ${translateOrderStatus(orderStatus)}
+      হয়েছে এই বিস্তারিতে:\n${formatProductDetails(order.products)}।\nমোট মূল্য: ${order.totalPrice}, অফার মূল্য: ${order.discountAmount}।\nঅর্ডার অবস্থা: ${translateOrderStatus(orderStatus)
+
+    }`,
   };
 
   return messages[orderStatus] || '';

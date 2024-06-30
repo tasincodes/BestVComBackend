@@ -260,29 +260,90 @@ const getAllOrders = async () => {
 
 
 // Update Order Status
-const updateOrderStatus = async (id, updateOrder) => {
-  const { orderStatus } = updateOrder;
+// const updateOrderStatus = async (id, updateOrder) => {
+//   console.log("Update Order Status");
+//   const { orderStatus } = updateOrder;
+ 
+//   const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
+//     new: true,
+//   });
 
-  const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
-    new: true,
-  });
+//   if (!order) throw new NotFound("Order not found");
+
+//   const isLogged = order.orderLogs.find(
+//     (log) => log.status === Number(orderStatus)
+//   );
+
+//   if (!isLogged) {
+//     order.orderLogs.push({
+//       status: Number(orderStatus),
+//       createdAt: new Date(),
+//     });
+
+//     await order.save();
+
+//   }
+// }
+
+
+
+
+const updateOrderStatus = async (id, { orderStatus }) => {
+  // Find and update the order
+  const order = await OrderModel.findByIdAndUpdate(id, { orderStatus }, { new: true })
+    .populate('customer') // Populate customer to get customer details
+    .populate('products._id'); // Populate products to get product details
 
   if (!order) throw new NotFound("Order not found");
 
-  const isLogged = order.orderLogs.find(
-    (log) => log.status === Number(orderStatus)
-  );
+  // Check if the status update is logged
+  const isLogged = order.orderLogs.find((log) => log.status === orderStatus);
 
   if (!isLogged) {
     order.orderLogs.push({
-      status: Number(orderStatus),
+      status: orderStatus,
       createdAt: new Date(),
     });
 
     await order.save();
 
+    // Fetch product details
+    const productDetails = await Promise.all(order.products.map(async (product) => {
+      const productDetail = await ProductModel.findById(product._id);
+      return {
+        productName: productDetail.productName,
+        quantity: product.quantity,
+        price: productDetail.general.regularPrice,
+      };
+    }));
+
+    // Send SMS to customer
+    const smsText = getSMSText(orderStatus, `${order.firstName} ${order.lastName}`, {
+      orderId: order.orderId,
+      products: productDetails,
+      totalPrice: order.totalPrice,
+      discountAmount: order.discountAmount
+    });
+    console.log('Sending SMS:', smsText); // Log the SMS text for debugging
+
+    try {
+      await sendSMS(order.phoneNumber, smsText); // Assuming sendSMS is correctly implemented
+      console.log('SMS sent successfully');
+    } catch (error) {
+      console.error('Error sending SMS:', error.message);
+    }
   }
-}
+
+  return order;
+};
+
+
+
+
+
+
+
+
 
 
 
@@ -383,6 +444,14 @@ const updateOrderNoteById = async (orderId, orderNote) => {
   if (!updatedOrder) {
     throw new NotFound("Order not found");
   }
+  // Send SMS to customer
+  const smsText = getSMSText(orderStatus, `${order.firstName} ${order.lastName}`, {
+    orderId: order.orderId,
+    products: productDetails,
+    totalPrice: order.totalPrice,
+    discountAmount: order.discountAmount
+  });
+  console.log('Sending SMS:', smsText); // Log the SMS text for debugging
 
   return { success: true, order: updatedOrder };
 

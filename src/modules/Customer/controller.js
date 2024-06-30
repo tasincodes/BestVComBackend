@@ -4,7 +4,7 @@ const { asyncHandler } =require('../../utility/common');
 const customerService = require('./service')
 const authMiddleware= require('../../middlewares/authMiddleware');
 const roleMiddleware= require('../../middlewares/roleMiddleware');
-const { HEAD_OFFICE,BRANCH_ADMIN } = require('../../config/constants');
+const { HEAD_OFFICE,BRANCH_ADMIN, MANAGER,ADMIN } = require('../../config/constants');
 
 
 const createCustomerhandler = asyncHandler(async (req, res) => {
@@ -113,7 +113,7 @@ const updateCustomerHandler = asyncHandler(async(req,res)=>{
 
 
 router.post('/createCustomer',createCustomerhandler);
-router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN]),getAllCustomerhandler);
+router.get('/getCustomer',authMiddleware,roleMiddleware([HEAD_OFFICE,BRANCH_ADMIN,MANAGER,ADMIN]),getAllCustomerhandler);
 router.post('/forgetCred',forgetCredentialshandler);
 router.post('/otpverify',otpVerifyHandler);
 router.post('/expiredOtp',expireOTP);

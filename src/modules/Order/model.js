@@ -10,8 +10,8 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     ref: 'customer'
   },
-  customerIp:{
-    type : String
+  customerIp: {
+    type: String
   },
   orderType: {
     type: String,
@@ -26,15 +26,11 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     max: [232, 'Last Name Should be less than 232 characters']
   },
-  customerIp: {
-    type: String,
-    max: [20, 'IP Address should be less than 20 characters'],
-  },
   orderStatus: {
     type: String,
     enum: [
-      'Received', 
-      'Confirmed', 
+      'Received',
+      'Confirmed',
       'Dispatched',
       'Delivered',
       'On-Hold',
@@ -90,8 +86,17 @@ const OrderSchema = new mongoose.Schema({
     default: "Order Note",
     max: [3000, 'Order Note Should be less than 3000 characters']
   },
-  
-  vatRate: Number
+  vatRate: Number,
+  orderLogs: [{
+    status: {
+      type: Number,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      required: true
+    }
+  }]
 }, { timestamps: true });
 
 const OrderModel = mongoose.model('Order', OrderSchema);

@@ -69,22 +69,18 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 
 
-const updateOrderStatusHandler = async (req, res, next) => {
-  try {
+const updateOrderStatusHandler = asyncHandler(async(req,res)=>{
     const { id } = req.params;
+    const { orderStatus } = req.body;
 
-    const order = await orderService.updateOrderStatus(id, req.body);
+    // Call the service function to update order status and send SMS
+    const order = await orderService.updateOrderStatus(id, { orderStatus });
 
     res.status(200).json({
-      message: "Order updated successfully",
+      message: 'Order status updated successfully',
       order,
     });
-  } catch (err) {
-    next(err, req, res);
-  }
-};
-
-
+})
 
 
 
