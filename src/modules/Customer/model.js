@@ -3,15 +3,13 @@ const bcrypt=require("bcryptjs");
 const { max } = require('moment/moment');
 
 const CustomerSchema=new mongoose.Schema({
+    
     email:{
         type:String,
         unique:true,
         required:[true,'Email must be provided'],
     },
-    profilePicture:{
-        type:String,
-        default:""
-    },
+   
     firstName:{
         type:String,
         max:[15,"FirstName Should be at least 15 characters"],
@@ -19,6 +17,10 @@ const CustomerSchema=new mongoose.Schema({
     lastName:{
         type:String,
         max:[12,"LastName Should be at least 12 characters"]
+    },
+    profilePicture:{
+        type:String,
+        default:""
     },
     userName:{
         type:String,
