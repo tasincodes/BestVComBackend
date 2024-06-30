@@ -5,8 +5,6 @@ const { passEmailForOutlet } = require('../../utility/email');
 
 
 
-
-
 const outletCreateService = async (outletName, cityName, outletLocation, outletImage, outletManager, outletManagerEmail, outletManagerPhone) => {
   try {
     if (!outletName || !outletLocation || !outletManager || !outletImage) {
