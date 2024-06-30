@@ -3,6 +3,7 @@ const axios = require('axios');
 const sendSMS = async (receiver, message) => {
   try {
     const response = await axios.post('https://sysadmin.muthobarta.com/api/v1/send-sms', {
+      // receiver: receiver,
       receiver: receiver,
       message: message,
       remove_duplicate: true
