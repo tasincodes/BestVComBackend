@@ -42,6 +42,9 @@ const updateOrder = asyncHandler(async (req, res) => {
 });
 
 
+
+
+
 const deleteOrder = asyncHandler(async (req, res) => {
     const { id } = req.params;
     await orderService.deleteOrder(id);
@@ -69,17 +72,26 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 
 
-const updateOrderStatusHandler = asyncHandler(async(req,res)=>{
+const updateOrderStatusHandler = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { orderStatus } = req.body;
-
-    const order = await orderService.updateOrderStatus(id, { orderStatus });
-
+  
+    if (!orderStatus || typeof orderStatus !== 'string') {
+      return res.status(400).json({ error: 'Invalid orderStatus' });
+    }
+  
+    const order = await orderService.updateOrderStatus(id, orderStatus);
+  
     res.status(200).json({
-      message: 'Order status updated successfully',
+      message: 'Order status updated and SMS sent successfully',
       order,
     });
-})
+  });
+  
+
+
+
+
 
 
 
@@ -132,13 +144,14 @@ const updateOrderNoteByIdHandler = asyncHandler(async (req, res) => {
 
 
 
+router.put('/:id',updateOrderStatusHandler);
 
 router.get('/customerHistory/:customerId', getCustomerHistoryHandler);
 router.get('/orders', getAllOrders);
 router.post('/orderCreate', createOrder);
 router.put('/:orderId', updateOrder);
 router.delete('/deleteOrder/:id',deleteOrder);
-router.put('/:id',authMiddleware,roleMiddleware([BRANCH_ADMIN,HEAD_OFFICE,ADMIN]),updateOrderStatusHandler);
+router.put('/:id',updateOrderStatusHandler);
 router.get('/getOrderById/:id',getOrderByIdHandler);
 router.put('/updateNote/:orderId', updateOrderNoteByIdHandler);
 

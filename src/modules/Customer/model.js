@@ -18,6 +18,11 @@ const CustomerSchema=new mongoose.Schema({
         type:String,
         max:[12,"LastName Should be at least 12 characters"]
     },
+    city:{
+        type:String, 
+        max:[200,"LastName Should be at least 12 characters"]
+    },
+
     profilePicture:{
         type:String,
         default:""

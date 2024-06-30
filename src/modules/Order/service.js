@@ -261,31 +261,54 @@ const getAllOrders = async () => {
 
 
 // Update Order Status
-const updateOrderStatus = async (id, updateOrder) => {
-  console.log("Update Order Status");
-  const { orderStatus } = updateOrder;
+// const updateOrderStatus = async (id, updateOrder) => {
+//   console.log("Update Order Status");
+//   const { orderStatus } = updateOrder;
  
-  const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
-    new: true,
-  });
+//   const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
+//     new: true,
+//   });
 
-  if (!order) throw new NotFound("Order not found");
+//   if (!order) throw new NotFound("Order not found");
 
-  const isLogged = order.orderLogs.find(
-    (log) => log.status === Number(orderStatus)
+//   const isLogged = order.orderLogs.find(
+//     (log) => log.status === Number(orderStatus)
+//   );
+
+//   if (!isLogged) {
+//     order.orderLogs.push({
+//       status: Number(orderStatus),
+//       createdAt: new Date(),
+//     });
+
+//     await order.save();
+
+//   }
+// }
+
+
+
+
+
+const updateOrderStatus = async (id, orderStatus) => {
+  const order = await OrderModel.findByIdAndUpdate(
+    { _id: id },
+    { orderStatus },
+    { new: true } // This option returns the updated document
   );
 
-  if (!isLogged) {
-    order.orderLogs.push({
-      status: Number(orderStatus),
-      createdAt: new Date(),
-    });
-
-    await order.save();
-
+  if (!order) {
+    throw new Error('Order not found');
   }
-}
 
+  const customerName = `${order.firstName} ${order.lastName}`;
+  const customerPhone = order.phoneNumber;
+  const message = getSMSText(orderStatus, customerName, order);
+
+  await sendSMS(customerPhone, message);
+
+  return order;
+};
 
 
 
