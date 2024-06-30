@@ -73,7 +73,6 @@ const updateOrderStatusHandler = asyncHandler(async(req,res)=>{
     const { id } = req.params;
     const { orderStatus } = req.body;
 
-    // Call the service function to update order status and send SMS
     const order = await orderService.updateOrderStatus(id, { orderStatus });
 
     res.status(200).json({
@@ -81,6 +80,10 @@ const updateOrderStatusHandler = asyncHandler(async(req,res)=>{
       order,
     });
 })
+
+
+
+
 
 
 

@@ -8,6 +8,10 @@ const CustomerSchema=new mongoose.Schema({
         unique:true,
         required:[true,'Email must be provided'],
     },
+    profilePicture:{
+        type:String,
+        default:""
+    },
     firstName:{
         type:String,
         max:[15,"FirstName Should be at least 15 characters"],
@@ -46,6 +50,10 @@ const CustomerSchema=new mongoose.Schema({
         max:[120,"Address Should be at least 120 characters"],
 
     },
+    zipCode:{
+        type:String,
+        max:[12 , 'Zip Code Should be at least 12 characters']
+    },
     isActive:{
         type:Boolean
     },
@@ -55,14 +63,68 @@ const CustomerSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Product'
     }],
-    district:{
+
+    billingInfo:[{
+
+        district:{
+            type:String,
+            max:[45,"District Should be at least 45 characters"],
+        },
+        firstName:{
+            type:String,
+            max:[15,"FirstName Should be at least 15 characters"],
+        },
+        lastName:{
+            type:String,
+            max:[12,"LastName Should be at least 12 characters"]
+        },
+        fullAddress:{
+            type:String,
+            max:[220,"LastName Should be at least 12 characters"] 
+        },
+        phoneNumber:{
+            type:String,
+            max:[13,"Phone Number Should be at least 13 characters"],
+        },
+        email:{
         type:String,
-        max:[45,"District Should be at least 45 characters"],
-    },
-    zipCode:{
+        },
+        zipCode:{
+            type:String,
+            max:[12 , 'Zip Code Should be at least 12 characters']
+        }
+    }],
+    shippingInfo:[{
+
+        district:{
+            type:String,
+            max:[45,"District Should be at least 45 characters"],
+        },
+        firstName:{
+            type:String,
+            max:[15,"FirstName Should be at least 15 characters"],
+        },
+        lastName:{
+            type:String,
+            max:[12,"LastName Should be at least 12 characters"]
+        },
+        fullAddress:{
+            type:String,
+            max:[220,"LastName Should be at least 12 characters"] 
+        },
+        phoneNumber:{
+            type:String,
+            max:[13,"Phone Number Should be at least 13 characters"],
+        },
+        email:{
         type:String,
-        max:[12 , 'Zip Code Should be at least 12 characters']
-    }
+        },
+        zipCode:{
+            type:String,
+            max:[12 , 'Zip Code Should be at least 12 characters']
+        }
+    }]
+  
     
 
 
