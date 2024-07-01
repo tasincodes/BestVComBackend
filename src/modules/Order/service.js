@@ -47,7 +47,8 @@ const createOrder = async (orderData) => {
     const { 
       email, orderType, deliveryAddress, deliveryCharge = 0, 
       district, phoneNumber, paymentMethod, transactionId, 
-      products, couponId, vatRate, firstName, lastName, customerIp 
+      products, couponId, vatRate, firstName, lastName, customerIp,
+      channel, outlet // Include channel and outlet here
     } = orderData;
 
     // Find the customer by email
@@ -102,7 +103,7 @@ const createOrder = async (orderData) => {
       orderType,
       orderTime,
       deliveryAddress,
-      orderStatus: 'Received', 
+      orderStatus: 'Received',
       district,
       phoneNumber,
       paymentMethod,
@@ -110,10 +111,12 @@ const createOrder = async (orderData) => {
       products,
       coupon: couponId ? couponId : null,
       discountAmount,
-      totalPrice: finalTotalPrice, 
+      totalPrice: finalTotalPrice,
       vatRate,
       deliveryCharge,
-      customerIp
+      customerIp,
+      channel, // Include channel
+      outlet // Include outlet
     });
 
     // Save the order to the database
@@ -128,15 +131,12 @@ const createOrder = async (orderData) => {
     // Prepare products info for SMS
     const productInfoForSMS = savedOrder.products.map(product => {
       const validProduct = validProducts.find(p => p._id.equals(product._id));
-      console.log('validProduct:', validProduct); // Debugging line
       return {
         name: validProduct ? validProduct.productName : 'Unknown',
         quantity: product.quantity,
         price: validProduct ? validProduct.general.regularPrice : 0
       };
     });
-
-    console.log('productInfoForSMS:', productInfoForSMS); // Debugging line
 
     // Send SMS to customer
     const smsText = getSMSText('Received', `${firstName} ${lastName}`, {
@@ -147,7 +147,6 @@ const createOrder = async (orderData) => {
     });
 
     console.log(smsText);
-
     await sendSMS(phoneNumber, smsText);
 
     return {
@@ -155,7 +154,7 @@ const createOrder = async (orderData) => {
       createdOrder: {
         order: savedOrder,
         customerEmail: customer.email,
-        totalOrderValue: finalTotalPrice 
+        totalOrderValue: finalTotalPrice
       }
     };
 
@@ -164,6 +163,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
