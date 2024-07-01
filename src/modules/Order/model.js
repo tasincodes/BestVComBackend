@@ -94,6 +94,11 @@ const OrderSchema = new mongoose.Schema({
     ]
   },
 
+    outlet:{
+      type: String,
+      default:""
+    },
+
   vatRate: Number,
   orderLogs: [{
     status: {
