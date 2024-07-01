@@ -86,6 +86,14 @@ const OrderSchema = new mongoose.Schema({
     default: "Order Note",
     max: [3000, 'Order Note Should be less than 3000 characters']
   },
+  channel:{
+    type: String,
+    enum:[
+      "web",
+      "mobile"
+    ]
+  },
+
   vatRate: Number,
   orderLogs: [{
     status: {
