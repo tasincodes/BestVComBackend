@@ -167,19 +167,6 @@ const createOrder = async (orderData) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //updateOrderByOrder ID
 
 const updateOrder = async (orderId, orderData) => {
@@ -261,41 +248,12 @@ const getAllOrders = async () => {
 
 
 // Update Order Status
-// const updateOrderStatus = async (id, updateOrder) => {
-//   console.log("Update Order Status");
-//   const { orderStatus } = updateOrder;
- 
-//   const order = await OrderModel.findByIdAndUpdate({ _id: id }, updateOrder, {
-//     new: true,
-//   });
-
-//   if (!order) throw new NotFound("Order not found");
-
-//   const isLogged = order.orderLogs.find(
-//     (log) => log.status === Number(orderStatus)
-//   );
-
-//   if (!isLogged) {
-//     order.orderLogs.push({
-//       status: Number(orderStatus),
-//       createdAt: new Date(),
-//     });
-
-//     await order.save();
-
-//   }
-// }
-
-
-
-
-
 const updateOrderStatus = async (id, orderStatus) => {
   const order = await OrderModel.findByIdAndUpdate(
     { _id: id },
     { orderStatus },
     { new: true } // This option returns the updated document
-  );
+  ).populate('products._id');
 
   if (!order) {
     throw new Error('Order not found');
@@ -309,18 +267,6 @@ const updateOrderStatus = async (id, orderStatus) => {
 
   return order;
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
