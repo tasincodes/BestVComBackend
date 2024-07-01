@@ -1,7 +1,7 @@
 const getSMSText = (orderStatus, customerName, order) => {
   const formatProductDetails = (products) => {
     return products.map(product => {
-      return `${product._id.productName} (${product.quantity} x ${product._id.general.salePrice})`;
+      return `${product.name} (${product.quantity} x ${product.price})`;
     }).join(', ');
   };
 
