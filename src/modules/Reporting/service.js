@@ -111,12 +111,17 @@ const { BadRequest } = require("../../utility/errors");
 // };
 const totalSalesAndNetSalesService = async (startDate, endDate) => {
   try {
-    if (!startDate || !endDate) {
-      return { message: "Start and end dates are required" };
-    }
+    let start, end;
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    if (!startDate || !endDate) {
+      // Set default dates to current date and one year before
+      end = new Date();
+      start = new Date();
+      start.setFullYear(start.getFullYear() - 1);
+    } else {
+      start = new Date(startDate);
+      end = new Date(endDate);
+    }
 
     // Calculate total orders today
     const todayStart = new Date();
@@ -129,7 +134,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
         $gte: todayStart,
         $lte: todayEnd,
       },
-      orderStatus: 'Delivered',// Considering only delivered orders
+      orderStatus: 'Delivered', // Considering only delivered orders
     });
 
     const totalOrdersInTimeFrame = await OrderModel.countDocuments({
@@ -159,7 +164,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
           totalSales: { $sum: "$totalPrice" },
           totalDiscount: { $sum: "$discountAmount" }, // Sum of discount amounts
           totalVAT: { $sum: { $multiply: ["$totalPrice", 0.15] } }, // Sum of VAT amounts (assuming VAT rate of 15%)
-          totalOrders: { $sum: 1 } // Count of orders
+          totalOrders: { $sum: 1 }, // Count of orders
         },
       },
       {
@@ -205,6 +210,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
     return { message: "Internal server error" };
   }
 };
+
 
 
 const totalOrderAndVariationsSoldService = async (startDate, endDate) => {
