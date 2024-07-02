@@ -2,6 +2,7 @@ const OrderModel = require("../Order/model");
 const ProductModel = require("../Products/model");
 const CouponModel = require("../Discount/model");
 const { BadRequest } = require("../../utility/errors");
+const { all } = require("axios");
 
 
 
@@ -114,10 +115,10 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
     let start, end;
 
     if (!startDate || !endDate) {
-      // Set default dates to current date and one year before
+      // Set default dates to the past six months and current date
       end = new Date();
       start = new Date();
-      start.setFullYear(start.getFullYear() - 1);
+      start.setMonth(start.getMonth() - 5);
     } else {
       start = new Date(startDate);
       end = new Date(endDate);
@@ -134,7 +135,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
         $gte: todayStart,
         $lte: todayEnd,
       },
-      orderStatus: 'Delivered', // Considering only delivered orders
+      orderStatus: { $exists: true } // Considering all orders regardless of status
     });
 
     const totalOrdersInTimeFrame = await OrderModel.countDocuments({
@@ -142,7 +143,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
         $gte: start,
         $lte: end,
       },
-      orderStatus: 'Delivered', // Considering only delivered orders
+      orderStatus: { $exists: true } // Considering all orders regardless of status
     });
 
     const totalSalesResult = await OrderModel.aggregate([
@@ -152,7 +153,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
             $gte: start,
             $lte: end,
           },
-          orderStatus: 'Delivered', // Considering only delivered orders
+          orderStatus: { $exists: true } // Considering all orders regardless of status
         },
       },
       {
@@ -184,13 +185,131 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
       }
     ]);
 
-    if (totalSalesResult.length === 0) {
-      return { message: "No delivered orders found within the given period" };
-    }
+    // Generate all months in the range
+    const generateAllMonths = (start, end) => {
+      let months = [];
+      let current = new Date(start);
+      current.setDate(1); // Set to first day of the month
+
+      while (current <= end) {
+        months.push({
+          year: current.getFullYear(),
+          month: current.getMonth() + 1, // Months are zero-based
+          totalSales: 0,
+          netSales: 0,
+          totalOrders: 0,
+          totalDiscount: 0,
+          totalVAT: 0
+        });
+        current.setMonth(current.getMonth() + 1); // Move to the next month
+      }
+      return months;
+    };
+
+    const allMonths = generateAllMonths(start, end);
+
+    // Merge totalSalesResult with allMonths
+    const mergedResults = allMonths.map(month => {
+      const found = totalSalesResult.find(result => result.year === month.year && result.month === month.month);
+      return found ? { ...month, ...found } : month;
+    });
 
     // Calculate the sum of total sales and net sales in the given time frame
-    const totalSalesSum = totalSalesResult.reduce((acc, result) => acc + result.totalSales, 0);
-    const netSalesSum = totalSalesResult.reduce((acc, result) => acc + result.netSales, 0);
+    const totalSalesSum = mergedResults.reduce((acc, result) => acc + result.totalSales, 0);
+    const netSalesSum = mergedResults.reduce((acc, result) => acc + result.netSales, 0);
+
+    // Calculate gross sales in the period
+    const grossSales = await OrderModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalGrossSales: { $sum: '$totalPrice' }
+        }
+      }
+    ]);
+
+    // Calculate net sales in the period
+    const netSales = await OrderModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalNetSales: { $sum: { $subtract: ['$totalPrice', '$discountAmount'] } }
+        }
+      }
+    ]);
+
+    // Calculate total days in the period
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+    // Calculate average gross daily sales
+    const avgGrossDailySales = grossSales.length ? grossSales[0].totalGrossSales / totalDays : 0;
+
+    // Calculate average net daily sales
+    const avgNetDailySales = netSales.length ? netSales[0].totalNetSales / totalDays : 0;
+
+    // Orders placed today
+    const ordersPlacedToday = await OrderModel.countDocuments({
+      createdAt: { $gte: todayStart, $lt: todayEnd }
+    });
+
+    // Items purchased today
+    const itemsPurchasedToday = await OrderModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: todayStart, $lt: todayEnd }
+        }
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $group: {
+          _id: null,
+          totalItemsPurchased: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Refunded orders (assuming refunded means orderStatus: 5)
+    const refundedOrders = await OrderModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+          orderStatus: 5 // Cancelled
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRefunded: { $sum: '$totalPrice' }
+        }
+      }
+    ]);
+
+    // Total delivery charges in the period
+    const totalDeliveryCharge = await OrderModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalDeliveryCharge: { $sum: '$deliveryCharge' }
+        }
+      }
+    ]);
 
     return {
       message: "Total sales calculated successfully",
@@ -198,12 +317,20 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
       netSalesSum,
       totalOrdersToday,
       totalOrdersInTimeFrame,
-      totalSalesAndNet: totalSalesResult.map(result => ({
+      totalSalesAndNet: mergedResults.map(result => ({
         year: result.year,
         month: result.month,
         totalSales: result.totalSales,
         netSales: result.netSales,
-      }))
+      })),
+      grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
+      avgGrossDailySales,
+      netSales: netSales.length ? netSales[0].totalNetSales : 0,
+      avgNetDailySales,
+      ordersPlacedToday,
+      itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,
+      refunded: refundedOrders.length ? refundedOrders[0].totalRefunded : 0,
+      deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
     };
   } catch (error) {
     console.error("Error fetching net sales:", error);
