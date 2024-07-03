@@ -140,7 +140,7 @@ const getProductByCategorySlug = async (slug) => {
     }
 
     console.log('Category found:', category);
-
+ 
     // Find products under the found category and populate category details
     const products = await productModel.find({ categoryId: category._id }).populate('categoryId');
     console.log('Products found:', products);
