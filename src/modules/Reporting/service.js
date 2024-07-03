@@ -215,8 +215,8 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
     });
 
     // Calculate the sum of total sales and net sales in the given time frame
-    const totalSalesSum = mergedResults.reduce((acc, result) => acc + result.totalSales, 0);
-    const netSalesSum = mergedResults.reduce((acc, result) => acc + result.netSales, 0);
+    const totalSalesSum = mergedResults.reduce((acc, result) => acc + result.totalSales, 0).toFixed(2);
+    const netSalesSum = mergedResults.reduce((acc, result) => acc + result.netSales, 0).toFixed(2);
 
     // Calculate gross sales in the period
     const grossSales = await OrderModel.aggregate([
@@ -285,7 +285,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
       {
         $match: {
           createdAt: { $gte: start, $lte: end },
-          orderStatus: 5 // Cancelled
+          orderStatus: "Cancelled" // Cancelled
         }
       },
       {
@@ -320,17 +320,17 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
       totalSalesAndNet: mergedResults.map(result => ({
         year: result.year,
         month: result.month,
-        totalSales: result.totalSales,
-        netSales: result.netSales,
+        totalSales: result.totalSales.toFixed(2),
+        netSales: result.netSales.toFixed(2),
       })),
-      grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
-      avgGrossDailySales,
-      netSales: netSales.length ? netSales[0].totalNetSales : 0,
-      avgNetDailySales,
+      grossSales: grossSales.length ? grossSales[0].totalGrossSales.toFixed(2) : 0,
+      avgGrossDailySales: avgGrossDailySales.toFixed(2),
+      netSales: netSales.length ? netSales[0].totalNetSales.toFixed(2) : 0,
+      avgNetDailySales: avgNetDailySales.toFixed(2),
       ordersPlacedToday,
       itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,
-      refunded: refundedOrders.length ? refundedOrders[0].totalRefunded : 0,
-      deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
+      refunded: refundedOrders.length ? refundedOrders[0].totalRefunded.toFixed(2): 0,
+      deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge.toFixed(2): 0
     };
   } catch (error) {
     console.error("Error fetching net sales:", error);
@@ -339,176 +339,128 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
 };
 
 
+// const getSalesMetrics = async (startDate, endDate) => {
+//   try {
+//     if (!startDate || !endDate) {
+//       throw new Error('Start and end dates are required');
+//     }
 
-const totalOrderAndVariationsSoldService = async (startDate, endDate) => {
-  try {
-    if (!startDate || !endDate) {
-      return { message: "Start and end dates are required" };
-    }
+//     const start = new Date(startDate);
+//     const end = new Date(endDate);
 
-    // Calculate total orders for the month
-    const totalOrders = await OrderModel.countDocuments({
-      createdAt: { $gte: startDate, $lte: endDate },
-    });
+//     // Calculate gross sales in the period
+//     const grossSales = await OrderModel.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: start, $lte: end }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalGrossSales: { $sum: '$totalPrice' }
+//         }
+//       }
+//     ]);
 
-    // Calculate unique product variations sold for the month
-    const totalVariationsSoldPipeline = [
-      {
-        $match: {
-          createdAt: { $gte: startDate, $lte: endDate },
-        },
-      },
-      {
-        $unwind: "$products", // Split products array into separate documents
-      },
-      {
-        $group: {
-          _id: null, // Single document for all variations
-          uniqueProducts: { $addToSet: "$products._id" }, // Set of unique product IDs
-        },
-      },
-      {
-        $project: {
-          totalVariationsSold: { $size: "$uniqueProducts" }, // Count of unique products
-        },
-      },
-    ];
+//     // Calculate net sales in the period
+//     const netSales = await OrderModel.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: start, $lte: end }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalNetSales: { $sum: { $subtract: ['$totalPrice', '$discountAmount'] } }
+//         }
+//       }
+//     ]);
+//     ///hufhish
+//     // Calculate total days in the period
+//     const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-    const variationsSoldResult = await OrderModel.aggregate(totalVariationsSoldPipeline);
-    const totalVariationsSold = variationsSoldResult.length > 0 ? variationsSoldResult[0].totalVariationsSold : 0;
+//     // Calculate average gross daily sales
+//     const avgGrossDailySales = grossSales.length ? grossSales[0].totalGrossSales / totalDays : 0;
 
-    return {
-      totalOrders: totalOrders,
-      totalVariationsSold: totalVariationsSold
-    };
-  } catch (error) {
-    console.error("Error fetching total order and variations sold:", error);
-    return { message: "Internal server error" };
-  }
-};
+//     // Calculate average net daily sales
+//     const avgNetDailySales = netSales.length ? netSales[0].totalNetSales / totalDays : 0;
 
-const getSalesMetrics = async (startDate, endDate) => {
-  try {
-    if (!startDate || !endDate) {
-      throw new Error('Start and end dates are required');
-    }
+//     // Orders placed today
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+//     const tomorrow = new Date(today);
+//     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+//     const ordersPlacedToday = await OrderModel.countDocuments({
+//       createdAt: { $gte: today, $lt: tomorrow }
+//     });
 
-    // Calculate gross sales in the period
-    const grossSales = await OrderModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: start, $lte: end }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalGrossSales: { $sum: '$totalPrice' }
-        }
-      }
-    ]);
+//     // Items purchased today
+//     const itemsPurchasedToday = await OrderModel.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: today, $lt: tomorrow }
+//         }
+//       },
+//       {
+//         $unwind: '$products'
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalItemsPurchased: { $sum: '$products.quantity' }
+//         }
+//       }
+//     ]);
 
-    // Calculate net sales in the period
-    const netSales = await OrderModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: start, $lte: end }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalNetSales: { $sum: { $subtract: ['$totalPrice', '$discountAmount'] } }
-        }
-      }
-    ]);
-    ///hufhish
-    // Calculate total days in the period
-    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+//     // Refunded orders (assuming refunded means orderStatus: 5)
+//     const refundedOrders = await OrderModel.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: start, $lte: end },
+//           orderStatus: 5 // Cancelled
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalRefunded: { $sum: '$totalPrice' }
+//         }
+//       }
+//     ]);
 
-    // Calculate average gross daily sales
-    const avgGrossDailySales = grossSales.length ? grossSales[0].totalGrossSales / totalDays : 0;
+//     // Total delivery charges in the period
+//     const totalDeliveryCharge = await OrderModel.aggregate([
+//       {
+//         $match: {
+//           createdAt: { $gte: start, $lte: end }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalDeliveryCharge: { $sum: '$deliveryCharge' }
+//         }
+//       }
+//     ]);
 
-    // Calculate average net daily sales
-    const avgNetDailySales = netSales.length ? netSales[0].totalNetSales / totalDays : 0;
-
-    // Orders placed today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const ordersPlacedToday = await OrderModel.countDocuments({
-      createdAt: { $gte: today, $lt: tomorrow }
-    });
-
-    // Items purchased today
-    const itemsPurchasedToday = await OrderModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: today, $lt: tomorrow }
-        }
-      },
-      {
-        $unwind: '$products'
-      },
-      {
-        $group: {
-          _id: null,
-          totalItemsPurchased: { $sum: '$products.quantity' }
-        }
-      }
-    ]);
-
-    // Refunded orders (assuming refunded means orderStatus: 5)
-    const refundedOrders = await OrderModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: start, $lte: end },
-          orderStatus: 5 // Cancelled
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalRefunded: { $sum: '$totalPrice' }
-        }
-      }
-    ]);
-
-    // Total delivery charges in the period
-    const totalDeliveryCharge = await OrderModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: start, $lte: end }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalDeliveryCharge: { $sum: '$deliveryCharge' }
-        }
-      }
-    ]);
-
-    return {
-      grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
-      avgGrossDailySales,
-      netSales: netSales.length ? netSales[0].totalNetSales : 0,
-      avgNetDailySales,
-      ordersPlacedToday,
-      itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,
-      refunded: refundedOrders.length ? refundedOrders[0].totalRefunded : 0,
-      deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
-    };
-  } catch (error) {
-    console.error('Sales metrics Error fetching sales metrics:', error);
-    throw error;
-  }
-};
+//     return {
+//       grossSales: grossSales.length ? grossSales[0].totalGrossSales : 0,
+//       avgGrossDailySales,
+//       netSales: netSales.length ? netSales[0].totalNetSales : 0,
+//       avgNetDailySales,
+//       ordersPlacedToday,
+//       itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,
+//       refunded: refundedOrders.length ? refundedOrders[0].totalRefunded : 0,
+//       deliveryCharge: totalDeliveryCharge.length ? totalDeliveryCharge[0].totalDeliveryCharge : 0
+//     };
+//   } catch (error) {
+//     console.error('Sales metrics Error fetching sales metrics:', error);
+//     throw error;
+//   }
+// };
 
 
 
@@ -518,7 +470,6 @@ const getSalesMetrics = async (startDate, endDate) => {
 module.exports = {
 
   totalSalesAndNetSalesService,
-  totalOrderAndVariationsSoldService,
-  getSalesMetrics
+  // getSalesMetrics
 
 };

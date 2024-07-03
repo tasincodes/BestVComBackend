@@ -1,7 +1,7 @@
 const Product = require('../Products/model');
-const { BadRequest } = require('../../utility/errors');
 const { generateSlug } = require('../../utility/slug');
 
+const { BadRequest } = require('../../utility/errors');
 
 
 // addProduct
@@ -150,6 +150,19 @@ const getProductByproductStatus = async () => {
 }
 
 
+const getProductBySlug = async(productSlug)=>{
+  try{
+  const product = await Product.find({productSlug:productSlug});
+  if(!product){
+    console.log('No products found by slug :',productSlug)
+  }
+  return product;
+  }
+  catch(err){
+    console.error('Error finding product by slug',err.message);
+  }
+}
+
 
 
 
@@ -160,5 +173,6 @@ module.exports = {
   deleteProductById,
   getProductByIdService,
   getProductByCategoryId,
-  getProductByproductStatus
+  getProductByproductStatus,
+  getProductBySlug
 }

@@ -105,6 +105,24 @@ const getProductByproductStatusHandler = asyncHandler(async (req, res) => {
 });
 
 
+const getProductBySlugHandler = asyncHandler(async (req, res) => {
+    const { productSlug } = req.body; 
+    const product = await productService.getProductBySlug(productSlug);
+
+    if (!product || product.length === 0) {
+        return res.status(404).json({
+            message: "No products found for the specified slug",
+        });
+    }
+
+    res.status(200).json({
+        message: "Success",
+        product
+    });
+});
+
+
+
 
 router.get('/getProductByproductStatus', getProductByproductStatusHandler);
 
@@ -114,5 +132,6 @@ router.get('/getAllProducts', getAllProductsHandler)
 router.delete('/deleteProduct/:id', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), deleteProductHandler);
 router.get('/getProductById/:id', getProductByIdHandler);
 router.get('/getProductByCategoryId/:categoryId', getProductByCategoryIdHandler);
+router.get('/getProductBySlugHandler',getProductBySlugHandler);
 
 module.exports = router;
