@@ -325,7 +325,7 @@ const totalSalesAndNetSalesService = async (startDate, endDate) => {
       })),
       grossSales: grossSales.length ? grossSales[0].totalGrossSales.toFixed(2) : 0,
       avgGrossDailySales: avgGrossDailySales.toFixed(2),
-      netSales: netSales.length ? netSales[0].totalNetSales.toFixed(2) : 0,
+      netSales: netSalesSum,
       avgNetDailySales: avgNetDailySales.toFixed(2),
       ordersPlacedToday,
       itemsPurchasedToday: itemsPurchasedToday.length ? itemsPurchasedToday[0].totalItemsPurchased : 0,

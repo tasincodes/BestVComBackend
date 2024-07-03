@@ -152,7 +152,7 @@ const getProductByproductStatus = async () => {
 
 const getProductBySlug = async(productSlug)=>{
   try{
-  const product = await Product.find({productSlug:productSlug});
+  const product = await Product.findOne({productSlug:productSlug});
   if(!product){
     console.log('No products found by slug :',productSlug)
   }
