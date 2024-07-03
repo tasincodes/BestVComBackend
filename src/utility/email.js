@@ -1,8 +1,9 @@
 const nodemailer = require('nodemailer');
-
+const handlebars = require('handlebars');
+const fs = require('fs');
+const path = require('path');
 
 const createToken = require('./createToken');
-
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -12,9 +13,6 @@ const transporter = nodemailer.createTransport({
     pass: 'nfkb rcqg wdez ionc',
   },
 });
-
-
-
 
 exports.SendEmailUtility = async (EmailTo, EmailText, EmailSubject) => {
   let mailOptions = {
@@ -61,9 +59,69 @@ exports.SendEmailUtilityForAdmin = async (EmailTo, EmailBody, EmailSubject, Emai
   });
 };
 
+// Function to read HTML template file
+const readHTMLFile = (pathToFile) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(pathToFile, { encoding: 'utf-8' }, (err, html) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(html);
+      }
+    });
+  });
+};
 
+// Register custom Handlebars helper
+handlebars.registerHelper('multiply', function(a, b) {
+  return a * b;
+});
 
+// Function to send order invoice email
+exports.sendOrderInvoiceEmail = async (EmailTo, orderData) => {
+  try {
+    // Read the HTML template file
+    const templatePath = path.join(__dirname, '../templates/order.html');
+    const htmlTemplate = await readHTMLFile(templatePath);
 
+    // Compile Handlebars template
+    const template = handlebars.compile(htmlTemplate);
 
+    // Prepare data to inject into template
+    const replacements = {
+      orderId: orderData.orderId,
+      orderDate: new Date().toLocaleDateString(),  // Example date formatting
+      customerName: orderData.firstName + ' ' + orderData.lastName,
+      customerEmail: orderData.email,
+      deliveryAddress: orderData.deliveryAddress,
+      phoneNumber: orderData.phoneNumber,
+      products: orderData.products,
+      subtotal: orderData.totalPrice - orderData.vatRate,
+      discount: orderData.discountAmount,
+      deliveryCharge: orderData.deliveryCharge,
+      vatRate: orderData.vatRate,
+      vat: (orderData.vatRate / 100) * orderData.totalPrice,
+      total: orderData.totalPrice,
+    };
 
+    // Replace placeholders with actual data in the template
+    const emailHtml = template(replacements);
 
+    // Setup email options
+    const mailOptions = {
+      from: 'BestElectronics-Technologies <tech.syscomatic@gmail.com>',
+      to: EmailTo,
+      subject: 'Your Order Invoice',
+      html: emailHtml,
+    };
+
+    // Send email using Nodemailer
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Order invoice email sent:', info);
+
+    return info;
+  } catch (error) {
+    console.error('Error sending order invoice email:', error);
+    throw error;
+  }
+};

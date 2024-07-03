@@ -6,10 +6,7 @@ const CustomerModel = require('../Customer/model');
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
 const sendSMS = require('../../utility/aamarPayOTP'); // Adjust the path as per your file structure
 const { getSMSText } = require('../../utility/getSMS'); // Adjust the path as per your file structure
-const { object } = require('joi');
-
-
-
+const { sendOrderInvoiceEmail } = require('../../utility/email'); // Adjust the path as per your file structure
 
 function calculateOrderValue(products, orderProducts) {
   return orderProducts.reduce((total, orderProduct) => {
@@ -149,6 +146,22 @@ const createOrder = async (orderData) => {
     console.log(smsText);
     await sendSMS(phoneNumber, smsText);
 
+    // Send Email Invoice to customer
+    await sendOrderInvoiceEmail(email, {
+      orderId: savedOrder.orderId,
+      firstName,
+      lastName,
+      email,
+      deliveryAddress,
+      phoneNumber,
+      products: productInfoForSMS,
+      totalPrice: finalTotalPrice,
+      discountAmount,
+      deliveryCharge,
+      vatRate,
+      vat
+    });
+
     return {
       message: "Order created successfully",
       createdOrder: {
@@ -163,6 +176,7 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
 
 
 
