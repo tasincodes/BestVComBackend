@@ -129,6 +129,32 @@ const getCategoryById = async (categoryId) => {
   }
 };
 
+
+const getProductByCategorySlug = async (slug) => {
+  try {
+    // Find the category by slug
+    const category = await Category.findOne({ slug: slug });
+    if (!category) {
+      console.error(`Couldn't find category by specified slug: ${slug}`);
+      return null;
+    }
+
+    console.log('Category found:', category);
+
+    // Find products under the found category and populate category details
+    const products = await productModel.find({ categoryId: category._id }).populate('categoryId');
+    console.log('Products found:', products);
+
+    return products;
+  } catch (err) {
+    console.error('Error finding products by category slug:', err.message);
+    throw err;
+  }
+};
+
+
+
+
 module.exports = {
   addCategory,
   getAllCategory,
@@ -136,4 +162,5 @@ module.exports = {
   deleteCategoryById,
   getSubcategories,
   getCategoryById,
+  getProductByCategorySlug
 };
