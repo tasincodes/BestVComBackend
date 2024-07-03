@@ -106,7 +106,7 @@ const getProductByproductStatusHandler = asyncHandler(async (req, res) => {
 
 
 const getProductBySlugHandler = asyncHandler(async (req, res) => {
-    const { productSlug } = req.body; 
+    const {productSlug}  = req.params;
     const product = await productService.getProductBySlug(productSlug);
 
     if (!product || product.length === 0) {
@@ -132,6 +132,6 @@ router.get('/getAllProducts', getAllProductsHandler)
 router.delete('/deleteProduct/:id', authMiddleware, roleMiddleware([HEAD_OFFICE, BRANCH_ADMIN]), deleteProductHandler);
 router.get('/getProductById/:id', getProductByIdHandler);
 router.get('/getProductByCategoryId/:categoryId', getProductByCategoryIdHandler);
-router.get('/getProductBySlugHandler',getProductBySlugHandler);
+router.get('/getProductBySlugHandler/:productSlug',getProductBySlugHandler);
 
 module.exports = router;
