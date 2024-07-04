@@ -4,9 +4,9 @@ const CouponModel = require('../Discount/model');
 const { BadRequest, NotFound } = require('../../utility/errors');
 const CustomerModel = require('../Customer/model');
 const { generateCustomOrderId, formatOrderTime } = require('../../utility/customOrder');
-const sendSMS = require('../../utility/aamarPayOTP'); // Adjust the path as per your file structure
-const { getSMSText } = require('../../utility/getSMS'); // Adjust the path as per your file structure
-const { sendOrderInvoiceEmail } = require('../../utility/email'); // Adjust the path as per your file structure
+const sendSMS = require('../../utility/aamarPayOTP');
+const { getSMSText } = require('../../utility/getSMS');
+const { sendOrderInvoiceEmail } = require('../../utility/email');
 
 function calculateOrderValue(products, orderProducts) {
   return orderProducts.reduce((total, orderProduct) => {
@@ -22,7 +22,7 @@ function calculateOrderValue(products, orderProducts) {
 
 function calculateDiscount(coupon, totalPrice) {
   if (!coupon) {
-    return 0; // No coupon, so no discount
+    return 0;
   }
 
   if (coupon.discountType === 'percentage') {
@@ -30,7 +30,7 @@ function calculateDiscount(coupon, totalPrice) {
   } else if (coupon.discountType === 'fixed') {
     return coupon.couponAmount;
   } else {
-    return 0; // Unknown discount type, so no discount
+    return 0;
   }
 }
 
@@ -45,11 +45,11 @@ const createOrder = async (orderData) => {
       email, orderType, deliveryAddress, deliveryCharge = 0, 
       district, phoneNumber, paymentMethod, transactionId, 
       products, couponId, vatRate, firstName, lastName, customerIp,
-      channel, outlet // Include channel and outlet here
+      channel, outlet 
     } = orderData;
 
     // Find the customer by email
-    const customer = await CustomerModel.findOne({ email });
+    const customer = await CustomerModel.findOne({ email }).lean().exec();
     if (!customer) {
       throw new Error('Customer not found');
     }
@@ -59,31 +59,21 @@ const createOrder = async (orderData) => {
       throw new Error('No products provided');
     }
 
-    for (const product of products) {
-      if (!product.quantity || typeof product.quantity !== 'number') {
-        throw new Error('Each product must have a valid quantity');
-      }
-    }
-
     const productIds = products.map(product => product._id);
-    const validProducts = await ProductModel.find({ _id: { $in: productIds } });
+    const validProducts = await ProductModel.find({ _id: { $in: productIds } }).lean().exec();
 
     if (validProducts.length !== products.length) {
       throw new Error('Invalid product IDs');
     }
 
-    // Calculate total price
-    let totalPrice = calculateOrderValue(validProducts, products);
-
-    // Apply discount if coupon provided
-    let discountAmount = 0;
-    if (couponId) {
-      const coupon = await CouponModel.findById(couponId);
-      if (!coupon) {
-        throw new Error('Invalid coupon ID');
-      }
-      discountAmount = calculateDiscount(coupon, totalPrice);
-    }
+    // Calculate total price and apply discount if coupon provided
+    const [totalPrice, discountAmount] = await Promise.all([
+      calculateOrderValue(validProducts, products),
+      couponId ? CouponModel.findById(couponId).then(coupon => {
+        if (!coupon) throw new Error('Invalid coupon ID');
+        return calculateDiscount(coupon, totalPrice);
+      }) : 0
+    ]);
 
     // Calculate VAT
     const vat = (vatRate / 100) * totalPrice;
@@ -112,14 +102,13 @@ const createOrder = async (orderData) => {
       vatRate,
       deliveryCharge,
       customerIp,
-      channel, // Include channel
-      outlet // Include outlet
+      channel,
+      outlet
     });
 
     // Save the order to the database
     const savedOrder = await newOrder.save();
 
-    // Check if orderId exists in savedOrder
     if (!savedOrder.orderId) {
       console.error('orderId is missing from savedOrder:', savedOrder);
       throw new Error('Order creation failed: orderId is missing');
@@ -146,8 +135,8 @@ const createOrder = async (orderData) => {
     console.log(smsText);
     await sendSMS(phoneNumber, smsText);
 
-    // Send Email Invoice to customer
-    await sendOrderInvoiceEmail(email, {
+    // Send Email Invoice to customer in the background
+    sendOrderInvoiceEmail(email, {
       orderId: savedOrder.orderId,
       firstName,
       lastName,
@@ -160,6 +149,8 @@ const createOrder = async (orderData) => {
       deliveryCharge,
       vatRate,
       vat
+    }).catch(err => {
+      console.error('Error sending order invoice email:', err);
     });
 
     return {
@@ -176,6 +167,8 @@ const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+
 
 
 
