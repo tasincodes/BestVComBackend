@@ -67,7 +67,7 @@ const CustomerSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   }],
-  billingInfo: [{
+  billingInfo: {
     district: {
       type: String,
       max: [45, "District Should be at least 45 characters"],
@@ -95,8 +95,8 @@ const CustomerSchema = new mongoose.Schema({
       type: String,
       max: [12, 'Zip Code Should be at least 12 characters']
     }
-  }],
-  shippingInfo: [{
+  },
+  shippingInfo: {
     district: {
       type: String,
       max: [45, "District Should be at least 45 characters"],
@@ -124,7 +124,7 @@ const CustomerSchema = new mongoose.Schema({
       type: String,
       max: [12, 'Zip Code Should be at least 12 characters']
     }
-  }]
+  }
 });
 
 // Password Hash Function using Bcryptjs
