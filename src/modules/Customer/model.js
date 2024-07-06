@@ -127,6 +127,8 @@ const CustomerSchema = new mongoose.Schema({
   }
 });
 
+
+
 // Password Hash Function using Bcryptjs
 CustomerSchema.pre('save', async function hashPassword(next) {
   if (this.isModified('password')) {
