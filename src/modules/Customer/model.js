@@ -67,6 +67,8 @@ const CustomerSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   }],
+
+  
   billingInfo: [{
     district: {
       type: String,
@@ -126,6 +128,8 @@ const CustomerSchema = new mongoose.Schema({
     }
   }]
 });
+
+
 
 // Password Hash Function using Bcryptjs
 CustomerSchema.pre('save', async function hashPassword(next) {

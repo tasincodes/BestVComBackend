@@ -68,10 +68,6 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 
 
-
-
-
-
 const updateOrderStatusHandler = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { orderStatus } = req.body;
